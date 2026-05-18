@@ -220,7 +220,10 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
                 <Eye className="h-3.5 w-3.5" /> Open page
               </a>
             </div>
-            <div className="overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_30px_60px_rgba(15,23,42,0.25)]">
+            {/* Phone-shaped frame, capped at real-phone width so the
+                PublicProfile inside (max-w-md = 448px) fills the frame
+                edge-to-edge — banner spans the full preview width. */}
+            <div className="mx-auto w-full max-w-[380px] overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_30px_60px_rgba(15,23,42,0.25)]">
               <div className="flex items-center justify-center bg-ink-900 py-1.5">
                 <div className="h-1 w-16 rounded-full bg-white/30" />
               </div>
