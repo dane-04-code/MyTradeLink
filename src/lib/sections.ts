@@ -34,8 +34,8 @@ export type SectionGroup = {
 };
 
 export const SECTION_DEFS: SectionDef[] = [
-  { key: "profile_photo", label: "Profile photo", description: "Your headshot at the top of the page" },
   { key: "banner_image", label: "Banner image", description: "Wide hero photo behind your profile picture" },
+  { key: "profile_photo", label: "Profile photo", description: "Your headshot at the top of the page" },
   { key: "call_button", label: "Call button", description: "Big green tap-to-call button" },
   { key: "whatsapp_button", label: "WhatsApp button", description: "Open a chat in one tap" },
   { key: "availability_status", label: "Availability status", description: "Taking on work / fully booked badge" },
@@ -63,8 +63,8 @@ export const SECTION_GROUPS: SectionGroup[] = [
   {
     id: "identity",
     title: "Identity",
-    blurb: "Photo, banner, name, availability.",
-    keys: ["profile_photo", "banner_image", "availability_status"],
+    blurb: "Banner, photo, availability.",
+    keys: ["banner_image", "profile_photo", "availability_status"],
   },
   {
     id: "contact",

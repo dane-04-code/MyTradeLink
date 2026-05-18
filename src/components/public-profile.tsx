@@ -49,16 +49,24 @@ export function PublicProfile({
     trackEvent(user.slug, "view");
   }, [preview, user.slug]);
 
+  // Banner is a hero element — always renders first if enabled, regardless
+  // of where the user has dragged it in the section order. Pulled out of
+  // the main switch below so the rest of the order stays user-controlled.
+  const bannerEnabled = orderedSections.some(
+    (s) => s.sectionKey === "banner_image"
+  );
+
   return (
     <div
       className="mx-auto min-h-screen w-full max-w-md bg-white pb-24 font-sans"
       style={{ ["--accent" as never]: accent }}
     >
+      {bannerEnabled && <BannerImage profile={profile} />}
       {orderedSections.map((s) => {
         const key = s.sectionKey as SectionKey;
         switch (key) {
           case "banner_image":
-            return <BannerImage key={key} profile={profile} />;
+            return null; // already rendered above
           case "profile_photo":
             return <ProfileHeader key={key} profile={profile} />;
           case "availability_status":
