@@ -98,8 +98,12 @@ function Section({
   className?: string;
 }) {
   return (
-    <section className={cn("px-5 pt-6", className)}>
-      {title && <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-500">{title}</h2>}
+    <section className={cn("px-5 pt-7", className)}>
+      {title && (
+        <h2 className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500">
+          {title}
+        </h2>
+      )}
       {children}
     </section>
   );
@@ -108,29 +112,40 @@ function Section({
 function ProfileHeader({ profile }: { profile: FullProfile }) {
   const { user } = profile;
   return (
-    <header className="px-5 pt-8">
-      <div className="flex flex-col items-center text-center">
+    <header className="relative px-5 pt-9">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-44 opacity-30"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 0%, var(--accent), transparent 70%)",
+        }}
+      />
+      <div className="relative flex flex-col items-center text-center">
         {user.profilePhotoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={user.profilePhotoUrl}
             alt={user.name ?? "Profile"}
-            className="h-28 w-28 rounded-full object-cover"
-            style={{ boxShadow: "0 0 0 4px var(--accent)" }}
+            className="h-32 w-32 rounded-full object-cover ring-[5px]"
+            style={{ ["--tw-ring-color" as never]: "var(--accent)" }}
           />
         ) : (
           <div
-            className="flex h-28 w-28 items-center justify-center rounded-full text-3xl font-bold text-white"
+            className="flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white"
             style={{ background: "var(--accent)" }}
           >
             {(user.name ?? "T")[0].toUpperCase()}
           </div>
         )}
-        <h1 className="mt-4 text-2xl font-extrabold text-ink-900">
+        <h1 className="mt-5 font-display text-3xl leading-tight tracking-tight text-ink-900">
           {user.name || "Your name"}
         </h1>
         {user.trade && (
-          <p className="text-base font-semibold" style={{ color: "var(--accent)" }}>
+          <p
+            className="mt-0.5 text-sm font-bold uppercase tracking-[0.14em]"
+            style={{ color: "var(--accent)" }}
+          >
             {user.trade}
             {user.location ? ` · ${user.location}` : ""}
           </p>
@@ -143,14 +158,34 @@ function ProfileHeader({ profile }: { profile: FullProfile }) {
 function AvailabilityBadge({ profile }: { profile: FullProfile }) {
   const taking = profile.user.availabilityStatus === "taking_on_work";
   return (
-    <div className="mt-5 flex justify-center px-5">
+    <div className="mt-4 flex justify-center px-5">
       <div
         className={cn(
-          "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold",
-          taking ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider",
+          taking
+            ? "border-green-200 bg-green-50 text-green-700"
+            : "border-red-200 bg-red-50 text-red-700"
         )}
       >
-        <span className={cn("h-2 w-2 rounded-full", taking ? "bg-green-500 animate-pulse" : "bg-red-500")} />
+        <span
+          className={cn(
+            "relative flex h-2 w-2",
+            taking ? "" : ""
+          )}
+        >
+          <span
+            className={cn(
+              "absolute inset-0 rounded-full",
+              taking ? "animate-ping bg-green-400" : ""
+            )}
+          />
+          <span
+            className={cn(
+              "relative h-2 w-2 rounded-full",
+              taking ? "bg-green-500" : "bg-red-500"
+            )}
+          />
+        </span>
         {taking ? "Taking on work" : "Fully booked"}
       </div>
     </div>
@@ -159,13 +194,25 @@ function AvailabilityBadge({ profile }: { profile: FullProfile }) {
 
 function CallButton({ profile }: { profile: FullProfile }) {
   if (!profile.user.phone) return null;
+  const first = profile.user.name?.split(" ")[0] || "now";
   return (
     <Section>
       <a
         href={`tel:${profile.user.phone}`}
-        className="flex w-full items-center justify-center gap-3 rounded-2xl bg-green-600 px-6 py-5 text-xl font-bold text-white shadow-lg active:scale-[0.98]"
+        className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-green-600 px-6 py-5 text-white shadow-[0_10px_25px_rgba(22,163,74,0.35)] transition active:scale-[0.98]"
       >
-        <Phone className="h-6 w-6" /> Call {profile.user.name?.split(" ")[0] || "now"}
+        <span className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+            <Phone className="h-5 w-5" />
+          </span>
+          <span className="text-left">
+            <span className="block font-display text-lg leading-none tracking-tight">
+              Call {first}
+            </span>
+            <span className="block text-xs text-white/75">{profile.user.phone}</span>
+          </span>
+        </span>
+        <span className="text-sm font-bold opacity-80">Tap →</span>
       </a>
     </Section>
   );
@@ -181,9 +228,20 @@ function WhatsappButton({ profile }: { profile: FullProfile }) {
         href={`https://wa.me/${cleaned.replace(/^\+/, "")}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-xl font-bold text-white shadow-lg active:scale-[0.98]"
+        className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-white shadow-[0_10px_25px_rgba(37,211,102,0.35)] transition active:scale-[0.98]"
       >
-        <MessageCircle className="h-6 w-6" /> WhatsApp
+        <span className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+            <MessageCircle className="h-5 w-5" />
+          </span>
+          <span className="text-left">
+            <span className="block font-display text-lg leading-none tracking-tight">
+              WhatsApp message
+            </span>
+            <span className="block text-xs text-white/85">Usually replies same day</span>
+          </span>
+        </span>
+        <span className="text-sm font-bold opacity-80">Tap →</span>
       </a>
     </Section>
   );
@@ -196,9 +254,28 @@ function EmergencyButton({ profile }: { profile: FullProfile }) {
     <Section>
       <a
         href={`tel:${number}`}
-        className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-600 px-6 py-5 text-xl font-bold text-white shadow-lg active:scale-[0.98]"
+        className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl bg-red-600 px-6 py-5 text-white shadow-[0_10px_25px_rgba(220,38,38,0.4)] transition active:scale-[0.98]"
       >
-        <Phone className="h-6 w-6" /> Emergency callout 24/7
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-12 -top-4 h-40 w-40 rotate-12 opacity-25"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, #fff 0 6px, transparent 6px 18px)",
+          }}
+        />
+        <span className="relative flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+            <Phone className="h-5 w-5" />
+          </span>
+          <span className="text-left">
+            <span className="block font-display text-lg leading-none tracking-tight">
+              Emergency callout
+            </span>
+            <span className="block text-xs text-white/85">24/7 · Out of hours rates apply</span>
+          </span>
+        </span>
+        <span className="relative text-sm font-bold opacity-90">Tap →</span>
       </a>
     </Section>
   );
@@ -548,12 +625,14 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
 
 function PoweredByFooter() {
   return (
-    <footer className="mt-10 px-5 text-center">
+    <footer className="mt-12 px-5 pb-2 text-center">
       <a
         href="/"
-        className="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-4 py-2 text-xs font-medium text-ink-700 hover:bg-neutral-200"
+        className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-500 hover:text-ink-700"
       >
-        Powered by <span className="font-bold text-brand">TradeLink</span> · Get your free page
+        <span>Built with</span>
+        <span className="font-display tracking-tight text-ink-900">TRADELINK</span>
+        <span className="text-ink-500">— get yours free</span>
       </a>
     </footer>
   );
