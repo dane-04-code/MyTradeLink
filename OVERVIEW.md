@@ -287,6 +287,7 @@ Dashboard renders as a "Weekly worksheet" — one big hero metric (page views) w
 | `/api/stripe/portal` | Auth | Open customer portal |
 | `/api/webhooks/clerk` | ✔ | Clerk → DB sync (svix-verified) |
 | `/api/webhooks/stripe` | ✔ | Stripe → plan flip (signature-verified) |
+| `/admin` | Gated by ADMIN_EMAIL | Operator dashboard — signups, MRR, activation, recent activity (returns 404 for everyone else) |
 
 ---
 
@@ -307,6 +308,7 @@ RESEND_API_KEY                          # Resend (optional — no-op if missing)
 RESEND_FROM_EMAIL                       # e.g. "TradeLink <hello@tradelink.app>"
 NEXT_PUBLIC_APP_URL                     # Canonical URL, e.g. https://tradelink.app
 IP_HASH_SALT                            # Optional — analytics IP hash salt (default: "tradelink")
+ADMIN_EMAIL                             # Comma-separated emails allowed to access /admin (operator dashboard)
 ```
 
 ---
