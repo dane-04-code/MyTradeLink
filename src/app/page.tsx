@@ -221,8 +221,8 @@ function PhoneMockup() {
                 <Check className="h-4 w-4 text-white" strokeWidth={3} />
               </div>
             </div>
-            <h2 className="mt-3 font-display text-xl leading-tight tracking-tight">
-              Dave Wilson
+            <h2 className="mt-3 font-display text-lg leading-tight tracking-tight">
+              Dave Wilson Plumbing
             </h2>
             <div className="text-sm font-semibold text-brand">
               Plumber · Manchester
@@ -381,7 +381,7 @@ function BeforeAfter() {
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white text-[10px]">
                   DW
                 </span>
-                Dave Wilson · Plumber · Manchester
+                Dave Wilson Plumbing · Manchester
               </div>
             </div>
             <ChatBubble side="left" text="amazing — when can you come?" />

@@ -11,7 +11,7 @@ type OgProfile = {
 };
 
 const DEMO_OG: OgProfile = {
-  name: "Dave Wilson",
+  name: "Dave Wilson Plumbing",
   trade: "Plumber",
   location: "Manchester",
   accent: "#F97316",

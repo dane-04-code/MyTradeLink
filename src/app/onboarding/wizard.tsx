@@ -30,7 +30,7 @@ type State = {
 };
 
 const STEPS: { n: number; tag: string; title: string }[] = [
-  { n: 1, tag: "You", title: "Who are you?" },
+  { n: 1, tag: "Business", title: "What's your business?" },
   { n: 2, tag: "Reach", title: "How do customers reach you?" },
   { n: 3, tag: "Photo", title: "Put a face to the name" },
   { n: 4, tag: "About", title: "Tell them about yourself" },
@@ -56,7 +56,7 @@ export function OnboardingWizard({ initial }: { initial: State }) {
   async function submitStep() {
     if (step === 1) {
       if (!state.name.trim() || !state.trade) {
-        toast.error("Add your name and pick a trade.");
+        toast.error("Add your business name and pick a trade.");
         return;
       }
       startTransition(async () => {
@@ -236,22 +236,26 @@ function Step1({
   return (
     <div>
       <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">
-        Who are you?
+        What&apos;s your <br />
+        <span className="text-brand">business?</span>
       </h1>
-      <p className="mt-3 text-white/60">This goes on your public page.</p>
+      <p className="mt-3 text-white/60">This goes big at the top of your page.</p>
 
       <div className="mt-8 space-y-6">
-        <Field label="Your name">
+        <Field
+          label="Business name"
+          hint="Sole trader? Just use your name"
+        >
           <input
             type="text"
             value={state.name}
             onChange={(e) => update("name", e.target.value)}
-            placeholder="Dave Wilson"
+            placeholder="Dave Wilson Plumbing"
             autoFocus
             className="w-full rounded-2xl border-2 border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-white/30 focus:border-brand focus:bg-white/10 focus:outline-none"
           />
         </Field>
-        <Field label="Your trade">
+        <Field label="Trade">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {TRADES.map((t) => (
               <button
@@ -259,7 +263,7 @@ function Step1({
                 type="button"
                 onClick={() => update("trade", t)}
                 className={cn(
-                  "rounded-xl border-2 px-3 py-3 text-sm font-bold transition active:scale-[0.97]",
+                  "rounded-xl border-2 px-3 py-3 text-left text-[13px] font-bold leading-tight transition active:scale-[0.97]",
                   state.trade === t
                     ? "border-brand bg-brand text-ink-900"
                     : "border-white/10 bg-white/5 text-white/80 hover:border-white/30"

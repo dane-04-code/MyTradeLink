@@ -9,7 +9,7 @@ export const DEMO_PROFILE: FullProfile = {
     id: 0,
     clerkId: "demo",
     email: "dave@example.com",
-    name: "Dave Wilson",
+    name: "Dave Wilson Plumbing",
     trade: "Plumber",
     phone: "07700 900123",
     location: "Manchester",

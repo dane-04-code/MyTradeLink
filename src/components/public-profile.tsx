@@ -240,7 +240,6 @@ function AvailabilityBadge({ profile }: { profile: FullProfile }) {
 
 function CallButton({ profile }: { profile: FullProfile }) {
   if (!profile.user.phone) return null;
-  const first = profile.user.name?.split(" ")[0] || "now";
   return (
     <Section>
       <ActionButton
@@ -248,7 +247,7 @@ function CallButton({ profile }: { profile: FullProfile }) {
         bandClassName="bg-green-600"
         bandStyle={null}
         labelClassName="text-green-700"
-        label={`Call ${first}`}
+        label="Call now"
         icon={<Phone className="h-6 w-6" strokeWidth={2.5} />}
         body={profile.user.phone}
         tabularBody
