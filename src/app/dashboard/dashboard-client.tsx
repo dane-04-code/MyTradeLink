@@ -59,8 +59,19 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
       : `/t/${profile.user.slug}`;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 lg:py-10">
-      {/* Top: link bar + upgrade banner */}
+    <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-10">
+      {/* Page heading */}
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+            My page
+          </div>
+          <h1 className="mt-1 font-display text-3xl leading-none tracking-tight text-ink-900 md:text-4xl">
+            Welcome back, {profile.user.name?.split(" ")[0] || "boss"}.
+          </h1>
+        </div>
+      </div>
+
       <LinkBar
         slug={profile.user.slug}
         publicUrl={publicUrl}
@@ -71,30 +82,36 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
 
       {!isPaid && <UpgradeBanner />}
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         {/* LEFT: editor */}
-        <div className="space-y-4">
+        <div>
           <SectionsEditor profile={profile} setProfile={setProfile} />
         </div>
         {/* RIGHT: live preview */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
-          <div className="flex items-center justify-between pb-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-500">
-              Live preview
-            </h2>
+        <div className="lg:sticky lg:top-32 lg:self-start">
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+                Live preview
+              </div>
+              <div className="mt-0.5 text-sm font-bold text-ink-900">
+                What customers see
+              </div>
+            </div>
             <a
               href={`/t/${profile.user.slug}`}
               target="_blank"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-800"
             >
-              <Eye className="h-4 w-4" /> Open public page
+              <Eye className="h-3.5 w-3.5" /> Open page
             </a>
           </div>
-          <div className="overflow-hidden rounded-3xl border-4 border-ink-900 bg-ink-900 shadow-2xl">
+          <div className="overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_30px_60px_rgba(15,23,42,0.25)]">
             <div className="flex items-center justify-center bg-ink-900 py-1.5">
               <div className="h-1 w-16 rounded-full bg-white/30" />
             </div>
-            <div className="max-h-[80vh] overflow-y-auto bg-neutral-100">
+            <div className="max-h-[80vh] overflow-y-auto bg-white">
               <PublicProfile profile={profile} preview />
             </div>
           </div>
@@ -136,27 +153,31 @@ function LinkBar({
   }
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-          Your link
+    <div className="overflow-hidden rounded-2xl border border-line bg-white">
+      <div className="flex flex-wrap items-stretch gap-0 sm:flex-nowrap">
+        <div className="flex items-center gap-2 border-line px-4 py-3 sm:border-r">
+          <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-500">
+            Your link
+          </div>
         </div>
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex flex-1 items-center px-4 py-3">
           {editing ? (
-            <div className="flex items-center gap-2">
-              <span className="text-base text-ink-500">/t/</span>
+            <div className="flex w-full items-center gap-2">
+              <span className="font-mono text-sm text-ink-500">tradelink.app/t/</span>
               <input
                 value={draft}
                 onChange={(e) =>
-                  setDraft(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))
+                  setDraft(
+                    e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
+                  )
                 }
-                className="flex-1 rounded-xl border-2 border-neutral-200 px-3 py-1.5 text-base focus:border-brand focus:outline-none"
+                className="flex-1 rounded-lg border-2 border-line px-3 py-1.5 font-mono text-sm focus:border-brand focus:outline-none"
                 autoFocus
               />
               <button
                 onClick={save}
                 disabled={pending}
-                className="rounded-xl bg-brand px-3 py-1.5 text-sm font-semibold text-white"
+                className="rounded-lg bg-ink-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-800 disabled:opacity-60"
               >
                 Save
               </button>
@@ -165,7 +186,7 @@ function LinkBar({
                   setEditing(false);
                   setDraft(slug);
                 }}
-                className="text-sm text-neutral-500"
+                className="text-xs font-bold text-ink-500 hover:text-ink-900"
               >
                 Cancel
               </button>
@@ -173,18 +194,23 @@ function LinkBar({
           ) : (
             <button
               onClick={() => setEditing(true)}
-              className="truncate text-base font-semibold text-ink-900 hover:underline"
+              className="group flex items-baseline gap-1 truncate text-left font-mono text-sm md:text-base"
+              title="Click to edit"
             >
-              {publicUrl}
+              <span className="text-ink-500">tradelink.app/t/</span>
+              <span className="font-semibold text-brand">{slug}</span>
+              <span className="ml-2 hidden text-[10px] font-bold uppercase tracking-wider text-ink-500 opacity-0 transition group-hover:opacity-100 sm:inline">
+                edit
+              </span>
             </button>
           )}
         </div>
         <button
           onClick={copy}
-          className="inline-flex items-center gap-2 rounded-xl bg-ink-900 px-4 py-2 text-sm font-semibold text-white hover:bg-ink-800"
+          className="flex items-center justify-center gap-2 border-t border-line bg-ink-900 px-5 text-sm font-bold text-white transition hover:bg-ink-800 sm:border-l sm:border-t-0"
         >
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          {copied ? "Copied" : "Copy"}
+          {copied ? "Copied" : "Copy link"}
         </button>
       </div>
     </div>
@@ -195,16 +221,28 @@ function UpgradeBanner() {
   return (
     <Link
       href="/pricing"
-      className="mt-4 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-brand to-brand-600 p-4 text-white shadow-card transition hover:brightness-110"
+      className="group relative mt-4 flex items-center gap-4 overflow-hidden rounded-2xl bg-ink-900 p-5 text-white transition hover:bg-ink-800"
     >
-      <Sparkles className="h-5 w-5" />
-      <div className="flex-1">
-        <div className="font-semibold">Unlock all features for £9/month</div>
-        <div className="text-sm text-white/80">
-          Remove the TradeLink badge · quote form with photos · emergency button · intro video
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-8 h-40 w-40 rotate-[8deg] opacity-30"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, #F97316 0 6px, transparent 6px 18px)",
+        }}
+      />
+      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand text-ink-900">
+        <Sparkles className="h-5 w-5" strokeWidth={2.5} />
+      </span>
+      <div className="relative flex-1">
+        <div className="font-display text-lg leading-tight tracking-tight">
+          Unlock the lot for <span className="text-brand">£9/month</span>
+        </div>
+        <div className="mt-0.5 text-sm text-white/65">
+          Quote requests · Emergency callout · Intro video · No TradeLink badge
         </div>
       </div>
-      <div className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-brand">
+      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">
         Upgrade
       </div>
     </Link>
@@ -259,12 +297,14 @@ function SectionsEditor({
 
   return (
     <div>
-      <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-neutral-500">
-        Page sections
-      </h2>
-      <p className="mb-4 text-sm text-neutral-500">
-        Toggle to show or hide. Drag to reorder. Changes save automatically.
-      </p>
+      <div className="mb-4">
+        <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+          Page sections
+        </div>
+        <div className="mt-0.5 text-sm font-bold text-ink-900">
+          Toggle, drag to reorder, click to edit. <span className="font-normal text-ink-500">Auto-saves.</span>
+        </div>
+      </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd as never}>
         <SortableContext items={ordered.map((s) => s.sectionKey)} strategy={verticalListSortingStrategy}>
@@ -329,33 +369,34 @@ function SortableRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "rounded-2xl border border-neutral-200 bg-white",
-        isDragging && "shadow-card"
+        "rounded-2xl border border-line bg-white transition",
+        isDragging && "shadow-[0_20px_40px_rgba(15,23,42,0.15)] ring-2 ring-brand",
+        locked && "opacity-90"
       )}
     >
-      <div className="flex items-center gap-2 p-3">
+      <div className="flex items-center gap-1 p-3">
         <button
           {...attributes}
           {...listeners}
-          aria-label="Drag"
-          className="cursor-grab touch-none rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 active:cursor-grabbing"
+          aria-label="Drag to reorder"
+          className="cursor-grab touch-none rounded-lg p-2 text-ink-500 transition hover:bg-muted hover:text-ink-900 active:cursor-grabbing"
         >
           <GripVertical className="h-5 w-5" />
         </button>
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="flex-1 text-left"
+          className="flex-1 text-left px-1"
         >
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-ink-900">{label}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-bold text-ink-900">{label}</span>
             {locked && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
-                <Lock className="h-3 w-3" /> Paid
+              <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-900">
+                <Lock className="h-2.5 w-2.5" strokeWidth={3} /> Pro
               </span>
             )}
           </div>
-          <div className="text-sm text-neutral-500">{description}</div>
+          <div className="mt-0.5 text-sm text-ink-500">{description}</div>
         </button>
 
         <Toggle checked={enabled} onChange={onToggle} disabled={locked} />
@@ -363,7 +404,7 @@ function SortableRow({
         {children && (
           <button
             onClick={() => setOpen((o) => !o)}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100"
+            className="rounded-lg p-2 text-ink-500 transition hover:bg-muted hover:text-ink-900"
             aria-label={open ? "Collapse" : "Expand"}
           >
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
@@ -371,7 +412,7 @@ function SortableRow({
         )}
       </div>
       {open && children && (
-        <div className="border-t border-neutral-100 p-4">{children}</div>
+        <div className="border-t border-line bg-muted/50 p-4">{children}</div>
       )}
     </li>
   );
