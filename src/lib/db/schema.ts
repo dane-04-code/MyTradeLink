@@ -29,6 +29,14 @@ export const quoteStatusEnum = pgEnum("quote_status", [
   "contacted",
   "closed",
 ]);
+export const eventTypeEnum = pgEnum("event_type", [
+  "view",
+  "call_click",
+  "whatsapp_click",
+  "quote_open",
+  "quote_submit",
+  "social_click",
+]);
 
 export const users = pgTable(
   "users",
@@ -175,12 +183,33 @@ export const quoteRequests = pgTable(
   })
 );
 
+export const pageEvents = pgTable(
+  "page_events",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    eventType: eventTypeEnum("event_type").notNull(),
+    ipHash: varchar("ip_hash", { length: 64 }),
+    referrer: varchar("referrer", { length: 255 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    userTimeIdx: index("page_events_user_time_idx").on(t.userId, t.createdAt),
+    userTypeIdx: index("page_events_user_type_idx").on(t.userId, t.eventType),
+  })
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   services: many(services),
   photos: many(photos),
   certifications: many(certifications),
   sections: many(sections),
   quoteRequests: many(quoteRequests),
+  pageEvents: many(pageEvents),
 }));
 
 export const servicesRelations = relations(services, ({ one }) => ({
@@ -198,6 +227,9 @@ export const sectionsRelations = relations(sections, ({ one }) => ({
 export const quoteRequestsRelations = relations(quoteRequests, ({ one }) => ({
   user: one(users, { fields: [quoteRequests.userId], references: [users.id] }),
 }));
+export const pageEventsRelations = relations(pageEvents, ({ one }) => ({
+  user: one(users, { fields: [pageEvents.userId], references: [users.id] }),
+}));
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -206,3 +238,5 @@ export type Photo = typeof photos.$inferSelect;
 export type Certification = typeof certifications.$inferSelect;
 export type Section = typeof sections.$inferSelect;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;
+export type PageEvent = typeof pageEvents.$inferSelect;
+export type EventType = PageEvent["eventType"];

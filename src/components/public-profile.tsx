@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Phone,
   MessageCircle,
@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
+import { trackEvent, type TrackEventType } from "@/lib/tracker";
 import type { FullProfile } from "@/lib/queries";
 import type { SectionKey } from "@/lib/sections";
 
@@ -39,6 +40,14 @@ export function PublicProfile({
   const { user } = profile;
   const accent = user.accentColor || "#F97316";
   const orderedSections = profile.sections.filter((s) => s.isEnabled);
+
+  // Fire a single 'view' event when the public page mounts. Skipped in
+  // dashboard live-preview mode so the tradesman's own previewing doesn't
+  // poison their own analytics.
+  useEffect(() => {
+    if (preview) return;
+    trackEvent(user.slug, "view");
+  }, [preview, user.slug]);
 
   return (
     <div
@@ -244,6 +253,7 @@ function CallButton({ profile }: { profile: FullProfile }) {
     <Section>
       <ActionButton
         href={`tel:${profile.user.phone}`}
+        onClickTrack={() => trackEvent(profile.user.slug, "call_click")}
         bandClassName="bg-green-600"
         bandStyle={null}
         labelClassName="text-green-700"
@@ -265,6 +275,7 @@ function WhatsappButton({ profile }: { profile: FullProfile }) {
       <ActionButton
         href={`https://wa.me/${cleaned.replace(/^\+/, "")}`}
         target="_blank"
+        onClickTrack={() => trackEvent(profile.user.slug, "whatsapp_click")}
         bandClassName="bg-[#25D366]"
         bandStyle={null}
         labelClassName="text-[#1A8E4A]"
@@ -288,6 +299,7 @@ function EmergencyButton({ profile }: { profile: FullProfile }) {
     <Section>
       <ActionButton
         href={`tel:${number}`}
+        onClickTrack={() => trackEvent(profile.user.slug, "call_click")}
         bandClassName="text-white"
         bandStyle={{
           backgroundImage:
@@ -313,6 +325,7 @@ function EmergencyButton({ profile }: { profile: FullProfile }) {
 function ActionButton({
   href,
   target,
+  onClickTrack,
   bandClassName,
   bandStyle,
   labelClassName,
@@ -323,6 +336,7 @@ function ActionButton({
 }: {
   href: string;
   target?: string;
+  onClickTrack?: () => void;
   bandClassName: string;
   bandStyle: React.CSSProperties | null;
   labelClassName: string;
@@ -336,6 +350,7 @@ function ActionButton({
       href={href}
       target={target}
       rel={target ? "noopener noreferrer" : undefined}
+      onClick={onClickTrack}
       className="flex translate-y-0 overflow-hidden rounded-2xl border-[2.5px] border-ink-900 bg-white shadow-[0_4px_0_0_#0F172A] transition-all duration-75 ease-out active:translate-y-1 active:shadow-[0_0_0_0_#0F172A]"
     >
       <div
@@ -556,13 +571,21 @@ function PaymentMethods({ profile }: { profile: FullProfile }) {
 
 function FacebookLink({ profile }: { profile: FullProfile }) {
   if (!profile.user.facebookUrl) return null;
-  return <SocialLink href={profile.user.facebookUrl} label="Follow on Facebook" icon={<Facebook className="h-5 w-5 text-[#1877F2]" />} />;
+  return (
+    <SocialLink
+      slug={profile.user.slug}
+      href={profile.user.facebookUrl}
+      label="Follow on Facebook"
+      icon={<Facebook className="h-5 w-5 text-[#1877F2]" />}
+    />
+  );
 }
 
 function InstagramLink({ profile }: { profile: FullProfile }) {
   if (!profile.user.instagramUrl) return null;
   return (
     <SocialLink
+      slug={profile.user.slug}
       href={profile.user.instagramUrl}
       label="Follow on Instagram"
       icon={
@@ -578,6 +601,7 @@ function TiktokLink({ profile }: { profile: FullProfile }) {
   if (!profile.user.tiktokUrl) return null;
   return (
     <SocialLink
+      slug={profile.user.slug}
       href={profile.user.tiktokUrl}
       label="Follow on TikTok"
       icon={
@@ -590,10 +614,12 @@ function TiktokLink({ profile }: { profile: FullProfile }) {
 }
 
 function SocialLink({
+  slug,
   href,
   label,
   icon,
 }: {
+  slug: string;
   href: string;
   label: string;
   icon: React.ReactNode;
@@ -604,6 +630,7 @@ function SocialLink({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackEvent(slug, "social_click")}
         className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3.5 text-base font-bold text-ink-900 transition active:scale-[0.98]"
       >
         {icon}
@@ -670,6 +697,7 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
       setSent(true);
       form.reset();
       setPhotoUrls([]);
+      trackEvent(profile.user.slug, "quote_submit");
       toast.success("Sent. They'll get back to you soon.");
     } catch (err) {
       toast.error("Couldn't send. Try again.");

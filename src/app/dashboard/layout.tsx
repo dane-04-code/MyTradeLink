@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { requireOnboardedUser } from "@/lib/auth";
-import { Inbox, LayoutGrid, CreditCard, Hammer, Sparkles } from "lucide-react";
+import { Inbox, LayoutGrid, CreditCard, Hammer, Sparkles, BarChart3 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +34,9 @@ export default async function DashboardLayout({
               <NavLink href="/dashboard/quotes" icon={<Inbox className="h-4 w-4" />}>
                 Quotes
               </NavLink>
+              <NavLink href="/dashboard/analytics" icon={<BarChart3 className="h-4 w-4" />}>
+                Analytics
+              </NavLink>
               <NavLink href="/dashboard/billing" icon={<CreditCard className="h-4 w-4" />}>
                 Billing
               </NavLink>
@@ -56,12 +59,15 @@ export default async function DashboardLayout({
 
       {/* Mobile tab bar */}
       <nav className="sticky top-[57px] z-20 border-b border-line bg-white md:hidden">
-        <div className="flex">
+        <div className="grid grid-cols-4">
           <NavLink href="/dashboard" mobile icon={<LayoutGrid className="h-4 w-4" />}>
-            My page
+            Page
           </NavLink>
           <NavLink href="/dashboard/quotes" mobile icon={<Inbox className="h-4 w-4" />}>
             Quotes
+          </NavLink>
+          <NavLink href="/dashboard/analytics" mobile icon={<BarChart3 className="h-4 w-4" />}>
+            Stats
           </NavLink>
           <NavLink href="/dashboard/billing" mobile icon={<CreditCard className="h-4 w-4" />}>
             Billing

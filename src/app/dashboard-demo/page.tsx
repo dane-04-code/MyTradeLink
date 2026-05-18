@@ -6,6 +6,7 @@ import {
   CreditCard,
   Sparkles,
   ArrowLeft,
+  BarChart3,
 } from "lucide-react";
 import { DashboardClient } from "@/app/dashboard/dashboard-client";
 import { DEMO_PROFILE } from "@/lib/demo-profile";
@@ -67,6 +68,9 @@ export default function DashboardDemoPage() {
               <NavLink href="/dashboard-demo" icon={<Inbox className="h-4 w-4" />} disabled>
                 Quotes
               </NavLink>
+              <NavLink href="/dashboard-demo" icon={<BarChart3 className="h-4 w-4" />} disabled>
+                Analytics
+              </NavLink>
               <NavLink href="/dashboard-demo" icon={<CreditCard className="h-4 w-4" />} disabled>
                 Billing
               </NavLink>
@@ -86,12 +90,15 @@ export default function DashboardDemoPage() {
 
       {/* Mobile tab bar (mirrors dashboard/layout.tsx) */}
       <nav className="sticky top-[57px] z-20 border-b border-line bg-white md:hidden">
-        <div className="flex">
+        <div className="grid grid-cols-4">
           <NavLink href="/dashboard-demo" mobile icon={<LayoutGrid className="h-4 w-4" />}>
-            My page
+            Page
           </NavLink>
           <NavLink href="/dashboard-demo" mobile icon={<Inbox className="h-4 w-4" />} disabled>
             Quotes
+          </NavLink>
+          <NavLink href="/dashboard-demo" mobile icon={<BarChart3 className="h-4 w-4" />} disabled>
+            Stats
           </NavLink>
           <NavLink href="/dashboard-demo" mobile icon={<CreditCard className="h-4 w-4" />} disabled>
             Billing

@@ -8,6 +8,13 @@
       "when": 1779126678141,
       "tag": "0000_add_banner_socials",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779136812789,
+      "tag": "0001_add_page_events",
+      "breakpoints": true
     }
   ]
 }
