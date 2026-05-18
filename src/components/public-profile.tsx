@@ -138,19 +138,20 @@ function BannerImage({ profile }: { profile: FullProfile }) {
   const url = profile.user.bannerImageUrl;
   if (!url) return null;
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={url}
         alt=""
-        className="h-56 w-full object-cover sm:h-64"
+        className="block h-48 w-full object-cover sm:h-56"
         style={{ objectPosition: "center" }}
         loading="lazy"
       />
-      {/* short fade so the avatar overlaps cleanly without eating the banner */}
+      {/* hard accent bar at the bottom of the banner — clear divider, no mush */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-b from-transparent to-white"
+        className="h-1 w-full"
+        style={{ background: "var(--accent)" }}
       />
     </div>
   );
@@ -164,7 +165,7 @@ function ProfileHeader({ profile }: { profile: FullProfile }) {
     <header
       className={cn(
         "relative px-5",
-        bannerActive ? "-mt-16" : "pt-9"
+        bannerActive ? "-mt-16 pb-2" : "pt-9"
       )}
     >
       {!bannerActive && (
@@ -184,16 +185,20 @@ function ProfileHeader({ profile }: { profile: FullProfile }) {
             src={user.profilePhotoUrl}
             alt={user.name ?? "Profile"}
             className={cn(
-              "h-32 w-32 rounded-full object-cover ring-[5px]",
-              bannerActive && "ring-[6px] ring-offset-2 ring-offset-white"
+              "h-32 w-32 rounded-full object-cover",
+              bannerActive
+                ? "ring-[5px] shadow-[0_8px_24px_rgba(15,23,42,0.25)]"
+                : "ring-[5px]"
             )}
             style={{ ["--tw-ring-color" as never]: "var(--accent)" }}
           />
         ) : (
           <div
             className={cn(
-              "flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white ring-[5px]",
-              bannerActive && "ring-[6px] ring-offset-2 ring-offset-white"
+              "flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white",
+              bannerActive
+                ? "ring-[5px] shadow-[0_8px_24px_rgba(15,23,42,0.25)]"
+                : "ring-[5px]"
             )}
             style={{
               background: "var(--accent)",
