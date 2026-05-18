@@ -44,18 +44,77 @@ import { THEME_PRESETS, isValidHex } from "@/lib/themes";
 import { PublicProfile } from "@/components/public-profile";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
-import {
-  toggleSection,
-  reorderSections,
-  updateProfile,
-  updateSlug,
-  addService,
-  deleteService,
-  addPhoto,
-  deletePhoto,
-  addCertification,
-  deleteCertification,
-} from "./actions";
+import * as serverActions from "./actions";
+
+/**
+ * Demo-mode wrappers: when this client is mounted on /dashboard-demo, all
+ * server actions short-circuit to a resolved no-op so the user can play
+ * with the editor without hitting auth/DB. Local React state still updates
+ * (optimistic logic already in place), so the UI feels live — refresh
+ * just throws away the unsaved fiddling.
+ */
+function isDemoRoute(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.location.pathname.startsWith("/dashboard-demo")
+  );
+}
+
+const DEMO_OK = { ok: true as const };
+
+const toggleSection: typeof serverActions.toggleSection = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.toggleSection(...args);
+const reorderSections: typeof serverActions.reorderSections = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.reorderSections(...args);
+const updateProfile: typeof serverActions.updateProfile = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.updateProfile(...args);
+const updateSlug: typeof serverActions.updateSlug = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve({ slug: args[0] })
+    : serverActions.updateSlug(...args);
+const addService: typeof serverActions.addService = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve({
+        id: Math.floor(Math.random() * 1e6),
+        userId: 0,
+        serviceName: args[0].serviceName,
+        description: args[0].description ?? null,
+        displayOrder: 0,
+        createdAt: new Date(),
+      })
+    : serverActions.addService(...args);
+const deleteService: typeof serverActions.deleteService = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.deleteService(...args);
+const addPhoto: typeof serverActions.addPhoto = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve({
+        id: Math.floor(Math.random() * 1e6),
+        userId: 0,
+        photoUrl: args[0].photoUrl,
+        caption: args[0].caption ?? null,
+        type: args[0].type,
+        pairId: args[0].pairId ?? null,
+        displayOrder: 0,
+        createdAt: new Date(),
+      })
+    : serverActions.addPhoto(...args);
+const deletePhoto: typeof serverActions.deletePhoto = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.deletePhoto(...args);
+const addCertification: typeof serverActions.addCertification = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve({
+        id: Math.floor(Math.random() * 1e6),
+        userId: 0,
+        name: args[0].name,
+        badgeUrl: args[0].badgeUrl ?? null,
+        displayOrder: 0,
+        createdAt: new Date(),
+      })
+    : serverActions.addCertification(...args);
+const deleteCertification: typeof serverActions.deleteCertification = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve(DEMO_OK)
+    : serverActions.deleteCertification(...args);
 
 export function DashboardClient({ initialProfile }: { initialProfile: FullProfile }) {
   const [profile, setProfile] = useState<FullProfile>(initialProfile);
