@@ -3,16 +3,23 @@ import type { Metadata } from "next";
 import { getProfileBySlug } from "@/lib/queries";
 import { PublicProfile } from "@/components/public-profile";
 import { localBusinessJsonLd } from "@/lib/structured-data";
+import { DEMO_PROFILE } from "@/lib/demo-profile";
+import type { FullProfile } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://tradelink.app";
 
+async function loadProfile(slug: string): Promise<FullProfile | null> {
+  if (slug === "demo") return DEMO_PROFILE;
+  return getProfileBySlug(slug);
+}
+
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const profile = await getProfileBySlug(slug);
+  const profile = await loadProfile(slug);
   if (!profile) return { title: "TradeLink" };
   const u = profile.user;
   const name = u.name ?? "TradeLink";
@@ -49,13 +56,13 @@ export default async function PublicTradePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const profile = await getProfileBySlug(slug);
+  const profile = await loadProfile(slug);
   if (!profile) notFound();
 
   const jsonLd = localBusinessJsonLd(profile, `${APP_URL}/t/${slug}`);
 
   return (
-    <main className="min-h-screen bg-neutral-100 py-0">
+    <main className="min-h-screen bg-muted py-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
