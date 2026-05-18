@@ -1,4 +1,4 @@
-# TradeLink — Full App Overview
+# Mytradelink — Full App Overview
 
 Feed this to any AI agent to give it a complete picture of the product. Pair with `CLAUDE.md` (instructions), `PRD.md` (product spec), `USER-FLOWS.md` (user journeys), and `BRAND.md` (visual/voice).
 
@@ -6,7 +6,7 @@ Feed this to any AI agent to give it a complete picture of the product. Pair wit
 
 ## 1. What it is
 
-TradeLink is a digital profile page builder for UK tradesmen — Linktree, but built for plumbers, electricians, builders and their peers. A tradesman signs up, runs a 5-step onboarding wizard, and gets a public page at `tradelink.app/t/<slug>` they share everywhere (van, WhatsApp bio, Facebook, business cards). The page has tap-to-call, WhatsApp, photo gallery, certifications, Google reviews stars, services list, and optionally a quote request form.
+Mytradelink is a digital profile page builder for UK tradesmen — Linktree, but built for plumbers, electricians, builders and their peers. A tradesman signs up, runs a 5-step onboarding wizard, and gets a public page at `mytradelink.app/t/<slug>` they share everywhere (van, WhatsApp bio, Facebook, business cards). The page has tap-to-call, WhatsApp, photo gallery, certifications, Google reviews stars, services list, and optionally a quote request form.
 
 **One-line:** "Your business. One link."
 
@@ -27,7 +27,7 @@ TradeLink is a digital profile page builder for UK tradesmen — Linktree, but b
 ### Plans
 | Plan | Price | Features |
 |---|---|---|
-| Free | £0 forever | All core sections + TradeLink badge in footer |
+| Free | £0 forever | All core sections + Mytradelink badge in footer |
 | Pro | £9/mo or £89/yr | Quote request form (with photo upload), emergency callout, intro video, removes the badge |
 
 Watermark in the free-plan footer = primary marketing channel.
@@ -305,8 +305,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY      # Stripe client
 STRIPE_PRICE_MONTHLY                    # Stripe price ID for £9/mo
 STRIPE_PRICE_ANNUAL                     # Stripe price ID for £89/yr
 RESEND_API_KEY                          # Resend (optional — no-op if missing)
-RESEND_FROM_EMAIL                       # e.g. "TradeLink <hello@tradelink.app>"
-NEXT_PUBLIC_APP_URL                     # Canonical URL, e.g. https://tradelink.app
+RESEND_FROM_EMAIL                       # e.g. "Mytradelink <hello@mytradelink.app>"
+NEXT_PUBLIC_APP_URL                     # Canonical URL, e.g. https://mytradelink.app
 IP_HASH_SALT                            # Optional — analytics IP hash salt (default: "tradelink")
 ADMIN_EMAIL                             # Comma-separated emails allowed to access /admin (operator dashboard)
 ```

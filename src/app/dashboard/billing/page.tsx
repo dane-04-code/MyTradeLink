@@ -79,7 +79,7 @@ export default async function BillingPage() {
                     "Quote request form (with photo uploads)",
                     "Emergency callout button — 24/7",
                     "Intro video on your page",
-                    "No TradeLink badge",
+                    "No Mytradelink badge",
                     "Email alerts on every quote",
                     "Everything from Free",
                   ]
@@ -107,7 +107,7 @@ export default async function BillingPage() {
                     "Quote request form with photo uploads",
                     "Emergency callout — 24/7",
                     "Intro video",
-                    "No TradeLink badge",
+                    "No Mytradelink badge",
                   ]
             }
             allMissing={!isPaid}

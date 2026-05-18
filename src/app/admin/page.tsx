@@ -161,7 +161,7 @@ export default async function AdminPage() {
               Operator
             </div>
             <h1 className="mt-1 font-display text-4xl leading-none tracking-tight text-ink-900 md:text-5xl">
-              How TradeLink is doing
+              How Mytradelink is doing
             </h1>
           </div>
           <div className="font-mono text-[11px] uppercase tracking-wider text-ink-500">

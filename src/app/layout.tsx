@@ -19,12 +19,12 @@ const body = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "TradeLink — Your business. One link.",
+  title: "Mytradelink — Your business. One link.",
   description:
     "A professional page that wins UK tradesmen jobs. Set up in 5 minutes.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
-    title: "TradeLink — Your business. One link.",
+    title: "Mytradelink — Your business. One link.",
     description:
       "A professional page that wins UK tradesmen jobs. Set up in 5 minutes.",
     type: "website",

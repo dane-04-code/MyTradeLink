@@ -30,7 +30,7 @@ export async function GET(
     slug === "demo"
       ? DEMO_OG
       : {
-          name: url.searchParams.get("name") ?? "TradeLink",
+          name: url.searchParams.get("name") ?? "Mytradelink",
           trade: url.searchParams.get("trade") ?? "Local tradesman",
           location: url.searchParams.get("location") ?? "United Kingdom",
           accent: url.searchParams.get("accent") ?? "#F97316",
@@ -87,7 +87,7 @@ export async function GET(
                 letterSpacing: "-0.02em",
               }}
             >
-              TRADELINK
+              MYTRADELINK
             </div>
           </div>
 
@@ -191,7 +191,7 @@ export async function GET(
                 display: "flex",
               }}
             >
-              tradelink.app/t/{slug}
+              mytradelink.app/t/{slug}
             </div>
           </div>
         </div>

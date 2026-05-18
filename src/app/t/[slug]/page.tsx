@@ -8,7 +8,7 @@ import type { FullProfile } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://tradelink.app";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mytradelink.app";
 
 async function loadProfile(slug: string): Promise<FullProfile | null> {
   if (slug === "demo") return DEMO_PROFILE;
@@ -20,12 +20,12 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const profile = await loadProfile(slug);
-  if (!profile) return { title: "TradeLink" };
+  if (!profile) return { title: "Mytradelink" };
   const u = profile.user;
-  const name = u.name ?? "TradeLink";
+  const name = u.name ?? "Mytradelink";
   const tradePart = u.trade ?? "Tradesman";
   const locationPart = u.location ? ` in ${u.location}` : "";
-  const title = `${name} — ${tradePart}${locationPart} | TradeLink`;
+  const title = `${name} — ${tradePart}${locationPart} | Mytradelink`;
   const description =
     u.about?.slice(0, 200) ??
     `Contact ${u.name ?? "this tradesman"}${u.trade ? `, a ${u.trade}` : ""}${u.location ? ` in ${u.location}` : ""}, for a quote.`;

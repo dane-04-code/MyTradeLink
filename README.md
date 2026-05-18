@@ -1,4 +1,4 @@
-# TradeLink
+# Mytradelink
 
 A smart digital profile page builder for UK tradesmen. Think Linktree for plumbers, electricians, builders, landscapers, etc.
 
@@ -60,6 +60,6 @@ src/
 
 ## Notes
 - Public profile pages (`/t/[slug]`) have no auth requirement and load fast.
-- Paid plan unlocks: quote form photos, emergency button, intro video, removes TradeLink footer.
+- Paid plan unlocks: quote form photos, emergency button, intro video, removes Mytradelink footer.
 - Sections auto-save on toggle / reorder / edit (no save button).
 - Free plan still gets a fully working quote form (without photo attachments).

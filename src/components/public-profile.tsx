@@ -909,7 +909,7 @@ function PoweredByFooter() {
         className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-500 hover:text-ink-700"
       >
         <span>Built with</span>
-        <span className="font-display tracking-tight text-ink-900">TRADELINK</span>
+        <span className="font-display tracking-tight text-ink-900">MYTRADELINK</span>
         <span className="text-ink-500">— get yours free</span>
       </a>
     </footer>

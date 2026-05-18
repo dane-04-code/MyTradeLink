@@ -72,7 +72,7 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
           <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-ink-900 transition group-hover:rotate-[-6deg]">
             <Hammer className="h-5 w-5" strokeWidth={2.5} />
           </span>
-          <span className="font-display text-xl tracking-tight">TRADELINK</span>
+          <span className="font-display text-xl tracking-tight">MYTRADELINK</span>
         </Link>
         <Link
           href={isSignedIn ? "/dashboard" : "/sign-in"}
@@ -114,7 +114,7 @@ function FreeCard({ isSignedIn }: { isSignedIn: boolean }) {
         <span className="text-white/55">forever</span>
       </div>
       <div className="mt-1 text-sm text-white/40">
-        Free plan shows a small TradeLink badge in the footer.
+        Free plan shows a small Mytradelink badge in the footer.
       </div>
 
       <Link
@@ -164,7 +164,7 @@ function ProCard({ isSignedIn }: { isSignedIn: boolean }) {
     "Quote request form with photo uploads",
     "Emergency callout button — 24/7",
     "Intro video at the top of your page",
-    "No TradeLink badge",
+    "No Mytradelink badge",
     "Email alerts on every quote",
   ];
   return (
@@ -223,7 +223,7 @@ function ComparisonTable() {
     { label: "Quote request form (with photos)", free: false, pro: true },
     { label: "Emergency 24/7 callout button", free: false, pro: true },
     { label: "Intro video", free: false, pro: true },
-    { label: "TradeLink badge in footer", free: "shown", pro: "removed" },
+    { label: "Mytradelink badge in footer", free: "shown", pro: "removed" },
   ];
 
   return (
@@ -294,7 +294,7 @@ function FAQ() {
     },
     {
       q: "Do I need a website too?",
-      a: "Most tradesmen don't. One TradeLink page covers what 90% of customers want — see your work, see your trust badges, call or WhatsApp you.",
+      a: "Most tradesmen don't. One Mytradelink page covers what 90% of customers want — see your work, see your trust badges, call or WhatsApp you.",
     },
   ];
   return (
@@ -330,7 +330,7 @@ function Footer() {
           <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-ink-900">
             <Hammer className="h-3.5 w-3.5" strokeWidth={2.5} />
           </span>
-          <span className="font-display text-base text-white/70">TRADELINK</span>
+          <span className="font-display text-base text-white/70">MYTRADELINK</span>
           <span className="ml-2 text-white/30">© {new Date().getFullYear()}</span>
         </div>
         <div className="flex gap-5">

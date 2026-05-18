@@ -1,10 +1,10 @@
-# CLAUDE.md — TradeLink
+# CLAUDE.md — Mytradelink
 Instructions for Claude Code. Read this before making any changes.
 
 ---
 
 ## What We're Building
-TradeLink is a digital profile page builder for UK tradesmen. Think Linktree but built for plumbers and electricians. Dead simple. Mobile first. Non-technical users.
+Mytradelink is a digital profile page builder for UK tradesmen. Think Linktree but built for plumbers and electricians. Dead simple. Mobile first. Non-technical users.
 
 Full details in PRD.md. Read it before building anything new.
 

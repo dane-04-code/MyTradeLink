@@ -65,7 +65,7 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
           <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-ink-900 transition group-hover:rotate-[-6deg]">
             <Hammer className="h-5 w-5" strokeWidth={2.5} />
           </span>
-          <span className="font-display text-xl tracking-tight">TRADELINK</span>
+          <span className="font-display text-xl tracking-tight">MYTRADELINK</span>
         </Link>
         <nav className="flex items-center gap-1 md:gap-3">
           <Link
@@ -135,7 +135,7 @@ function Hero({ isSignedIn }: { isSignedIn: boolean }) {
               <span className="h-2 w-2 rounded-full bg-green-400" />
             </div>
             <div className="flex items-center gap-2 px-4 py-3 font-mono text-sm md:text-base">
-              <span className="text-white/40">tradelink.app/t/</span>
+              <span className="text-white/40">mytradelink.app/t/</span>
               <span className="font-semibold text-white">dave-plumber</span>
               <span className="ml-1 h-4 w-px animate-pulse bg-brand" />
             </div>
@@ -192,7 +192,7 @@ function Hero({ isSignedIn }: { isSignedIn: boolean }) {
 }
 
 /* ----------------------------------------------------------------------------
- * Phone mockup — drawn to look like a finished TradeLink profile
+ * Phone mockup — drawn to look like a finished Mytradelink profile
  * --------------------------------------------------------------------------*/
 function PhoneMockup() {
   return (
@@ -322,7 +322,7 @@ function ProofStrip() {
 }
 
 /* ----------------------------------------------------------------------------
- * Before / After — the messy WhatsApp thread vs a clean TradeLink
+ * Before / After — the messy WhatsApp thread vs a clean Mytradelink
  * --------------------------------------------------------------------------*/
 function BeforeAfter() {
   return (
@@ -337,7 +337,7 @@ function BeforeAfter() {
         </h2>
         <p className="mt-5 max-w-lg text-lg text-white/70">
           Most tradesmen win work through a mess of WhatsApp threads, Facebook
-          comments and word of mouth. TradeLink gives you one link that does
+          comments and word of mouth. Mytradelink gives you one link that does
           the talking — so customers see you're legit before you've even picked
           up the phone.
         </p>
@@ -375,7 +375,7 @@ function BeforeAfter() {
             />
             <div className="ml-auto w-max rounded-2xl bg-white px-4 py-3 text-ink-900 shadow-sm">
               <div className="font-mono text-xs text-ink-500">
-                tradelink.app/t/dave-plumber
+                mytradelink.app/t/dave-plumber
               </div>
               <div className="mt-1 flex items-center gap-2 text-[11px] font-semibold">
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white text-[10px]">
@@ -596,7 +596,7 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
               "Call & WhatsApp buttons",
               "Photo gallery + before/after",
               "Certifications + Google reviews",
-              "Small TradeLink badge in footer",
+              "Small Mytradelink badge in footer",
             ]}
             cta={
               <Link
@@ -618,7 +618,7 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
               "Quote request form with photo uploads",
               "Emergency callout button (24/7)",
               "Intro video on your page",
-              "No TradeLink badge",
+              "No Mytradelink badge",
             ]}
             cta={
               <Link
@@ -744,7 +744,7 @@ function Footer() {
             <Hammer className="h-3.5 w-3.5" strokeWidth={2.5} />
           </span>
           <span className="font-display text-base text-white/70">
-            TRADELINK
+            MYTRADELINK
           </span>
           <span className="ml-2 text-white/30">© {new Date().getFullYear()}</span>
         </div>

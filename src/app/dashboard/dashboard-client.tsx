@@ -280,7 +280,7 @@ function LinkBar({
         <div className="flex flex-1 items-center px-4 py-3">
           {editing ? (
             <div className="flex w-full items-center gap-2">
-              <span className="font-mono text-sm text-ink-500">tradelink.app/t/</span>
+              <span className="font-mono text-sm text-ink-500">mytradelink.app/t/</span>
               <input
                 value={draft}
                 onChange={(e) =>
@@ -314,7 +314,7 @@ function LinkBar({
               className="group flex items-baseline gap-1 truncate text-left font-mono text-sm md:text-base"
               title="Click to edit"
             >
-              <span className="text-ink-500">tradelink.app/t/</span>
+              <span className="text-ink-500">mytradelink.app/t/</span>
               <span className="font-semibold text-brand">{slug}</span>
               <span className="ml-2 hidden text-[10px] font-bold uppercase tracking-wider text-ink-500 opacity-0 transition group-hover:opacity-100 sm:inline">
                 edit
@@ -357,7 +357,7 @@ function UpgradeBanner() {
           Unlock the lot for <span className="text-brand">£9/month</span>
         </div>
         <div className="mt-0.5 text-sm text-white/65">
-          Quote requests · Emergency callout · Intro video · No TradeLink badge
+          Quote requests · Emergency callout · Intro video · No Mytradelink badge
         </div>
       </div>
       <div className="relative inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">

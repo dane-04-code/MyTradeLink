@@ -162,7 +162,7 @@ function Header() {
         <Hammer className="h-4 w-4" strokeWidth={2.5} />
       </span>
       <span className="font-display text-base tracking-tight text-white">
-        TRADELINK
+        MYTRADELINK
       </span>
     </div>
   );
@@ -452,7 +452,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
     typeof window !== "undefined"
       ? `${window.location.origin}/t/${slug}`
       : `/t/${slug}`;
-  const path = `tradelink.app/t/${slug}`;
+  const path = `mytradelink.app/t/${slug}`;
 
   const shareText = `Here's my page — ${path}`;
   const whatsapp = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
@@ -488,7 +488,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
         </div>
         <div className="flex items-center justify-between gap-2 px-4 py-4">
           <div className="flex min-w-0 items-baseline gap-1 truncate font-mono text-base">
-            <span className="text-white/40">tradelink.app/t/</span>
+            <span className="text-white/40">mytradelink.app/t/</span>
             <span className="font-semibold text-brand">{slug}</span>
           </div>
           <button

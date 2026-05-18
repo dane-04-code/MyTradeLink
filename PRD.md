@@ -1,12 +1,12 @@
-# TradeLink — Product Requirements Document
+# Mytradelink — Product Requirements Document
 Version 1.0 | DL Systems
 
 ---
 
 ## 1. Product Overview
 
-### What is TradeLink?
-TradeLink is a smart digital profile page builder built specifically for UK sole trader and small team tradesmen. It gives tradesmen a professional public page in under 5 minutes — one link they share everywhere to win more jobs.
+### What is Mytradelink?
+Mytradelink is a smart digital profile page builder built specifically for UK sole trader and small team tradesmen. It gives tradesmen a professional public page in under 5 minutes — one link they share everywhere to win more jobs.
 
 Think Linktree, but built for a plumber not an influencer.
 
@@ -49,11 +49,11 @@ A dead simple profile builder. Toggle sections on/off. Auto saves. Live preview.
 
 | Plan | Price | Features |
 |------|-------|----------|
-| Free | £0/month | Core profile sections, TradeLink watermark footer |
+| Free | £0/month | Core profile sections, Mytradelink watermark footer |
 | Pro | £9/month or £89/year | No watermark, quote form with photo upload, emergency callout button, intro video |
 
 ### Watermark Strategy
-Free plan pages show a small footer: "Powered by TradeLink — Get your free page"
+Free plan pages show a small footer: "Powered by Mytradelink — Get your free page"
 This is the primary marketing engine. Every customer who views a tradesman's page becomes a potential new user.
 
 ### Revenue Targets
@@ -230,7 +230,7 @@ Real time preview of their public profile page as it will appear to customers. U
 
 ### SEO
 - Public profile pages are server rendered for SEO
-- Meta title: "[Name] — [Trade] in [Location] | TradeLink"
+- Meta title: "[Name] — [Trade] in [Location] | Mytradelink"
 - Meta description auto generated from their about section
 - OG image generated from profile
 
@@ -239,7 +239,7 @@ Real time preview of their public profile page as it will appear to customers. U
 ## 7. Email Notifications
 
 ### Welcome Email (on signup)
-- Subject: "Your TradeLink page is live 🎉"
+- Subject: "Your Mytradelink page is live 🎉"
 - Their public link
 - 3 tips to get their first enquiry
 - Link to dashboard

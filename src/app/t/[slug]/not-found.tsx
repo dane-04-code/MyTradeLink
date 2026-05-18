@@ -8,7 +8,7 @@ export default function TradeNotFound() {
           ?
         </div>
         <h1 className="text-3xl font-extrabold text-ink-900">
-          This TradeLink page doesn&apos;t exist
+          This Mytradelink page doesn&apos;t exist
         </h1>
         <p className="mt-3 text-base text-ink-700">
           The link might be wrong, or the tradesman hasn&apos;t set up their page yet.
@@ -37,7 +37,7 @@ export default function TradeNotFound() {
           href="/"
           className="mt-6 inline-block text-sm font-medium text-ink-700 underline underline-offset-4 hover:text-ink-900"
         >
-          Back to TradeLink home
+          Back to Mytradelink home
         </Link>
       </div>
     </main>

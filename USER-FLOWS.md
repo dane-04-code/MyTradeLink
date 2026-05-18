@@ -1,4 +1,4 @@
-# TradeLink — User Flows
+# Mytradelink — User Flows
 
 ---
 

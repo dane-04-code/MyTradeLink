@@ -2,7 +2,7 @@ import type { FullProfile } from "@/lib/queries";
 
 export function localBusinessJsonLd(profile: FullProfile, pageUrl: string) {
   const { user } = profile;
-  const name = user.name ?? "TradeLink";
+  const name = user.name ?? "Mytradelink";
   const sameAs = [user.facebookUrl, user.googleReviewUrl].filter(
     (x): x is string => !!x
   );

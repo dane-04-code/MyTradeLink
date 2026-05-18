@@ -24,7 +24,7 @@ export default async function DashboardLayout({
                 <Hammer className="h-4 w-4" strokeWidth={2.5} />
               </span>
               <span className="font-display text-base tracking-tight text-ink-900">
-                TRADELINK
+                MYTRADELINK
               </span>
             </Link>
             <nav className="hidden items-center gap-1 md:flex">
