@@ -135,12 +135,14 @@ function BannerImage({ profile }: { profile: FullProfile }) {
       <img
         src={url}
         alt=""
-        className="h-44 w-full object-cover sm:h-52"
+        className="h-56 w-full object-cover sm:h-64"
+        style={{ objectPosition: "center" }}
         loading="lazy"
       />
+      {/* short fade so the avatar overlaps cleanly without eating the banner */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-white"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-b from-transparent to-white"
       />
     </div>
   );

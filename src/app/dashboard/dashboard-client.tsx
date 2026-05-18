@@ -1074,13 +1074,17 @@ function BannerEditor({
   return (
     <div className="space-y-3">
       {profile.user.bannerImageUrl ? (
-        <div className="relative overflow-hidden rounded-xl border border-line">
+        <div className="relative aspect-[5/2] overflow-hidden rounded-xl border border-line">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={profile.user.bannerImageUrl}
             alt=""
-            className="h-32 w-full object-cover"
+            className="h-full w-full object-cover"
           />
+          {/* Avatar position indicator so they know where it'll overlap */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pb-1">
+            <div className="h-10 w-10 -translate-y-3 rounded-full border-2 border-white/80 bg-white/40 backdrop-blur-sm" />
+          </div>
           <button
             type="button"
             onClick={clear}
@@ -1090,8 +1094,9 @@ function BannerEditor({
           </button>
         </div>
       ) : (
-        <div className="flex h-24 items-center justify-center rounded-xl border-2 border-dashed border-line bg-muted/50 text-xs text-ink-500">
-          No banner yet — upload a wide photo (recommended 1600×600)
+        <div className="flex aspect-[5/2] items-center justify-center rounded-xl border-2 border-dashed border-line bg-muted/50 px-4 text-center text-xs text-ink-500">
+          No banner yet — landscape photo, 1600×640 ideal.<br />
+          Centre of the image works best (top &amp; sides may crop on small screens).
         </div>
       )}
       <UploadButton
