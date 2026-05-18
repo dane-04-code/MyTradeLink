@@ -4,11 +4,14 @@ import {
   MessageCircle,
   Check,
   Star,
-  Share2,
-  Inbox,
-  Shield,
+  ShieldCheck,
   ArrowRight,
-  Sparkles,
+  Hammer,
+  Wrench,
+  Zap,
+  Copy,
+  Camera,
+  ChevronRight,
 } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 
@@ -17,87 +20,170 @@ export default async function LandingPage() {
   const isSignedIn = !!userId;
 
   return (
-    <main className="min-h-screen bg-ink-900 text-white">
+    <main className="min-h-screen bg-ink-900 text-white selection:bg-brand selection:text-ink-900">
+      <BlueprintGrid />
       <Header isSignedIn={isSignedIn} />
       <Hero isSignedIn={isSignedIn} />
-      <Benefits />
-      <Pricing isSignedIn={isSignedIn} />
+      <ProofStrip />
+      <BeforeAfter />
+      <HowItWorks />
+      <FeatureGrid />
+      <PricingBlock isSignedIn={isSignedIn} />
       <FinalCTA isSignedIn={isSignedIn} />
       <Footer />
     </main>
   );
 }
 
+/* ----------------------------------------------------------------------------
+ * Background — fixed blueprint grid that gives the page a build-site feel
+ * --------------------------------------------------------------------------*/
+function BlueprintGrid() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-0 opacity-[0.07]"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+        backgroundSize: "48px 48px",
+        maskImage:
+          "radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 90%)",
+      }}
+    />
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Header
+ * --------------------------------------------------------------------------*/
 function Header({ isSignedIn }: { isSignedIn: boolean }) {
   return (
-    <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6">
-      <Link href="/" className="text-2xl font-extrabold">
-        <span className="text-brand">▲</span> TradeLink
-      </Link>
-      <nav className="flex items-center gap-2 md:gap-4">
-        <Link href="/pricing" className="hidden text-sm text-white/70 hover:text-white md:inline">
-          Pricing
+    <header className="relative z-10">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:py-7">
+        <Link href="/" className="group flex items-center gap-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-ink-900 transition group-hover:rotate-[-6deg]">
+            <Hammer className="h-5 w-5" strokeWidth={2.5} />
+          </span>
+          <span className="font-display text-xl tracking-tight">TRADELINK</span>
         </Link>
-        {isSignedIn ? (
+        <nav className="flex items-center gap-1 md:gap-3">
           <Link
-            href="/dashboard"
-            className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white"
+            href="/pricing"
+            className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
           >
-            Dashboard
+            Pricing
           </Link>
-        ) : (
-          <>
-            <Link href="/sign-in" className="hidden text-sm text-white/70 hover:text-white md:inline">
-              Sign in
-            </Link>
+          {isSignedIn ? (
             <Link
-              href="/sign-up"
-              className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white"
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900 transition hover:bg-white/90"
             >
-              Get started
+              Dashboard <ChevronRight className="h-4 w-4" />
             </Link>
-          </>
-        )}
-      </nav>
+          ) : (
+            <>
+              <Link
+                href="/sign-in"
+                className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 shadow-[0_4px_14px_rgba(249,115,22,0.4)] transition hover:bg-brand-400"
+              >
+                Get my page <ChevronRight className="h-4 w-4" />
+              </Link>
+            </>
+          )}
+        </nav>
+      </div>
     </header>
   );
 }
 
+/* ----------------------------------------------------------------------------
+ * Hero — massive headline + URL chip + phone preview
+ * --------------------------------------------------------------------------*/
 function Hero({ isSignedIn }: { isSignedIn: boolean }) {
   return (
-    <section className="relative overflow-hidden">
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-brand/30 blur-3xl" />
-      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-5 pt-12 pb-24 md:grid-cols-2 md:pt-20">
+    <section className="relative z-10 overflow-hidden">
+      {/* orange glow behind the headline */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-32 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-brand/30 blur-[120px]"
+      />
+
+      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-5 pt-10 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16 lg:pb-28">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
-            <Sparkles className="h-3.5 w-3.5 text-brand" /> Built for UK tradesmen
-          </div>
-          <h1 className="mt-5 text-5xl font-extrabold leading-[1.05] md:text-7xl">
-            Your business.{" "}
-            <span className="text-brand">One link.</span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/80 backdrop-blur">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
+            Built for UK tradesmen
+          </span>
+
+          <h1 className="mt-7 font-display text-[14vw] leading-[0.88] tracking-[-0.03em] sm:text-[88px] md:text-[104px] lg:text-[112px]">
+            <span className="block">Your business.</span>
+            <span className="block text-brand">One link.</span>
           </h1>
-          <p className="mt-5 max-w-md text-lg text-white/70 md:text-xl">
-            A professional page that wins you jobs. Set up in 5 minutes — share it on your van, WhatsApp, Facebook bio and business cards.
+
+          {/* The URL chip — the unforgettable moment */}
+          <div className="mt-7 inline-flex max-w-full items-stretch overflow-hidden rounded-2xl border border-white/15 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur">
+            <div className="hidden items-center gap-2 border-r border-white/10 px-4 sm:flex">
+              <span className="h-2 w-2 rounded-full bg-red-400" />
+              <span className="h-2 w-2 rounded-full bg-yellow-400" />
+              <span className="h-2 w-2 rounded-full bg-green-400" />
+            </div>
+            <div className="flex items-center gap-2 px-4 py-3 font-mono text-sm md:text-base">
+              <span className="text-white/40">tradelink.app/t/</span>
+              <span className="font-semibold text-white">dave-plumber</span>
+              <span className="ml-1 h-4 w-px animate-pulse bg-brand" />
+            </div>
+            <button
+              type="button"
+              aria-label="Copy link"
+              className="hidden items-center justify-center border-l border-white/10 bg-white/[0.04] px-4 text-white/60 transition hover:bg-white/[0.08] hover:text-white sm:flex"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+
+          <p className="mt-7 max-w-md text-lg leading-relaxed text-white/70 md:text-xl">
+            One professional page. Photos, reviews, call & WhatsApp buttons,
+            quote requests. Share it on your van, in your bio, on a card. Set up
+            in five minutes.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href={isSignedIn ? "/dashboard" : "/sign-up"} className="btn-primary">
-              Create your free page <ArrowRight className="ml-2 h-5 w-5" />
+
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={isSignedIn ? "/dashboard" : "/sign-up"}
+              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-7 py-4 text-lg font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400 active:scale-[0.98]"
+            >
+              Get my free page
+              <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
             </Link>
             <Link
               href="/t/demo"
-              className="inline-flex items-center justify-center rounded-2xl border-2 border-white/10 bg-white/5 px-6 py-4 text-lg font-semibold text-white hover:bg-white/10"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[0.04] px-7 py-4 text-lg font-semibold text-white backdrop-blur transition hover:bg-white/[0.08]"
             >
-              See a live example
+              See a live page
             </Link>
           </div>
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-white/50">
-            <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-brand" /> Free forever plan</span>
-            <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-brand" /> No card needed</span>
-            <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-brand" /> Mobile first</span>
-          </div>
+
+          <ul className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/55">
+            <li className="inline-flex items-center gap-1.5">
+              <Check className="h-4 w-4 text-brand" /> Free forever plan
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <Check className="h-4 w-4 text-brand" /> No card needed
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <Check className="h-4 w-4 text-brand" /> 5-minute setup
+            </li>
+          </ul>
         </div>
 
-        <div className="flex items-center justify-center">
+        <div className="relative flex items-center justify-center">
           <PhoneMockup />
         </div>
       </div>
@@ -105,41 +191,100 @@ function Hero({ isSignedIn }: { isSignedIn: boolean }) {
   );
 }
 
+/* ----------------------------------------------------------------------------
+ * Phone mockup — drawn to look like a finished TradeLink profile
+ * --------------------------------------------------------------------------*/
 function PhoneMockup() {
   return (
     <div className="relative">
-      <div className="absolute -inset-10 rounded-[60px] bg-gradient-to-br from-brand/30 via-transparent to-transparent blur-2xl" />
-      <div className="relative h-[620px] w-[300px] rounded-[44px] border-[10px] border-ink-700 bg-white shadow-2xl">
-        <div className="absolute left-1/2 top-2 -translate-x-1/2 h-5 w-28 rounded-full bg-ink-700" />
+      {/* angled "construction tape" accent */}
+      <div
+        aria-hidden
+        className="absolute -left-12 -top-6 hidden h-12 w-44 rotate-[-12deg] rounded-sm bg-brand text-ink-900 lg:flex"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, #0F172A 0 6px, transparent 6px 18px)",
+        }}
+      />
+      <div className="absolute -inset-10 rounded-[60px] bg-gradient-to-br from-brand/40 via-transparent to-transparent blur-3xl" />
+
+      <div className="relative h-[640px] w-[310px] rounded-[44px] border-[10px] border-ink-900/80 bg-ink-900 shadow-[0_30px_90px_rgba(0,0,0,0.5)] ring-1 ring-white/10">
+        <div className="absolute left-1/2 top-2 z-10 h-5 w-28 -translate-x-1/2 rounded-full bg-ink-900" />
         <div className="h-full w-full overflow-hidden rounded-[34px] bg-white text-ink-900">
-          <div className="flex flex-col items-center px-5 pt-10 text-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand text-2xl font-bold text-white ring-4 ring-brand/30">
-              DW
+          {/* header */}
+          <div className="flex flex-col items-center px-5 pt-9 text-center">
+            <div className="relative">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-700 text-2xl font-bold text-white ring-4 ring-brand/20">
+                DW
+              </div>
+              <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 ring-2 ring-white">
+                <Check className="h-4 w-4 text-white" strokeWidth={3} />
+              </div>
             </div>
-            <h2 className="mt-3 text-lg font-extrabold">Dave Wilson</h2>
-            <div className="text-sm font-semibold text-brand">Plumber · Manchester</div>
-            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500" /> Taking on work
+            <h2 className="mt-3 font-display text-xl leading-tight tracking-tight">
+              Dave Wilson
+            </h2>
+            <div className="text-sm font-semibold text-brand">
+              Plumber · Manchester
+            </div>
+            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1 text-xs font-bold text-green-800">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+              Taking on work
             </div>
           </div>
+
+          {/* contact buttons */}
           <div className="space-y-2 px-4 pt-4">
-            <div className="flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 text-sm font-bold text-white">
+            <div className="flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 text-sm font-bold text-white shadow-md">
               <Phone className="h-4 w-4" /> Call Dave
             </div>
-            <div className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-sm font-bold text-white">
+            <div className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-sm font-bold text-white shadow-md">
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </div>
-            <div className="rounded-xl border border-neutral-200 p-3 text-left text-xs leading-relaxed text-ink-700">
-              12 years' experience. Reliable, on time, fair prices. Boilers, leaks, bathrooms.
+          </div>
+
+          {/* about */}
+          <div className="px-4 pt-4">
+            <div className="rounded-xl bg-slate-50 p-3 text-left text-[11px] leading-relaxed text-ink-700">
+              <div className="mb-1 font-bold uppercase tracking-wider text-[10px] text-ink-500">
+                About
+              </div>
+              12 years' experience. Boilers, leaks, bathrooms. Fair prices,
+              on-time, fully insured.
+            </div>
+          </div>
+
+          {/* gallery */}
+          <div className="px-4 pt-3">
+            <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-ink-500">
+              Recent work
             </div>
             <div className="grid grid-cols-3 gap-1.5">
-              <div className="aspect-square rounded-lg bg-gradient-to-br from-orange-200 to-orange-400" />
-              <div className="aspect-square rounded-lg bg-gradient-to-br from-sky-200 to-sky-400" />
-              <div className="aspect-square rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-400" />
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-gradient-to-br from-sky-300 to-sky-500">
+                <Camera className="absolute bottom-1 right-1 h-3 w-3 text-white/80" />
+              </div>
+              <div className="aspect-square rounded-lg bg-gradient-to-br from-orange-300 to-orange-500" />
+              <div className="aspect-square rounded-lg bg-gradient-to-br from-slate-300 to-slate-500" />
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-neutral-200 px-3 py-2">
-              <Shield className="h-4 w-4 text-brand" />
-              <div className="text-xs font-semibold">Gas Safe Registered</div>
+          </div>
+
+          {/* certs */}
+          <div className="px-4 pt-3">
+            <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2">
+              <ShieldCheck className="h-4 w-4 text-brand" strokeWidth={2.5} />
+              <div className="text-[11px] font-bold">Gas Safe Registered</div>
+              <span className="ml-auto text-[10px] font-mono text-ink-500">
+                #12345
+              </span>
+            </div>
+          </div>
+
+          {/* reviews */}
+          <div className="px-4 pt-2">
+            <div className="flex items-center gap-1.5 rounded-xl bg-yellow-50 px-3 py-2 text-[11px]">
+              <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+              <span className="font-bold">4.9</span>
+              <span className="text-ink-500">on Google · 84 reviews</span>
             </div>
           </div>
         </div>
@@ -148,37 +293,27 @@ function PhoneMockup() {
   );
 }
 
-function Benefits() {
+/* ----------------------------------------------------------------------------
+ * Proof strip — counters + trust signals
+ * --------------------------------------------------------------------------*/
+function ProofStrip() {
   const items = [
-    {
-      icon: <Star className="h-6 w-6" />,
-      title: "Professional profile",
-      body: "Photo, services, gallery, certifications — everything customers need to trust you in 30 seconds.",
-    },
-    {
-      icon: <Inbox className="h-6 w-6" />,
-      title: "Get quote requests",
-      body: "Customers fill in a form with photos and postcode. You get an instant email — call them back, win the job.",
-    },
-    {
-      icon: <Share2 className="h-6 w-6" />,
-      title: "Share everywhere",
-      body: "One link for your van, Instagram, WhatsApp, business cards. Update once — it changes everywhere.",
-    },
+    { value: "5 min", label: "to set up" },
+    { value: "100%", label: "mobile first" },
+    { value: "£0", label: "to start" },
+    { value: "1 link", label: "everywhere" },
   ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <section className="relative z-10 border-y border-white/10 bg-white/[0.02]">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-white/10 px-5 md:grid-cols-4">
         {items.map((item) => (
-          <div
-            key={item.title}
-            className="rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
-          >
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-white shadow-glow">
-              {item.icon}
+          <div key={item.label} className="px-2 py-7 text-center">
+            <div className="font-display text-3xl text-white md:text-4xl">
+              {item.value}
             </div>
-            <h3 className="mt-4 text-xl font-bold">{item.title}</h3>
-            <p className="mt-2 text-white/70">{item.body}</p>
+            <div className="mt-1 text-xs uppercase tracking-wider text-white/50">
+              {item.label}
+            </div>
           </div>
         ))}
       </div>
@@ -186,97 +321,437 @@ function Benefits() {
   );
 }
 
-function Pricing({ isSignedIn }: { isSignedIn: boolean }) {
+/* ----------------------------------------------------------------------------
+ * Before / After — the messy WhatsApp thread vs a clean TradeLink
+ * --------------------------------------------------------------------------*/
+function BeforeAfter() {
   return (
-    <section className="mx-auto max-w-5xl px-5 py-20" id="pricing">
-      <div className="text-center">
-        <h2 className="text-4xl font-extrabold md:text-5xl">Pick a plan and start winning jobs.</h2>
-        <p className="mt-3 text-lg text-white/70">No card needed for the free plan.</p>
+    <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
+      <div className="max-w-2xl">
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          The problem
+        </span>
+        <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+          Stop sending screenshots <br />
+          <span className="text-brand">of screenshots.</span>
+        </h2>
+        <p className="mt-5 max-w-lg text-lg text-white/70">
+          Most tradesmen win work through a mess of WhatsApp threads, Facebook
+          comments and word of mouth. TradeLink gives you one link that does
+          the talking — so customers see you're legit before you've even picked
+          up the phone.
+        </p>
       </div>
 
-      <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
-          <div className="text-sm uppercase tracking-wider text-white/50">Free</div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-5xl font-extrabold">£0</span>
-            <span className="text-white/60">forever</span>
+      <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
+        {/* BEFORE */}
+        <div className="relative rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-red-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-300">
+            Before
           </div>
-          <ul className="mt-6 space-y-2 text-sm text-white/80">
-            {["Public profile page", "Call, WhatsApp, services", "Gallery + certifications", "Areas covered + payment methods"].map((f) => (
-              <li key={f} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-brand" /> {f}
-              </li>
-            ))}
-          </ul>
-          <Link
-            href={isSignedIn ? "/dashboard" : "/sign-up"}
-            className="btn-secondary mt-8 w-full"
-          >
-            {isSignedIn ? "Go to dashboard" : "Start free"}
-          </Link>
+          <div className="space-y-2 text-sm">
+            <ChatBubble side="left" text="hi do u do bathrooms" />
+            <ChatBubble side="right" text="yes" />
+            <ChatBubble side="left" text="can u send pics of past work" />
+            <ChatBubble side="right" text="i'll look on my phone tonight" />
+            <ChatBubble side="left" text="and the gas safe number?" />
+            <ChatBubble side="right" text="…" muted />
+          </div>
+          <div className="mt-5 text-sm text-white/50">
+            Three days, no booking, the customer rings someone else.
+          </div>
         </div>
 
-        <div className="relative rounded-3xl border-2 border-brand bg-gradient-to-b from-brand/10 to-transparent p-8 shadow-glow">
-          <div className="absolute -top-3 right-6 rounded-full bg-brand px-3 py-1 text-xs font-bold uppercase">
-            Most popular
+        {/* AFTER */}
+        <div className="relative overflow-hidden rounded-3xl border border-brand/40 bg-gradient-to-br from-brand/10 via-transparent to-transparent p-6">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-brand/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand">
+            After
           </div>
-          <div className="text-sm uppercase tracking-wider text-white/50">Pro</div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-5xl font-extrabold">£9</span>
-            <span className="text-white/60">per month</span>
+          <div className="space-y-2 text-sm">
+            <ChatBubble side="left" text="hi do u do bathrooms" />
+            <ChatBubble
+              side="right"
+              text="yes — everything's on my page 👇"
+            />
+            <div className="ml-auto w-max rounded-2xl bg-white px-4 py-3 text-ink-900 shadow-sm">
+              <div className="font-mono text-xs text-ink-500">
+                tradelink.app/t/dave-plumber
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-[11px] font-semibold">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white text-[10px]">
+                  DW
+                </span>
+                Dave Wilson · Plumber · Manchester
+              </div>
+            </div>
+            <ChatBubble side="left" text="amazing — when can you come?" />
           </div>
-          <div className="mt-1 text-sm text-brand">£89/year — save £19</div>
-          <ul className="mt-6 space-y-2 text-sm text-white/80">
-            {[
-              "Everything in Free",
-              "Quote request form (with photos)",
-              "Emergency callout button",
-              "Intro video",
-              "No TradeLink badge",
-            ].map((f) => (
-              <li key={f} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-brand" /> {f}
-              </li>
-            ))}
-          </ul>
-          <Link href="/pricing" className="btn-primary mt-8 w-full">
-            Upgrade to Pro
-          </Link>
+          <div className="mt-5 text-sm text-brand/90">
+            One link. Job booked the same morning.
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+function ChatBubble({
+  side,
+  text,
+  muted,
+}: {
+  side: "left" | "right";
+  text: string;
+  muted?: boolean;
+}) {
+  return (
+    <div className={side === "right" ? "flex justify-end" : "flex"}>
+      <div
+        className={[
+          "max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px]",
+          side === "right"
+            ? "rounded-br-md bg-brand text-ink-900"
+            : "rounded-bl-md bg-white/10 text-white/85",
+          muted ? "opacity-50" : "",
+        ].join(" ")}
+      >
+        {text}
+      </div>
+    </div>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * How it works — 3 step rail
+ * --------------------------------------------------------------------------*/
+function HowItWorks() {
+  const steps = [
+    {
+      n: "01",
+      icon: <Wrench className="h-6 w-6" />,
+      title: "Sign up free",
+      body: "Drop your name and trade. We make you a page on the spot.",
+    },
+    {
+      n: "02",
+      icon: <Hammer className="h-6 w-6" />,
+      title: "Fill it in",
+      body: "Photos, services, contact details, certs. Toggle what you want, drag the order.",
+    },
+    {
+      n: "03",
+      icon: <Zap className="h-6 w-6" />,
+      title: "Share the link",
+      body: "On your van, your WhatsApp bio, your business cards. One link does everything.",
+    },
+  ];
+  return (
+    <section className="relative z-10 border-t border-white/10 bg-white/[0.02]">
+      <div className="mx-auto max-w-6xl px-5 py-24">
+        <div className="text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+            How it works
+          </span>
+          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+            Live in <span className="text-brand">five minutes.</span>
+          </h2>
+        </div>
+
+        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
+          {steps.map((s) => (
+            <div
+              key={s.n}
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-ink-900 p-7 transition hover:border-brand/40"
+            >
+              <div className="absolute -right-6 -top-2 font-display text-[140px] leading-none tracking-tighter text-white/[0.04] transition group-hover:text-brand/10">
+                {s.n}
+              </div>
+              <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-ink-900 shadow-[0_8px_24px_rgba(249,115,22,0.3)]">
+                {s.icon}
+              </div>
+              <h3 className="relative mt-5 font-display text-2xl leading-tight tracking-tight">
+                {s.title}
+              </h3>
+              <p className="relative mt-2 text-white/65">{s.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Feature grid — what you actually get
+ * --------------------------------------------------------------------------*/
+function FeatureGrid() {
+  const features = [
+    {
+      title: "Call & WhatsApp buttons",
+      body: "Massive, impossible-to-miss. One tap and they're on the phone with you.",
+      tag: "Free",
+    },
+    {
+      title: "Photo gallery",
+      body: "Show off your work. Swipeable on mobile. Looks professional out the box.",
+      tag: "Free",
+    },
+    {
+      title: "Reviews link",
+      body: "Send people to your Google reviews with a single button.",
+      tag: "Free",
+    },
+    {
+      title: "Certifications",
+      body: "Gas Safe, NICEIC, CSCS — display them as proper trust badges.",
+      tag: "Free",
+    },
+    {
+      title: "Quote request form",
+      body: "Customers send name, postcode, photos. You get an email. Win the job.",
+      tag: "Pro",
+    },
+    {
+      title: "Emergency callout",
+      body: "Red 24/7 button for the jobs that pay double. Pro plan only.",
+      tag: "Pro",
+    },
+  ];
+  return (
+    <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
+      <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+            What you get
+          </span>
+          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+            Everything a customer <br className="hidden md:block" />
+            <span className="text-brand">needs to trust you.</span>
+          </h2>
+        </div>
+        <p className="max-w-sm text-white/65">
+          Toggle sections on or off, drag them in the order you want. Changes
+          save the second you make them — no save button anywhere.
+        </p>
+      </div>
+
+      <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+        {features.map((f) => (
+          <div
+            key={f.title}
+            className="group relative bg-ink-900 p-7 transition hover:bg-white/[0.03]"
+          >
+            <div className="flex items-start justify-between">
+              <h3 className="font-display text-xl leading-tight tracking-tight">
+                {f.title}
+              </h3>
+              <span
+                className={[
+                  "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                  f.tag === "Pro"
+                    ? "bg-brand text-ink-900"
+                    : "bg-white/10 text-white/70",
+                ].join(" ")}
+              >
+                {f.tag}
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/65">{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Pricing
+ * --------------------------------------------------------------------------*/
+function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
+  return (
+    <section
+      id="pricing"
+      className="relative z-10 border-t border-white/10 bg-white/[0.02]"
+    >
+      <div className="mx-auto max-w-6xl px-5 py-24">
+        <div className="text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+            Pricing
+          </span>
+          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+            Simple. <span className="text-brand">Honest.</span>
+          </h2>
+          <p className="mt-4 text-white/65">
+            Start free. Upgrade when you've won the first job.
+          </p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <PriceCard
+            tier="Free"
+            price="£0"
+            cadence="forever"
+            features={[
+              "Public profile page",
+              "Call & WhatsApp buttons",
+              "Photo gallery + before/after",
+              "Certifications + Google reviews",
+              "Small TradeLink badge in footer",
+            ]}
+            cta={
+              <Link
+                href={isSignedIn ? "/dashboard" : "/sign-up"}
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 text-base font-bold transition hover:bg-white/10"
+              >
+                {isSignedIn ? "Go to dashboard" : "Start free"}
+              </Link>
+            }
+          />
+          <PriceCard
+            highlight
+            tier="Pro"
+            price="£9"
+            cadence="per month"
+            sub="£89/year — save £19"
+            features={[
+              "Everything in Free",
+              "Quote request form with photo uploads",
+              "Emergency callout button (24/7)",
+              "Intro video on your page",
+              "No TradeLink badge",
+            ]}
+            cta={
+              <Link
+                href="/pricing"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand px-6 py-3.5 text-base font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400"
+              >
+                Upgrade to Pro
+              </Link>
+            }
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PriceCard({
+  tier,
+  price,
+  cadence,
+  sub,
+  features,
+  cta,
+  highlight,
+}: {
+  tier: string;
+  price: string;
+  cadence: string;
+  sub?: string;
+  features: string[];
+  cta: React.ReactNode;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={[
+        "relative overflow-hidden rounded-3xl border p-8",
+        highlight
+          ? "border-brand/50 bg-gradient-to-b from-brand/10 to-transparent shadow-[0_0_60px_rgba(249,115,22,0.15)]"
+          : "border-white/10 bg-ink-900",
+      ].join(" ")}
+    >
+      {highlight && (
+        <div className="absolute right-6 top-6 rounded-full bg-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-ink-900">
+          Most popular
+        </div>
+      )}
+      <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+        {tier}
+      </div>
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="font-display text-6xl tracking-tight">{price}</span>
+        <span className="text-white/55">{cadence}</span>
+      </div>
+      {sub && <div className="mt-1 text-sm text-brand">{sub}</div>}
+      <ul className="mt-7 space-y-2.5">
+        {features.map((f) => (
+          <li
+            key={f}
+            className="flex items-start gap-2.5 text-sm text-white/80"
+          >
+            <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand" />
+            {f}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-8">{cta}</div>
+    </div>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Final CTA
+ * --------------------------------------------------------------------------*/
 function FinalCTA({ isSignedIn }: { isSignedIn: boolean }) {
   return (
-    <section className="mx-auto max-w-5xl px-5 pb-24">
-      <div className="rounded-3xl bg-gradient-to-br from-brand to-brand-700 p-10 text-center shadow-glow md:p-16">
-        <h2 className="text-3xl font-extrabold md:text-5xl">
-          Stop losing jobs to tradesmen with a website.
+    <section className="relative z-10 mx-auto max-w-6xl px-5 pb-24">
+      <div className="relative overflow-hidden rounded-[32px] bg-brand p-10 text-ink-900 md:p-16">
+        {/* hatched accent */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-12 -top-12 h-64 w-64 rotate-[12deg] rounded-3xl opacity-25"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, #0F172A 0 6px, transparent 6px 18px)",
+          }}
+        />
+        <h2 className="relative max-w-2xl font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+          Stop losing jobs to lads with a website.
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-white/90">
-          5 minutes to set up. Free forever. Share one link, win more work.
+        <p className="relative mt-4 max-w-md text-lg text-ink-900/85">
+          Five minutes to set up. Free forever. Share one link, win more work.
         </p>
-        <Link
-          href={isSignedIn ? "/dashboard" : "/sign-up"}
-          className="mt-8 inline-flex items-center justify-center rounded-2xl bg-ink-900 px-8 py-5 text-xl font-bold text-white shadow-xl hover:bg-ink-800"
-        >
-          Create your free page <ArrowRight className="ml-2 h-5 w-5" />
-        </Link>
+        <div className="relative mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href={isSignedIn ? "/dashboard" : "/sign-up"}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-ink-900 px-7 py-4 text-lg font-bold text-white transition hover:bg-ink-800"
+          >
+            Create my free page
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/t/demo"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-ink-900/15 bg-white/30 px-7 py-4 text-lg font-bold text-ink-900 backdrop-blur transition hover:bg-white/50"
+          >
+            See a live page
+          </Link>
+        </div>
       </div>
     </section>
   );
 }
 
+/* ----------------------------------------------------------------------------
+ * Footer
+ * --------------------------------------------------------------------------*/
 function Footer() {
   return (
-    <footer className="border-t border-white/10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-white/50 md:flex-row">
-        <div>© {new Date().getFullYear()} TradeLink</div>
+    <footer className="relative z-10 border-t border-white/10">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-10 text-sm text-white/50 md:flex-row">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-ink-900">
+            <Hammer className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </span>
+          <span className="font-display text-base text-white/70">
+            TRADELINK
+          </span>
+          <span className="ml-2 text-white/30">© {new Date().getFullYear()}</span>
+        </div>
         <div className="flex gap-5">
           <Link href="/pricing" className="hover:text-white">Pricing</Link>
           <Link href="/sign-in" className="hover:text-white">Sign in</Link>
+          <Link href="/sign-up" className="hover:text-white">Sign up</Link>
         </div>
       </div>
     </footer>

@@ -24,16 +24,17 @@ const config: Config = {
         },
         ink: {
           900: "#0F172A",
-          800: "#15151C",
-          700: "#1F1F2A",
-          600: "#2A2A38",
+          800: "#1E293B",
+          700: "#334155",
+          600: "#475569",
           500: "#64748B",
         },
         line: "#E2E8F0",
         muted: "#F8FAFC",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
       },
       boxShadow: {
         card: "0 8px 30px rgba(0,0,0,0.08)",

@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from "next";
+import { Archivo_Black, Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import "./globals.css";
+
+const display = Archivo_Black({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-display",
+  display: "swap",
+});
+
+const body = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "TradeLink — Your business. One link.",
@@ -36,8 +51,8 @@ export default function RootLayout({
         variables: { colorPrimary: "#F97316", colorText: "#0F172A" },
       }}
     >
-      <html lang="en">
-        <body className="min-h-screen bg-white text-ink-900 antialiased">
+      <html lang="en" className={`${display.variable} ${body.variable}`}>
+        <body className="min-h-screen bg-white font-sans text-ink-900 antialiased">
           {children}
           <Toaster position="top-center" richColors />
         </body>
