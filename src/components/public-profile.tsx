@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
 import { trackEvent, type TrackEventType } from "@/lib/tracker";
+import { StickyContactBar } from "@/components/sticky-contact-bar";
 import type { FullProfile } from "@/lib/queries";
 import type { SectionKey } from "@/lib/sections";
 
@@ -109,6 +110,8 @@ export function PublicProfile({
       })}
 
       {user.plan === "free" && <PoweredByFooter />}
+
+      <StickyContactBar profile={profile} preview={preview} />
     </div>
   );
 }
