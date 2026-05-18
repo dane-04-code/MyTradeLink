@@ -2,19 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"monthly" | "annual" | null>(null);
+  const [plan, setPlan] = useState<"monthly" | "annual">("annual");
+  const [loading, setLoading] = useState(false);
 
-  async function start(plan: "monthly" | "annual") {
+  async function start() {
     if (!isSignedIn) {
       router.push("/sign-up?redirect=/pricing");
       return;
     }
-    setLoading(plan);
+    setLoading(true);
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -27,26 +28,59 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
     } catch {
       toast.error("Couldn't open checkout");
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      {/* Plan toggle */}
+      <div className="flex rounded-2xl border border-white/15 bg-white/5 p-1">
+        <button
+          type="button"
+          onClick={() => setPlan("monthly")}
+          className={
+            "flex-1 rounded-xl px-3 py-2 text-xs font-bold transition " +
+            (plan === "monthly"
+              ? "bg-white text-ink-900"
+              : "text-white/70 hover:text-white")
+          }
+        >
+          Monthly · £9
+        </button>
+        <button
+          type="button"
+          onClick={() => setPlan("annual")}
+          className={
+            "flex-1 rounded-xl px-3 py-2 text-xs font-bold transition " +
+            (plan === "annual"
+              ? "bg-white text-ink-900"
+              : "text-white/70 hover:text-white")
+          }
+        >
+          Yearly · £89
+        </button>
+      </div>
+
       <button
-        onClick={() => start("monthly")}
-        disabled={!!loading}
-        className="btn-primary w-full"
+        onClick={start}
+        disabled={loading}
+        className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-6 py-4 text-base font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400 disabled:opacity-60"
       >
-        {loading === "monthly" ? <Loader2 className="h-5 w-5 animate-spin" /> : "Start Pro — £9/mo"}
+        {loading ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          <>
+            {plan === "annual" ? "Start Pro · £89/yr" : "Start Pro · £9/mo"}
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+          </>
+        )}
       </button>
-      <button
-        onClick={() => start("annual")}
-        disabled={!!loading}
-        className="inline-flex w-full items-center justify-center rounded-2xl border-2 border-white/20 bg-white/5 px-6 py-4 text-base font-semibold text-white hover:bg-white/10"
-      >
-        {loading === "annual" ? <Loader2 className="h-5 w-5 animate-spin" /> : "Pay yearly — £89/yr (save £19)"}
-      </button>
+      <p className="text-center text-[11px] text-white/45">
+        {plan === "annual"
+          ? "Two months free vs paying monthly · cancel anytime"
+          : "Cancel anytime · upgrade to yearly anytime"}
+      </p>
     </div>
   );
 }

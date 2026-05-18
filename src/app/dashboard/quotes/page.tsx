@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Sparkles, Lock } from "lucide-react";
 import { requireOnboardedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { quoteRequests } from "@/lib/db/schema";
@@ -12,13 +14,70 @@ export default async function QuotesPage() {
     where: eq(quoteRequests.userId, user.id),
     orderBy: [desc(quoteRequests.createdAt)],
   });
+
+  const counts = {
+    all: rows.length,
+    new: rows.filter((r) => r.status === "new").length,
+    contacted: rows.filter((r) => r.status === "contacted").length,
+    closed: rows.filter((r) => r.status === "closed").length,
+  };
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 lg:py-10">
-      <h1 className="mb-1 text-2xl font-bold">Quote requests</h1>
-      <p className="mb-6 text-sm text-neutral-500">
-        Customers who reached out from your page.
-      </p>
+    <div className="mx-auto max-w-4xl px-4 py-6 lg:px-6 lg:py-10">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+            Inbox
+          </div>
+          <h1 className="mt-1 font-display text-3xl leading-none tracking-tight text-ink-900 md:text-4xl">
+            Quote requests
+          </h1>
+        </div>
+        {counts.all > 0 && (
+          <div className="flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink-700">
+            <span className="inline-flex h-2 w-2 rounded-full bg-brand" />
+            {counts.new} new · {counts.contacted} contacted · {counts.closed} closed
+          </div>
+        )}
+      </div>
+
+      {user.plan !== "paid" && <FreeUpsell />}
+
       <QuotesList quotes={rows} />
     </div>
+  );
+}
+
+function FreeUpsell() {
+  return (
+    <Link
+      href="/pricing"
+      className="group relative mb-6 flex items-center gap-4 overflow-hidden rounded-2xl bg-ink-900 p-5 text-white transition hover:bg-ink-800"
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-8 h-40 w-40 rotate-[8deg] opacity-30"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, #F97316 0 6px, transparent 6px 18px)",
+        }}
+      />
+      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand text-ink-900">
+        <Lock className="h-5 w-5" strokeWidth={2.5} />
+      </span>
+      <div className="relative flex-1">
+        <div className="font-display text-lg leading-tight tracking-tight">
+          Quote requests are <span className="text-brand">Pro only</span>
+        </div>
+        <div className="mt-0.5 text-sm text-white/65">
+          Customers can already call and WhatsApp you on free. Upgrade to add
+          the quote form (with photo uploads) and get every lead emailed to you.
+        </div>
+      </div>
+      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">
+        <Sparkles className="h-3.5 w-3.5" />
+        Upgrade
+      </div>
+    </Link>
   );
 }
