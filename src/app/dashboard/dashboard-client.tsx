@@ -13,6 +13,7 @@ import {
   Eye,
   Plus,
   Trash,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -46,6 +47,29 @@ import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
 import { QrButton } from "./qr-button";
 import * as serverActions from "./actions";
+
+/**
+ * Pick a greeting that works for both a personal name ("Dave Wilson") and
+ * a business name ("Coventry Plumbing", "DW Plumbing & Heating Ltd").
+ * If the name looks like a business (contains trade/business words),
+ * use a generic greeting. If it looks like a person, use their first name.
+ */
+const BUSINESS_WORDS = [
+  "plumbing", "electric", "electrical", "roofing", "building", "builders",
+  "construction", "landscaping", "gardening", "heating", "gas", "tiling",
+  "plastering", "decorating", "carpentry", "joinery", "fencing", "paving",
+  "kitchens", "bathrooms", "ltd", "limited", "co", "&", "and", "services",
+  "solutions", "specialists", "group", "trades", "trade",
+];
+function greeting(name: string | null | undefined): string {
+  if (!name) return "Welcome back.";
+  const lower = name.toLowerCase();
+  const looksLikeBusiness = BUSINESS_WORDS.some((w) =>
+    new RegExp(`\\b${w}\\b`).test(lower)
+  );
+  if (looksLikeBusiness) return "Welcome back.";
+  return `Welcome back, ${name.split(" ")[0]}.`;
+}
 
 /**
  * Demo-mode wrappers: when this client is mounted on /dashboard-demo, all
@@ -147,7 +171,7 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
               My page
             </div>
             <h1 className="mt-1 font-display text-3xl leading-none tracking-tight text-ink-900 md:text-4xl">
-              Welcome back, {profile.user.name?.split(" ")[0] || "boss"}.
+              {greeting(profile.user.name)}
             </h1>
           </div>
         </div>
@@ -1292,7 +1316,10 @@ function ServicesEditor({
 
   async function add() {
     if (!name.trim()) return;
-    const row = await addService({ serviceName: name.trim(), description: desc.trim() || undefined });
+    const row = await addService({
+      serviceName: name.trim(),
+      description: desc.trim() || undefined,
+    });
     setProfile((p) => ({ ...p, services: [...p.services, row] }));
     setName("");
     setDesc("");
@@ -1305,37 +1332,56 @@ function ServicesEditor({
 
   return (
     <div className="space-y-3">
-      <ul className="space-y-2">
-        {profile.services.map((s) => (
-          <li key={s.id} className="flex items-center justify-between rounded-xl border border-neutral-200 p-3">
-            <div>
-              <div className="font-semibold">{s.serviceName}</div>
-              {s.description && <div className="text-sm text-neutral-500">{s.description}</div>}
-            </div>
-            <button onClick={() => remove(s.id)} className="text-neutral-400 hover:text-red-600">
-              <Trash className="h-4 w-4" />
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div className="rounded-xl border border-dashed border-neutral-300 p-3">
+      {profile.services.length === 0 ? (
+        <EmptyState
+          title="Add what you do"
+          body="Boiler service, bathroom install, leak repair — list the work you actually take on. Three or four is plenty."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {profile.services.map((s) => (
+            <li
+              key={s.id}
+              className="flex items-start justify-between gap-3 rounded-xl border border-line bg-white p-3"
+            >
+              <div className="min-w-0">
+                <div className="font-bold text-ink-900">{s.serviceName}</div>
+                {s.description && (
+                  <div className="mt-0.5 text-sm text-ink-500">
+                    {s.description}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => remove(s.id)}
+                aria-label="Remove"
+                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-red-600"
+              >
+                <Trash className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="rounded-xl border-2 border-dashed border-line bg-white p-3">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Service name"
-          className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
+          placeholder="Service name (e.g. Bathroom installs)"
+          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-brand focus:outline-none"
         />
         <input
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          placeholder="Short description (optional)"
-          className="mt-2 w-full rounded-lg border border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
+          placeholder="One-line description (optional)"
+          className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-brand focus:outline-none"
         />
         <button
           onClick={add}
-          className="mt-2 inline-flex items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white"
+          disabled={!name.trim()}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-ink-900 px-3 py-2 text-xs font-bold text-white transition hover:bg-ink-800 disabled:opacity-40"
         >
-          <Plus className="h-4 w-4" /> Add service
+          <Plus className="h-3.5 w-3.5" /> Add service
         </button>
       </div>
     </div>
@@ -1360,28 +1406,55 @@ function PhotosEditor({
     setProfile((p) => ({ ...p, photos: p.photos.filter((ph) => ph.id !== id) }));
   }
 
+  const emptyCopy: Record<typeof type, { title: string; body: string }> = {
+    gallery: {
+      title: "No photos yet",
+      body: "Snap your best work on your phone — finished bathrooms, neat pipework, clean vans. Up to 12 photos.",
+    },
+    before: {
+      title: "No 'before' photos",
+      body: "Customers love a transformation. Add the dingy bathroom, the broken boiler, the mossy roof — the starting point.",
+    },
+    after: {
+      title: "No 'after' photos",
+      body: "Pair each before with its after to show the result of your work.",
+    },
+  };
+
   return (
     <div className="space-y-3">
-      <label className="text-sm font-semibold text-ink-700">{label}</label>
-      <div className="flex flex-wrap gap-2">
-        {list.map((p) => (
-          <div key={p.id} className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.photoUrl} alt="" className="h-20 w-20 rounded-lg object-cover" />
-            <button
-              onClick={() => remove(p.id)}
-              className="absolute -top-1 -right-1 rounded-full bg-red-600 p-0.5 text-white"
-            >
-              <Trash className="h-3 w-3" />
-            </button>
-          </div>
-        ))}
+      <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500">
+        {label}
       </div>
+      {list.length === 0 ? (
+        <EmptyState title={emptyCopy[type].title} body={emptyCopy[type].body} />
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {list.map((p) => (
+            <div key={p.id} className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={p.photoUrl}
+                alt=""
+                className="h-20 w-20 rounded-lg border border-line object-cover"
+              />
+              <button
+                onClick={() => remove(p.id)}
+                aria-label="Remove"
+                className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink-900 text-white shadow-sm hover:bg-red-600"
+              >
+                <Trash className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
       <UploadButton
         endpoint="gallery"
         appearance={{
-          button: "ut-ready:bg-brand bg-brand text-white rounded-xl px-4 py-2 text-sm font-semibold",
-          allowedContent: "text-neutral-500 text-xs",
+          button:
+            "ut-ready:bg-ink-900 bg-ink-900 text-white rounded-xl px-4 py-2 text-sm font-semibold",
+          allowedContent: "text-ink-500 text-xs",
         }}
         onClientUploadComplete={async (res) => {
           if (!res) return;
@@ -1389,10 +1462,26 @@ function PhotosEditor({
             const row = await addPhoto({ photoUrl: r.url, type });
             setProfile((p) => ({ ...p, photos: [...p.photos, row] }));
           }
-          toast.success("Uploaded");
+          toast.success(`${res.length} photo${res.length === 1 ? "" : "s"} added`);
         }}
-        onUploadError={(err) => { toast.error(err.message); }}
+        onUploadError={(err) => {
+          toast.error(err.message);
+        }}
       />
+    </div>
+  );
+}
+
+/**
+ * Compact empty state used inside expanded section editors.
+ */
+function EmptyState({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="rounded-xl border-2 border-dashed border-line bg-white p-5 text-center">
+      <div className="font-display text-lg leading-tight tracking-tight text-ink-900">
+        {title}
+      </div>
+      <p className="mx-auto mt-1.5 max-w-sm text-sm text-ink-500">{body}</p>
     </div>
   );
 }
@@ -1424,65 +1513,105 @@ function CertificationsEditor({
 
   async function add() {
     if (!name.trim()) return;
-    const row = await addCertification({ name: name.trim(), badgeUrl: badgeUrl ?? undefined });
-    setProfile((p) => ({ ...p, certifications: [...p.certifications, row] }));
+    const row = await addCertification({
+      name: name.trim(),
+      badgeUrl: badgeUrl ?? undefined,
+    });
+    setProfile((p) => ({
+      ...p,
+      certifications: [...p.certifications, row],
+    }));
     setName("");
     setBadgeUrl(null);
   }
 
   async function remove(id: number) {
     await deleteCertification(id);
-    setProfile((p) => ({ ...p, certifications: p.certifications.filter((c) => c.id !== id) }));
+    setProfile((p) => ({
+      ...p,
+      certifications: p.certifications.filter((c) => c.id !== id),
+    }));
   }
 
   return (
     <div className="space-y-3">
-      <ul className="space-y-2">
-        {profile.certifications.map((c) => (
-          <li key={c.id} className="flex items-center justify-between rounded-xl border border-neutral-200 p-3">
-            <div className="flex items-center gap-2">
-              {c.badgeUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={c.badgeUrl} alt="" className="h-8 w-8 rounded object-contain" />
-              ) : null}
-              <span className="font-semibold">{c.name}</span>
-            </div>
-            <button onClick={() => remove(c.id)} className="text-neutral-400 hover:text-red-600">
-              <Trash className="h-4 w-4" />
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div className="rounded-xl border border-dashed border-neutral-300 p-3">
+      {profile.certifications.length === 0 ? (
+        <EmptyState
+          title="Your trust badges"
+          body="Gas Safe, NICEIC, CSCS, City &amp; Guilds, public liability — the credentials that make customers click Call."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {profile.certifications.map((c) => (
+            <li
+              key={c.id}
+              className="flex items-center justify-between gap-3 rounded-xl border border-line bg-white p-3"
+            >
+              <div className="flex min-w-0 items-center gap-2.5">
+                {c.badgeUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={c.badgeUrl}
+                    alt=""
+                    className="h-8 w-8 flex-shrink-0 rounded object-contain"
+                  />
+                ) : (
+                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded bg-muted">
+                    <ShieldCheck className="h-4 w-4 text-brand" strokeWidth={2.5} />
+                  </span>
+                )}
+                <span className="truncate font-bold text-ink-900">{c.name}</span>
+              </div>
+              <button
+                onClick={() => remove(c.id)}
+                aria-label="Remove"
+                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-red-600"
+              >
+                <Trash className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="rounded-xl border-2 border-dashed border-line bg-white p-3">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Certification name (e.g. Gas Safe Registered)"
-          className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
+          placeholder="e.g. Gas Safe Registered #12345"
+          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-brand focus:outline-none"
         />
         <div className="mt-2 flex items-center gap-2">
           <UploadButton
             endpoint="certification"
             appearance={{
-              button: "ut-ready:bg-neutral-100 bg-neutral-100 text-ink-900 border border-neutral-200 rounded-lg px-3 py-1.5 text-sm font-semibold",
+              button:
+                "ut-ready:bg-white bg-white text-ink-900 border border-line rounded-lg px-3 py-1.5 text-xs font-bold",
               allowedContent: "hidden",
             }}
             onClientUploadComplete={(res) => {
               const url = res?.[0]?.url;
               if (url) setBadgeUrl(url);
             }}
-            onUploadError={(err) => { toast.error(err.message); }}
+            onUploadError={(err) => {
+              toast.error(err.message);
+            }}
           />
+          <span className="text-[11px] text-ink-500">Badge image (optional)</span>
           {badgeUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={badgeUrl} alt="" className="h-8 w-8 rounded object-contain" />
+            <img
+              src={badgeUrl}
+              alt=""
+              className="h-8 w-8 rounded object-contain"
+            />
           )}
         </div>
         <button
           onClick={add}
-          className="mt-2 inline-flex items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white"
+          disabled={!name.trim()}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-ink-900 px-3 py-2 text-xs font-bold text-white transition hover:bg-ink-800 disabled:opacity-40"
         >
-          <Plus className="h-4 w-4" /> Add certification
+          <Plus className="h-3.5 w-3.5" /> Add certification
         </button>
       </div>
     </div>

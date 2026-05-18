@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { requireOnboardedUser } from "@/lib/auth";
 import { Inbox, LayoutGrid, CreditCard, Hammer, Sparkles, BarChart3 } from "lucide-react";
+import { NavLink } from "./nav-link";
 
 export const dynamic = "force-dynamic";
 
@@ -80,35 +81,3 @@ export default async function DashboardLayout({
   );
 }
 
-function NavLink({
-  href,
-  children,
-  icon,
-  mobile,
-}: {
-  href: string;
-  children: React.ReactNode;
-  icon: React.ReactNode;
-  mobile?: boolean;
-}) {
-  if (mobile) {
-    return (
-      <Link
-        href={href}
-        className="flex flex-1 items-center justify-center gap-2 py-3 text-sm font-bold text-ink-700"
-      >
-        {icon}
-        {children}
-      </Link>
-    );
-  }
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-bold text-ink-700 transition hover:bg-ink-900 hover:text-white"
-    >
-      {icon}
-      {children}
-    </Link>
-  );
-}
