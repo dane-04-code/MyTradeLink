@@ -15,7 +15,10 @@ export async function generateMetadata(
   const profile = await getProfileBySlug(slug);
   if (!profile) return { title: "TradeLink" };
   const u = profile.user;
-  const title = `${u.name ?? "TradeLink"}${u.trade ? ` · ${u.trade}` : ""}${u.location ? ` · ${u.location}` : ""}`;
+  const name = u.name ?? "TradeLink";
+  const tradePart = u.trade ?? "Tradesman";
+  const locationPart = u.location ? ` in ${u.location}` : "";
+  const title = `${name} — ${tradePart}${locationPart} | TradeLink`;
   const description =
     u.about?.slice(0, 200) ??
     `Contact ${u.name ?? "this tradesman"}${u.trade ? `, a ${u.trade}` : ""}${u.location ? ` in ${u.location}` : ""}, for a quote.`;

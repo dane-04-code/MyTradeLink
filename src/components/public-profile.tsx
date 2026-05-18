@@ -35,7 +35,7 @@ export function PublicProfile({
   preview?: boolean;
 }) {
   const { user } = profile;
-  const accent = user.accentColor || "#FF6B00";
+  const accent = user.accentColor || "#F97316";
   const orderedSections = profile.sections.filter((s) => s.isEnabled);
 
   return (
@@ -54,27 +54,27 @@ export function PublicProfile({
             return <CallButton key={key} profile={profile} />;
           case "whatsapp_button":
             return <WhatsappButton key={key} profile={profile} />;
-          case "emergency_button":
+          case "emergency_callout":
             return user.plan === "paid" ? <EmergencyButton key={key} profile={profile} /> : null;
           case "about_me":
             return <AboutMe key={key} profile={profile} />;
-          case "services":
+          case "services_list":
             return <ServicesList key={key} profile={profile} />;
-          case "gallery":
+          case "photo_gallery":
             return <Gallery key={key} profile={profile} />;
-          case "before_after":
+          case "before_after_photos":
             return <BeforeAfter key={key} profile={profile} />;
           case "certifications":
             return <Certifications key={key} profile={profile} />;
           case "google_reviews":
             return <GoogleReviews key={key} profile={profile} />;
           case "quote_form":
-            return <QuoteForm key={key} profile={profile} preview={preview} />;
+            return user.plan === "paid" ? <QuoteForm key={key} profile={profile} preview={preview} /> : null;
           case "areas_covered":
             return <AreasCovered key={key} profile={profile} />;
           case "payment_methods":
             return <PaymentMethods key={key} profile={profile} />;
-          case "facebook":
+          case "facebook_link":
             return <FacebookLink key={key} profile={profile} />;
           case "intro_video":
             return user.plan === "paid" ? <IntroVideo key={key} profile={profile} /> : null;
@@ -421,7 +421,6 @@ function IntroVideo({ profile }: { profile: FullProfile }) {
 }
 
 function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolean }) {
-  const paid = profile.user.plan === "paid";
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
@@ -435,7 +434,6 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
     const form = e.currentTarget;
     const fd = new FormData(form);
     const body = {
-      slug: profile.user.slug,
       customerName: String(fd.get("customerName") || ""),
       customerPhone: String(fd.get("customerPhone") || ""),
       jobDescription: String(fd.get("jobDescription") || ""),
@@ -448,7 +446,7 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
     }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/quote", {
+      const res = await fetch(`/api/quote/${profile.user.slug}`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
@@ -506,37 +504,35 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
           required
           className="input min-h-[120px]"
         />
-        {paid ? (
-          <div>
-            <UploadButton
-              endpoint="quotePhotos"
-              appearance={{
-                button:
-                  "ut-ready:bg-neutral-100 ut-uploading:opacity-60 bg-neutral-100 text-ink-900 rounded-2xl px-5 py-3 text-base font-semibold border border-neutral-200 w-full",
-                allowedContent: "text-neutral-500 text-xs",
-              }}
-              content={{
-                button: (
-                  <span className="flex items-center gap-2">
-                    <Camera className="h-4 w-4" /> Add photos (optional)
-                  </span>
-                ),
-              }}
-              onClientUploadComplete={(res) => {
-                if (res) setPhotoUrls((p) => [...p, ...res.map((r) => r.url)]);
-              }}
-              onUploadError={(err) => { toast.error(err.message); }}
-            />
-            {photoUrls.length > 0 && (
-              <div className="mt-2 flex gap-2 overflow-x-auto">
-                {photoUrls.map((u) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={u} src={u} alt="" className="h-16 w-16 rounded-lg object-cover" />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : null}
+        <div>
+          <UploadButton
+            endpoint="quotePhotos"
+            appearance={{
+              button:
+                "ut-ready:bg-neutral-100 ut-uploading:opacity-60 bg-neutral-100 text-ink-900 rounded-2xl px-5 py-3 text-base font-semibold border border-neutral-200 w-full",
+              allowedContent: "text-neutral-500 text-xs",
+            }}
+            content={{
+              button: (
+                <span className="flex items-center gap-2">
+                  <Camera className="h-4 w-4" /> Add photos (optional)
+                </span>
+              ),
+            }}
+            onClientUploadComplete={(res) => {
+              if (res) setPhotoUrls((p) => [...p, ...res.map((r) => r.url)]);
+            }}
+            onUploadError={(err) => { toast.error(err.message); }}
+          />
+          {photoUrls.length > 0 && (
+            <div className="mt-2 flex gap-2 overflow-x-auto">
+              {photoUrls.map((u) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={u} src={u} alt="" className="h-16 w-16 rounded-lg object-cover" />
+              ))}
+            </div>
+          )}
+        </div>
         <button
           type="submit"
           disabled={submitting}

@@ -445,7 +445,7 @@ function SectionDetail({
           placeholder="07700 900123"
         />
       );
-    case "emergency_button":
+    case "emergency_callout":
       return (
         <FieldEditor
           profile={profile}
@@ -465,13 +465,14 @@ function SectionDetail({
           field="about"
           label="About you"
           textarea
+          maxLength={280}
         />
       );
-    case "services":
+    case "services_list":
       return <ServicesEditor profile={profile} setProfile={setProfile} />;
-    case "gallery":
+    case "photo_gallery":
       return <PhotosEditor profile={profile} setProfile={setProfile} type="gallery" label="Gallery photos" />;
-    case "before_after":
+    case "before_after_photos":
       return <BeforeAfterEditor profile={profile} setProfile={setProfile} />;
     case "certifications":
       return <CertificationsEditor profile={profile} setProfile={setProfile} />;
@@ -505,7 +506,7 @@ function SectionDetail({
           placeholder="Cash, card, bank transfer"
         />
       );
-    case "facebook":
+    case "facebook_link":
       return (
         <FieldEditor
           profile={profile}
@@ -555,6 +556,7 @@ function FieldEditor({
   label,
   placeholder,
   textarea,
+  maxLength,
 }: {
   profile: FullProfile;
   setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
@@ -562,6 +564,7 @@ function FieldEditor({
   label: string;
   placeholder?: string;
   textarea?: boolean;
+  maxLength?: number;
 }) {
   const value = (profile.user[field] as string | null) ?? "";
   const [local, setLocal] = useState(value);
@@ -583,6 +586,9 @@ function FieldEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [local]);
 
+  const onChange = (v: string) =>
+    setLocal(maxLength ? v.slice(0, maxLength) : v);
+
   return (
     <div>
       <label className="mb-1.5 block text-sm font-semibold text-ink-700">
@@ -591,18 +597,25 @@ function FieldEditor({
       {textarea ? (
         <textarea
           value={local}
-          onChange={(e) => setLocal(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={4}
+          maxLength={maxLength}
           className="w-full rounded-xl border-2 border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
         />
       ) : (
         <input
           value={local}
-          onChange={(e) => setLocal(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
+          maxLength={maxLength}
           className="w-full rounded-xl border-2 border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
         />
+      )}
+      {maxLength && (
+        <p className="mt-1 text-xs text-ink-500">
+          {local.length}/{maxLength} characters
+        </p>
       )}
     </div>
   );

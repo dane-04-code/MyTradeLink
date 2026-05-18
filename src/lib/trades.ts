@@ -6,6 +6,9 @@ export const TRADES = [
   "Painter",
   "Carpenter",
   "Roofer",
+  "Gas Fitter",
+  "Tiler",
+  "Plasterer",
   "Other",
 ] as const;
 

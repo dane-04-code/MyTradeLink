@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
-  themeColor: "#0B0B0F",
+  themeColor: "#0F172A",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{
-        variables: { colorPrimary: "#FF6B00", colorText: "#0B0B0F" },
+        variables: { colorPrimary: "#F97316", colorText: "#0F172A" },
       }}
     >
       <html lang="en">

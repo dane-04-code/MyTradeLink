@@ -57,9 +57,13 @@ export async function updateProfile(data: Partial<{
   availabilityStatus: "taking_on_work" | "fully_booked";
 }>) {
   const user = await requireUser();
+  const sanitized = { ...data };
+  if (typeof sanitized.about === "string") {
+    sanitized.about = sanitized.about.slice(0, 280);
+  }
   await db
     .update(users)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...sanitized, updatedAt: new Date() })
     .where(eq(users.id, user.id));
   revalidatePath(`/t/${user.slug}`);
   revalidatePath("/dashboard");

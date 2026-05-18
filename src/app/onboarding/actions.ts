@@ -52,7 +52,7 @@ export async function saveStep4(data: { about: string }) {
   const user = await requireUser();
   await db
     .update(users)
-    .set({ about: data.about, onboardingComplete: true, updatedAt: new Date() })
+    .set({ about: data.about.slice(0, 280), onboardingComplete: true, updatedAt: new Date() })
     .where(eq(users.id, user.id));
   return { ok: true };
 }

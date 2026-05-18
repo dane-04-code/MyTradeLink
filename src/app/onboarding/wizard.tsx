@@ -305,13 +305,14 @@ function Step4({
       <div className="mt-8 space-y-5">
         <textarea
           value={state.about}
-          onChange={(e) => update("about", e.target.value)}
+          onChange={(e) => update("about", e.target.value.slice(0, 280))}
           rows={5}
-          placeholder="Local plumber based in Manchester with 12 years' experience. I do reliable work, turn up when I say I will, and charge fair prices."
+          maxLength={280}
+          placeholder="Been a plumber for 15 years. Based in Manchester. No job too small."
           className="input min-h-[160px] bg-white/5 text-white border-white/10 placeholder:text-white/30 focus:bg-white/10"
         />
         <p className="text-sm text-white/40">
-          {state.about.length}/300 characters
+          {state.about.length}/280 characters
         </p>
       </div>
     </div>

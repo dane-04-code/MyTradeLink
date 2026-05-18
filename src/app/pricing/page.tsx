@@ -36,8 +36,8 @@ export default async function PricingPage() {
             features={[
               "Public profile page",
               "Call, WhatsApp, services, gallery",
-              "Quote requests (no photos)",
-              "Up to 4 photos",
+              "Certifications + reviews link",
+              "Areas covered + payment methods",
               "TradeLink badge in footer",
             ]}
             cta={
@@ -54,12 +54,10 @@ export default async function PricingPage() {
             annual="£89/year — save £19"
             features={[
               "Everything in Free",
-              "Quote form with photo uploads",
+              "Quote request form (with photo uploads)",
               "Emergency callout button",
               "Intro video",
-              "Unlimited gallery + before/after",
               "No TradeLink badge",
-              "Priority listing (coming soon)",
             ]}
             cta={<PricingButtons isSignedIn={isSignedIn} />}
           />

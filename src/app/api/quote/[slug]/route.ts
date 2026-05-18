@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { sendNewQuoteEmail } from "@/lib/email";
 
 const schema = z.object({
-  slug: z.string().min(1),
   customerName: z.string().min(1).max(120),
   customerPhone: z.string().min(4).max(40),
   jobDescription: z.string().min(1).max(2000),
@@ -14,18 +13,25 @@ const schema = z.object({
   photoUrls: z.array(z.string().url()).max(8).optional().default([]),
 });
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;
   const body = await req.json().catch(() => null);
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid" }, { status: 400 });
   }
   const data = parsed.data;
-  const user = await db.query.users.findFirst({ where: eq(users.slug, data.slug) });
+
+  const user = await db.query.users.findFirst({ where: eq(users.slug, slug) });
   if (!user) return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  // Only paid plans can attach photos
-  const photoUrls = user.plan === "paid" ? data.photoUrls : [];
+  // Quote form is a Pro-only section
+  if (user.plan !== "paid") {
+    return NextResponse.json({ error: "not available" }, { status: 404 });
+  }
 
   await db.insert(quoteRequests).values({
     userId: user.id,
@@ -33,7 +39,7 @@ export async function POST(req: Request) {
     customerPhone: data.customerPhone,
     jobDescription: data.jobDescription,
     postcode: data.postcode ?? null,
-    photoUrls,
+    photoUrls: data.photoUrls,
   });
 
   if (user.email) {

@@ -54,7 +54,7 @@ export const users = pgTable(
     introVideoUrl: text("intro_video_url"),
     emergencyNumber: varchar("emergency_number", { length: 40 }),
     profilePhotoUrl: text("profile_photo_url"),
-    accentColor: varchar("accent_color", { length: 16 }).default("#FF6B00"),
+    accentColor: varchar("accent_color", { length: 16 }).default("#F97316"),
     plan: planEnum("plan").notNull().default("free"),
     slug: varchar("slug", { length: 80 }).notNull(),
     stripeCustomerId: varchar("stripe_customer_id", { length: 191 }),

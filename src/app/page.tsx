@@ -202,7 +202,7 @@ function Pricing({ isSignedIn }: { isSignedIn: boolean }) {
             <span className="text-white/60">forever</span>
           </div>
           <ul className="mt-6 space-y-2 text-sm text-white/80">
-            {["Public profile page", "Call, WhatsApp, services", "Gallery + certifications", "Quote requests"].map((f) => (
+            {["Public profile page", "Call, WhatsApp, services", "Gallery + certifications", "Areas covered + payment methods"].map((f) => (
               <li key={f} className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-brand" /> {f}
               </li>
@@ -229,7 +229,7 @@ function Pricing({ isSignedIn }: { isSignedIn: boolean }) {
           <ul className="mt-6 space-y-2 text-sm text-white/80">
             {[
               "Everything in Free",
-              "Quote form with photo uploads",
+              "Quote request form (with photos)",
               "Emergency callout button",
               "Intro video",
               "No TradeLink badge",
