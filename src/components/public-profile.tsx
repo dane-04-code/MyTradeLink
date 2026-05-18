@@ -243,23 +243,16 @@ function CallButton({ profile }: { profile: FullProfile }) {
   const first = profile.user.name?.split(" ")[0] || "now";
   return (
     <Section>
-      <a
+      <ActionButton
         href={`tel:${profile.user.phone}`}
-        className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-green-600 px-6 py-5 text-white shadow-[0_10px_25px_rgba(22,163,74,0.35)] transition active:scale-[0.98]"
-      >
-        <span className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
-            <Phone className="h-5 w-5" />
-          </span>
-          <span className="text-left">
-            <span className="block font-display text-lg leading-none tracking-tight">
-              Call {first}
-            </span>
-            <span className="block text-xs text-white/75">{profile.user.phone}</span>
-          </span>
-        </span>
-        <span className="text-sm font-bold opacity-80">Tap →</span>
-      </a>
+        bandClassName="bg-green-600"
+        bandStyle={null}
+        labelClassName="text-green-700"
+        label={`Call ${first}`}
+        icon={<Phone className="h-6 w-6" strokeWidth={2.5} />}
+        body={profile.user.phone}
+        tabularBody
+      />
     </Section>
   );
 }
@@ -270,25 +263,21 @@ function WhatsappButton({ profile }: { profile: FullProfile }) {
   const cleaned = number.replace(/[^0-9+]/g, "");
   return (
     <Section>
-      <a
+      <ActionButton
         href={`https://wa.me/${cleaned.replace(/^\+/, "")}`}
         target="_blank"
-        rel="noopener noreferrer"
-        className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-white shadow-[0_10px_25px_rgba(37,211,102,0.35)] transition active:scale-[0.98]"
-      >
-        <span className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
-            <MessageCircle className="h-5 w-5" />
+        bandClassName="bg-[#25D366]"
+        bandStyle={null}
+        labelClassName="text-[#1A8E4A]"
+        label="WhatsApp"
+        icon={<MessageCircle className="h-6 w-6" strokeWidth={2.5} />}
+        body={
+          <span className="inline-flex items-baseline gap-1.5">
+            Send a message
+            <span className="text-base">→</span>
           </span>
-          <span className="text-left">
-            <span className="block font-display text-lg leading-none tracking-tight">
-              WhatsApp message
-            </span>
-            <span className="block text-xs text-white/85">Usually replies same day</span>
-          </span>
-        </span>
-        <span className="text-sm font-bold opacity-80">Tap →</span>
-      </a>
+        }
+      />
     </Section>
   );
 }
@@ -298,32 +287,86 @@ function EmergencyButton({ profile }: { profile: FullProfile }) {
   if (!number) return null;
   return (
     <Section>
-      <a
+      <ActionButton
         href={`tel:${number}`}
-        className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl bg-red-600 px-6 py-5 text-white shadow-[0_10px_25px_rgba(220,38,38,0.4)] transition active:scale-[0.98]"
-      >
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -right-12 -top-4 h-40 w-40 rotate-12 opacity-25"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(45deg, #fff 0 6px, transparent 6px 18px)",
-          }}
-        />
-        <span className="relative flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
-            <Phone className="h-5 w-5" />
-          </span>
-          <span className="text-left">
-            <span className="block font-display text-lg leading-none tracking-tight">
-              Emergency callout
-            </span>
-            <span className="block text-xs text-white/85">24/7 · Out of hours rates apply</span>
-          </span>
-        </span>
-        <span className="relative text-sm font-bold opacity-90">Tap →</span>
-      </a>
+        bandClassName="text-white"
+        bandStyle={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, #DC2626 0 8px, #991B1B 8px 16px)",
+        }}
+        labelClassName="text-red-700"
+        label="Emergency · 24/7"
+        icon={<Phone className="h-6 w-6" strokeWidth={2.5} />}
+        body={number}
+        tabularBody
+      />
     </Section>
+  );
+}
+
+/**
+ * Hard-edged action button, like an industrial pushbutton: 2px ink-900
+ * outline, function-coloured side band holding the icon, white body with a
+ * mini-caps label and a big Archivo Black hero line (a phone number or
+ * action text). Sits on a hard 4px ink-900 shadow plate — pressing the
+ * button drops it into its own shadow.
+ */
+function ActionButton({
+  href,
+  target,
+  bandClassName,
+  bandStyle,
+  labelClassName,
+  label,
+  icon,
+  body,
+  tabularBody,
+}: {
+  href: string;
+  target?: string;
+  bandClassName: string;
+  bandStyle: React.CSSProperties | null;
+  labelClassName: string;
+  label: string;
+  icon: React.ReactNode;
+  body: React.ReactNode;
+  tabularBody?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target={target}
+      rel={target ? "noopener noreferrer" : undefined}
+      className="flex translate-y-0 overflow-hidden rounded-2xl border-[2.5px] border-ink-900 bg-white shadow-[0_4px_0_0_#0F172A] transition-all duration-75 ease-out active:translate-y-1 active:shadow-[0_0_0_0_#0F172A]"
+    >
+      <div
+        className={cn(
+          "flex w-[68px] flex-shrink-0 items-center justify-center border-r-[2.5px] border-ink-900 text-white",
+          bandClassName
+        )}
+        style={bandStyle ?? undefined}
+      >
+        {icon}
+      </div>
+      <div className="flex-1 px-4 py-3.5">
+        <div
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-[0.22em]",
+            labelClassName
+          )}
+        >
+          {label}
+        </div>
+        <div
+          className={cn(
+            "mt-0.5 font-display text-[22px] leading-tight tracking-tight text-ink-900",
+            tabularBody && "tabular-nums"
+          )}
+        >
+          {body}
+        </div>
+      </div>
+    </a>
   );
 }
 
