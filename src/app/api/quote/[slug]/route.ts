@@ -4,8 +4,11 @@ import { db } from "@/lib/db";
 import { quoteRequests, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { sendNewQuoteEmail } from "@/lib/email";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const schema = z.object({
+  // honeypot — bots fill hidden fields, real users don't
+  website: z.string().max(0).optional().default(""),
   customerName: z.string().min(1).max(120),
   customerPhone: z.string().min(4).max(40),
   jobDescription: z.string().min(1).max(2000),
@@ -13,17 +16,49 @@ const schema = z.object({
   photoUrls: z.array(z.string().url()).max(8).optional().default([]),
 });
 
+// 3 submissions per IP per slug per hour
+const QUOTE_LIMIT = 3;
+const QUOTE_WINDOW_MS = 60 * 60 * 1000;
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
+
+  const ip = clientIp(req);
+  const limit = rateLimit(
+    `quote:${slug}:${ip}`,
+    QUOTE_LIMIT,
+    QUOTE_WINDOW_MS
+  );
+  if (!limit.allowed) {
+    return NextResponse.json(
+      {
+        error: "Too many requests — try again in a bit.",
+        retryInSeconds: limit.resetInSeconds,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(limit.resetInSeconds),
+        },
+      }
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid" }, { status: 400 });
   }
   const data = parsed.data;
+
+  // Honeypot — silently accept and discard if the hidden field is filled.
+  // Bots think they succeeded; real users never trigger this branch.
+  if (data.website && data.website.length > 0) {
+    return NextResponse.json({ ok: true });
+  }
 
   const user = await db.query.users.findFirst({ where: eq(users.slug, slug) });
   if (!user) return NextResponse.json({ error: "not found" }, { status: 404 });

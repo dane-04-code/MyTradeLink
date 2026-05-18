@@ -34,8 +34,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# drizzle
-/drizzle
+# drizzle (we track generated migration files; ignore the local meta cache only)
+/drizzle/meta/_journal.json.bak
 
 # clerk configuration (can include secrets)
 /.clerk/

@@ -30,6 +30,14 @@ export async function generateMetadata(
     u.about?.slice(0, 200) ??
     `Contact ${u.name ?? "this tradesman"}${u.trade ? `, a ${u.trade}` : ""}${u.location ? ` in ${u.location}` : ""}, for a quote.`;
   const canonical = `${APP_URL}/t/${slug}`;
+  const ogParams = new URLSearchParams({
+    name: u.name ?? "",
+    trade: u.trade ?? "",
+    location: u.location ?? "",
+    accent: u.accentColor ?? "#F97316",
+    ...(u.profilePhotoUrl ? { photo: u.profilePhotoUrl } : {}),
+  });
+  const ogImage = `${APP_URL}/api/og/${slug}?${ogParams.toString()}`;
   return {
     title,
     description,
@@ -39,13 +47,13 @@ export async function generateMetadata(
       url: canonical,
       title,
       description,
-      images: u.profilePhotoUrl ? [u.profilePhotoUrl] : undefined,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: u.profilePhotoUrl ? [u.profilePhotoUrl] : undefined,
+      images: [ogImage],
     },
   };
 }

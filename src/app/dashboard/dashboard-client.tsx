@@ -44,6 +44,7 @@ import { THEME_PRESETS, isValidHex } from "@/lib/themes";
 import { PublicProfile } from "@/components/public-profile";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
+import { QrButton } from "./qr-button";
 import * as serverActions from "./actions";
 
 /**
@@ -318,6 +319,7 @@ function LinkBar({
             </button>
           )}
         </div>
+        <QrButton url={publicUrl} slug={slug} />
         <button
           onClick={copy}
           className="flex items-center justify-center gap-2 border-t border-line bg-ink-900 px-5 text-sm font-bold text-white transition hover:bg-ink-800 sm:border-l sm:border-t-0"

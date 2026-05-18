@@ -643,6 +643,8 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
     const form = e.currentTarget;
     const fd = new FormData(form);
     const body = {
+      // honeypot — real users leave it blank; bots fill every field
+      website: String(fd.get("website") || ""),
       customerName: String(fd.get("customerName") || ""),
       customerPhone: String(fd.get("customerPhone") || ""),
       jobDescription: String(fd.get("jobDescription") || ""),
@@ -660,6 +662,11 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (res.status === 429) {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error ?? "Too many requests — try again in a bit.");
+        return;
+      }
       if (!res.ok) throw new Error(await res.text());
       setSent(true);
       form.reset();
@@ -688,6 +695,15 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
   return (
     <Section title="Get a quote">
       <form onSubmit={onSubmit} className="space-y-3">
+        {/* Honeypot — hidden from real users, bots fill it */}
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="absolute left-[-9999px] h-0 w-0 opacity-0"
+        />
         <input
           name="customerName"
           placeholder="Your name"
