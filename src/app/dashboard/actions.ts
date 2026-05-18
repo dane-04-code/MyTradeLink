@@ -51,8 +51,11 @@ export async function updateProfile(data: Partial<{
   paymentMethods: string;
   googleReviewUrl: string;
   facebookUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
   introVideoUrl: string;
   profilePhotoUrl: string;
+  bannerImageUrl: string;
   accentColor: string;
   availabilityStatus: "taking_on_work" | "fully_booked";
 }>) {

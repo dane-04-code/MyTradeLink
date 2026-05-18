@@ -14,6 +14,16 @@ export const ourFileRouter = {
       return { url: file.ufsUrl };
     }),
 
+  banner: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      const { userId } = await auth();
+      if (!userId) throw new Error("Unauthorized");
+      return { userId };
+    })
+    .onUploadComplete(async ({ file }) => {
+      return { url: file.ufsUrl };
+    }),
+
   gallery: f({ image: { maxFileSize: "8MB", maxFileCount: 12 } })
     .middleware(async () => {
       const { userId } = await auth();

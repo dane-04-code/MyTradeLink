@@ -33,7 +33,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import type { FullProfile } from "@/lib/queries";
-import { SECTION_DEFS, type SectionKey, sectionDef } from "@/lib/sections";
+import {
+  SECTION_DEFS,
+  SECTION_GROUPS,
+  type SectionGroup as SectionGroupDef,
+  type SectionKey,
+  sectionDef,
+} from "@/lib/sections";
+import { THEME_PRESETS, isValidHex } from "@/lib/themes";
 import { PublicProfile } from "@/components/public-profile";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
@@ -52,6 +59,7 @@ import {
 
 export function DashboardClient({ initialProfile }: { initialProfile: FullProfile }) {
   const [profile, setProfile] = useState<FullProfile>(initialProfile);
+  const [mobileTab, setMobileTab] = useState<"edit" | "preview">("edit");
   const isPaid = profile.user.plan === "paid";
   const publicUrl =
     typeof window !== "undefined"
@@ -59,60 +67,106 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
       : `/t/${profile.user.slug}`;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-10">
-      {/* Page heading */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
-            My page
-          </div>
-          <h1 className="mt-1 font-display text-3xl leading-none tracking-tight text-ink-900 md:text-4xl">
-            Welcome back, {profile.user.name?.split(" ")[0] || "boss"}.
-          </h1>
-        </div>
-      </div>
-
-      <LinkBar
-        slug={profile.user.slug}
-        publicUrl={publicUrl}
-        onSlugChange={(s) =>
-          setProfile((p) => ({ ...p, user: { ...p.user, slug: s } }))
-        }
+    <div className="relative">
+      {/* subtle blueprint grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#0F172A 1px, transparent 1px), linear-gradient(90deg, #0F172A 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
       />
 
-      {!isPaid && <UpgradeBanner />}
-
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        {/* LEFT: editor */}
-        <div>
-          <SectionsEditor profile={profile} setProfile={setProfile} />
-        </div>
-        {/* RIGHT: live preview */}
-        <div className="lg:sticky lg:top-32 lg:self-start">
-          <div className="mb-3 flex items-end justify-between">
-            <div>
-              <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
-                Live preview
-              </div>
-              <div className="mt-0.5 text-sm font-bold text-ink-900">
-                What customers see
-              </div>
+      <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-10">
+        {/* Page heading */}
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+              My page
             </div>
-            <a
-              href={`/t/${profile.user.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-800"
-            >
-              <Eye className="h-3.5 w-3.5" /> Open page
-            </a>
+            <h1 className="mt-1 font-display text-3xl leading-none tracking-tight text-ink-900 md:text-4xl">
+              Welcome back, {profile.user.name?.split(" ")[0] || "boss"}.
+            </h1>
           </div>
-          <div className="overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_30px_60px_rgba(15,23,42,0.25)]">
-            <div className="flex items-center justify-center bg-ink-900 py-1.5">
-              <div className="h-1 w-16 rounded-full bg-white/30" />
+        </div>
+
+        <LinkBar
+          slug={profile.user.slug}
+          publicUrl={publicUrl}
+          onSlugChange={(s) =>
+            setProfile((p) => ({ ...p, user: { ...p.user, slug: s } }))
+          }
+        />
+
+        {!isPaid && <UpgradeBanner />}
+
+        {/* Mobile Edit / Preview tabs */}
+        <div className="mt-6 flex rounded-2xl border border-line bg-white p-1 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileTab("edit")}
+            className={cn(
+              "flex-1 rounded-xl px-4 py-2.5 text-sm font-bold transition",
+              mobileTab === "edit"
+                ? "bg-ink-900 text-white"
+                : "text-ink-700 hover:bg-muted"
+            )}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab("preview")}
+            className={cn(
+              "flex-1 rounded-xl px-4 py-2.5 text-sm font-bold transition",
+              mobileTab === "preview"
+                ? "bg-ink-900 text-white"
+                : "text-ink-700 hover:bg-muted"
+            )}
+          >
+            Preview
+          </button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-6 lg:mt-6 lg:grid-cols-[1.05fr_0.95fr]">
+          {/* LEFT: editor */}
+          <div className={cn(mobileTab === "preview" && "hidden lg:block")}>
+            <SectionsEditor profile={profile} setProfile={setProfile} />
+          </div>
+          {/* RIGHT: live preview */}
+          <div
+            className={cn(
+              "lg:sticky lg:top-32 lg:self-start",
+              mobileTab === "edit" && "hidden lg:block"
+            )}
+          >
+            <div className="mb-3 flex items-end justify-between">
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+                  Live preview
+                </div>
+                <div className="mt-0.5 text-sm font-bold text-ink-900">
+                  What customers see
+                </div>
+              </div>
+              <a
+                href={`/t/${profile.user.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-800"
+              >
+                <Eye className="h-3.5 w-3.5" /> Open page
+              </a>
             </div>
-            <div className="max-h-[80vh] overflow-y-auto bg-white">
-              <PublicProfile profile={profile} preview />
+            <div className="overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_30px_60px_rgba(15,23,42,0.25)]">
+              <div className="flex items-center justify-center bg-ink-900 py-1.5">
+                <div className="h-1 w-16 rounded-full bg-white/30" />
+              </div>
+              <div className="max-h-[80vh] overflow-y-auto bg-white">
+                <PublicProfile profile={profile} preview />
+              </div>
             </div>
           </div>
         </div>
@@ -256,29 +310,108 @@ function SectionsEditor({
   profile: FullProfile;
   setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
 }) {
+  return (
+    <div>
+      <div className="mb-4">
+        <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
+          Page sections
+        </div>
+        <div className="mt-0.5 text-sm font-bold text-ink-900">
+          Toggle on/off, drag to reorder within a group, click to edit.{" "}
+          <span className="font-normal text-ink-500">Auto-saves.</span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {SECTION_GROUPS.map((group) => (
+          <SectionGroupCard
+            key={group.id}
+            group={group}
+            profile={profile}
+            setProfile={setProfile}
+          />
+        ))}
+        <ThemeCard profile={profile} setProfile={setProfile} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A collapsible group containing the sections for one logical category.
+ * Drag-reorder works within the group; the overall public-page ordering
+ * is groupIndex * 100 + indexInGroup, persisted to displayOrder.
+ */
+function SectionGroupCard({
+  group,
+  profile,
+  setProfile,
+}: {
+  group: SectionGroupDef;
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
   const isPaid = profile.user.plan === "paid";
+  const [open, setOpen] = useState(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const ordered = useMemo(
-    () =>
-      [...profile.sections].sort((a, b) => a.displayOrder - b.displayOrder),
-    [profile.sections]
-  );
+  const sectionsInGroup = useMemo(() => {
+    return group.keys
+      .map((key) => profile.sections.find((s) => s.sectionKey === key))
+      .filter((s): s is NonNullable<typeof s> => !!s)
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+  }, [group, profile.sections]);
 
-  function onDragEnd(event: { active: { id: string | number }; over: { id: string | number } | null }) {
+  const enabledCount = sectionsInGroup.filter((s) => s.isEnabled).length;
+
+  function rebuildGlobalOrder(updatedKeysForThisGroup: SectionKey[]) {
+    const groupOrderIndex = SECTION_GROUPS.findIndex((g) => g.id === group.id);
+
+    const fullOrder: SectionKey[] = [];
+    SECTION_GROUPS.forEach((g, gIdx) => {
+      if (gIdx === groupOrderIndex) {
+        fullOrder.push(...updatedKeysForThisGroup);
+      } else {
+        const keys = g.keys
+          .map((k) => profile.sections.find((s) => s.sectionKey === k))
+          .filter((s): s is NonNullable<typeof s> => !!s)
+          .sort((a, b) => a.displayOrder - b.displayOrder)
+          .map((s) => s.sectionKey as SectionKey);
+        fullOrder.push(...keys);
+      }
+    });
+    return fullOrder;
+  }
+
+  function onDragEnd(event: {
+    active: { id: string | number };
+    over: { id: string | number } | null;
+  }) {
     if (!event.over || event.active.id === event.over.id) return;
-    const oldIndex = ordered.findIndex((s) => s.sectionKey === event.active.id);
-    const newIndex = ordered.findIndex((s) => s.sectionKey === event.over!.id);
-    const moved = arrayMove(ordered, oldIndex, newIndex);
-    const withOrder = moved.map((s, idx) => ({ ...s, displayOrder: idx }));
-    setProfile((p) => ({ ...p, sections: withOrder }));
-    reorderSections(moved.map((s) => s.sectionKey as SectionKey)).catch(() =>
-      toast.error("Couldn't save order")
+    const oldIdx = sectionsInGroup.findIndex(
+      (s) => s.sectionKey === event.active.id
     );
+    const newIdx = sectionsInGroup.findIndex(
+      (s) => s.sectionKey === event.over!.id
+    );
+    if (oldIdx < 0 || newIdx < 0) return;
+    const moved = arrayMove(sectionsInGroup, oldIdx, newIdx);
+    const newKeys = moved.map((s) => s.sectionKey as SectionKey);
+    const fullOrder = rebuildGlobalOrder(newKeys);
+
+    // Apply locally
+    setProfile((p) => ({
+      ...p,
+      sections: p.sections.map((s) => {
+        const idx = fullOrder.indexOf(s.sectionKey as SectionKey);
+        return idx >= 0 ? { ...s, displayOrder: idx } : s;
+      }),
+    }));
+    reorderSections(fullOrder).catch(() => toast.error("Couldn't save order"));
   }
 
   function toggle(key: SectionKey, on: boolean, locked: boolean) {
@@ -296,44 +429,184 @@ function SectionsEditor({
   }
 
   return (
-    <div>
-      <div className="mb-4">
-        <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
-          Page sections
+    <div className="overflow-hidden rounded-2xl border border-line bg-white">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-muted"
+      >
+        <span className="h-1.5 w-6 rounded-full bg-brand" />
+        <div className="flex-1">
+          <div className="font-display text-base leading-tight tracking-tight text-ink-900">
+            {group.title}
+          </div>
+          <div className="mt-0.5 text-xs text-ink-500">{group.blurb}</div>
         </div>
-        <div className="mt-0.5 text-sm font-bold text-ink-900">
-          Toggle, drag to reorder, click to edit. <span className="font-normal text-ink-500">Auto-saves.</span>
+        <span className="rounded-full bg-muted px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-ink-700">
+          {enabledCount}/{sectionsInGroup.length} on
+        </span>
+        <span className="text-ink-500">
+          {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+        </span>
+      </button>
+
+      {open && (
+        <div className="border-t border-line bg-muted/40 p-3">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd as never}
+          >
+            <SortableContext
+              items={sectionsInGroup.map((s) => s.sectionKey)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ul className="space-y-2">
+                {sectionsInGroup.map((s) => {
+                  const def = sectionDef(s.sectionKey as SectionKey);
+                  if (!def) return null;
+                  const locked = !!def.paidOnly && !isPaid;
+                  return (
+                    <SortableRow
+                      key={s.sectionKey}
+                      id={s.sectionKey}
+                      label={def.label}
+                      description={def.description}
+                      enabled={s.isEnabled}
+                      locked={locked}
+                      onToggle={(on) =>
+                        toggle(s.sectionKey as SectionKey, on, locked)
+                      }
+                    >
+                      <SectionDetail
+                        sectionKey={s.sectionKey as SectionKey}
+                        profile={profile}
+                        setProfile={setProfile}
+                      />
+                    </SortableRow>
+                  );
+                })}
+              </ul>
+            </SortableContext>
+          </DndContext>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Theme picker — 5 swatches + custom hex. Writes to users.accentColor.
+ */
+function ThemeCard({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  const accent = profile.user.accentColor ?? "#F97316";
+  const [showCustom, setShowCustom] = useState(false);
+  const [customHex, setCustomHex] = useState(accent);
+
+  function setAccent(hex: string) {
+    setProfile((p) => ({
+      ...p,
+      user: { ...p.user, accentColor: hex },
+    }));
+    updateProfile({ accentColor: hex }).catch(() =>
+      toast.error("Couldn't save")
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-line bg-white">
+      <div className="flex items-center gap-3 px-4 py-3.5">
+        <span className="h-1.5 w-6 rounded-full" style={{ background: accent }} />
+        <div className="flex-1">
+          <div className="font-display text-base leading-tight tracking-tight text-ink-900">
+            Theme
+          </div>
+          <div className="mt-0.5 text-xs text-ink-500">
+            Accent colour for your buttons and highlights.
+          </div>
         </div>
       </div>
+      <div className="border-t border-line bg-muted/40 p-4">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+          {THEME_PRESETS.map((t) => {
+            const active = accent.toLowerCase() === t.accent.toLowerCase();
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setAccent(t.accent)}
+                className={cn(
+                  "group rounded-xl border-2 bg-white p-2 text-left transition",
+                  active
+                    ? "border-ink-900 ring-2 ring-ink-900/10"
+                    : "border-line hover:border-ink-700"
+                )}
+                title={t.hint}
+              >
+                <div
+                  className="mb-1.5 h-10 w-full rounded-md"
+                  style={{ background: t.accent }}
+                />
+                <div className="text-[11px] font-bold text-ink-900">{t.label}</div>
+                {active && (
+                  <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-500">
+                    Active
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd as never}>
-        <SortableContext items={ordered.map((s) => s.sectionKey)} strategy={verticalListSortingStrategy}>
-          <ul className="space-y-2">
-            {ordered.map((s) => {
-              const def = sectionDef(s.sectionKey as SectionKey);
-              if (!def) return null;
-              const locked = !!def.paidOnly && !isPaid;
-              return (
-                <SortableRow
-                  key={s.sectionKey}
-                  id={s.sectionKey}
-                  label={def.label}
-                  description={def.description}
-                  enabled={s.isEnabled}
-                  locked={locked}
-                  onToggle={(on) => toggle(s.sectionKey as SectionKey, on, locked)}
-                >
-                  <SectionDetail
-                    sectionKey={s.sectionKey as SectionKey}
-                    profile={profile}
-                    setProfile={setProfile}
-                  />
-                </SortableRow>
-              );
-            })}
-          </ul>
-        </SortableContext>
-      </DndContext>
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={() => setShowCustom((s) => !s)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-white px-3 py-2 text-xs font-bold text-ink-700 hover:border-ink-500"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            {showCustom ? "Hide" : "Custom colour"}
+          </button>
+          {showCustom && (
+            <div className="mt-3 flex items-center gap-2">
+              <input
+                type="color"
+                value={customHex}
+                onChange={(e) => setCustomHex(e.target.value)}
+                className="h-10 w-12 cursor-pointer rounded-lg border border-line bg-white"
+              />
+              <input
+                type="text"
+                value={customHex}
+                onChange={(e) => setCustomHex(e.target.value)}
+                maxLength={7}
+                placeholder="#F97316"
+                className="w-28 rounded-lg border border-line px-3 py-2 font-mono text-sm focus:border-brand focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isValidHex(customHex)) {
+                    toast.error("Use a valid 6-digit hex like #F97316.");
+                    return;
+                  }
+                  setAccent(customHex);
+                  toast.success("Theme updated");
+                }}
+                className="rounded-lg bg-ink-900 px-3 py-2 text-xs font-bold text-white hover:bg-ink-800"
+              >
+                Apply
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -466,6 +739,8 @@ function SectionDetail({
   switch (sectionKey) {
     case "profile_photo":
       return <ProfilePhotoEditor profile={profile} setProfile={setProfile} />;
+    case "banner_image":
+      return <BannerEditor profile={profile} setProfile={setProfile} />;
     case "call_button":
       return (
         <FieldEditor
@@ -555,6 +830,26 @@ function SectionDetail({
           field="facebookUrl"
           label="Facebook page URL"
           placeholder="https://facebook.com/..."
+        />
+      );
+    case "instagram_link":
+      return (
+        <FieldEditor
+          profile={profile}
+          setProfile={setProfile}
+          field="instagramUrl"
+          label="Instagram profile URL"
+          placeholder="https://instagram.com/..."
+        />
+      );
+    case "tiktok_link":
+      return (
+        <FieldEditor
+          profile={profile}
+          setProfile={setProfile}
+          field="tiktokUrl"
+          label="TikTok profile URL"
+          placeholder="https://tiktok.com/@..."
         />
       );
     case "intro_video":
@@ -697,6 +992,65 @@ function ProfilePhotoEditor({
           }
         }}
         onUploadError={(err) => { toast.error(err.message); }}
+      />
+    </div>
+  );
+}
+
+function BannerEditor({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  function clear() {
+    setProfile((p) => ({ ...p, user: { ...p.user, bannerImageUrl: null } }));
+    updateProfile({ bannerImageUrl: "" }).catch(() =>
+      toast.error("Couldn't remove banner")
+    );
+  }
+  return (
+    <div className="space-y-3">
+      {profile.user.bannerImageUrl ? (
+        <div className="relative overflow-hidden rounded-xl border border-line">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={profile.user.bannerImageUrl}
+            alt=""
+            className="h-32 w-full object-cover"
+          />
+          <button
+            type="button"
+            onClick={clear}
+            className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-lg bg-white/95 px-2 py-1 text-[11px] font-bold text-ink-900 shadow-sm hover:bg-white"
+          >
+            <Trash className="h-3 w-3" /> Remove
+          </button>
+        </div>
+      ) : (
+        <div className="flex h-24 items-center justify-center rounded-xl border-2 border-dashed border-line bg-muted/50 text-xs text-ink-500">
+          No banner yet — upload a wide photo (recommended 1600×600)
+        </div>
+      )}
+      <UploadButton
+        endpoint="banner"
+        appearance={{
+          button:
+            "ut-ready:bg-ink-900 bg-ink-900 text-white rounded-xl px-4 py-2 text-sm font-semibold",
+          allowedContent: "text-ink-500 text-xs",
+        }}
+        onClientUploadComplete={(res) => {
+          const url = res?.[0]?.url;
+          if (url) {
+            setProfile((p) => ({ ...p, user: { ...p.user, bannerImageUrl: url } }));
+            updateProfile({ bannerImageUrl: url });
+            toast.success("Banner updated");
+          }
+        }}
+        onUploadError={(err) => {
+          toast.error(err.message);
+        }}
       />
     </div>
   );

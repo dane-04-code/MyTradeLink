@@ -7,6 +7,8 @@ import {
   MapPin,
   Star,
   Facebook,
+  Instagram,
+  Music2,
   CreditCard,
   ShieldCheck,
   Clock,
@@ -46,6 +48,8 @@ export function PublicProfile({
       {orderedSections.map((s) => {
         const key = s.sectionKey as SectionKey;
         switch (key) {
+          case "banner_image":
+            return <BannerImage key={key} profile={profile} />;
           case "profile_photo":
             return <ProfileHeader key={key} profile={profile} />;
           case "availability_status":
@@ -76,6 +80,10 @@ export function PublicProfile({
             return <PaymentMethods key={key} profile={profile} />;
           case "facebook_link":
             return <FacebookLink key={key} profile={profile} />;
+          case "instagram_link":
+            return <InstagramLink key={key} profile={profile} />;
+          case "tiktok_link":
+            return <TiktokLink key={key} profile={profile} />;
           case "intro_video":
             return user.plan === "paid" ? <IntroVideo key={key} profile={profile} /> : null;
           default:
@@ -109,31 +117,69 @@ function Section({
   );
 }
 
-function ProfileHeader({ profile }: { profile: FullProfile }) {
-  const { user } = profile;
+function BannerImage({ profile }: { profile: FullProfile }) {
+  const url = profile.user.bannerImageUrl;
+  if (!url) return null;
   return (
-    <header className="relative px-5 pt-9">
+    <div className="relative overflow-hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={url}
+        alt=""
+        className="h-44 w-full object-cover sm:h-52"
+        loading="lazy"
+      />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-44 opacity-30"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 60% at 50% 0%, var(--accent), transparent 70%)",
-        }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-white"
       />
+    </div>
+  );
+}
+
+function ProfileHeader({ profile }: { profile: FullProfile }) {
+  const { user } = profile;
+  const bannerActive =
+    !!user.bannerImageUrl && enabled(profile, "banner_image");
+  return (
+    <header
+      className={cn(
+        "relative px-5",
+        bannerActive ? "-mt-16" : "pt-9"
+      )}
+    >
+      {!bannerActive && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-44 opacity-30"
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 60% at 50% 0%, var(--accent), transparent 70%)",
+          }}
+        />
+      )}
       <div className="relative flex flex-col items-center text-center">
         {user.profilePhotoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={user.profilePhotoUrl}
             alt={user.name ?? "Profile"}
-            className="h-32 w-32 rounded-full object-cover ring-[5px]"
+            className={cn(
+              "h-32 w-32 rounded-full object-cover ring-[5px]",
+              bannerActive && "ring-[6px] ring-offset-2 ring-offset-white"
+            )}
             style={{ ["--tw-ring-color" as never]: "var(--accent)" }}
           />
         ) : (
           <div
-            className="flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white"
-            style={{ background: "var(--accent)" }}
+            className={cn(
+              "flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white ring-[5px]",
+              bannerActive && "ring-[6px] ring-offset-2 ring-offset-white"
+            )}
+            style={{
+              background: "var(--accent)",
+              ["--tw-ring-color" as never]: "var(--accent)",
+            }}
           >
             {(user.name ?? "T")[0].toUpperCase()}
           </div>
@@ -468,16 +514,59 @@ function PaymentMethods({ profile }: { profile: FullProfile }) {
 
 function FacebookLink({ profile }: { profile: FullProfile }) {
   if (!profile.user.facebookUrl) return null;
+  return <SocialLink href={profile.user.facebookUrl} label="Follow on Facebook" icon={<Facebook className="h-5 w-5 text-[#1877F2]" />} />;
+}
+
+function InstagramLink({ profile }: { profile: FullProfile }) {
+  if (!profile.user.instagramUrl) return null;
+  return (
+    <SocialLink
+      href={profile.user.instagramUrl}
+      label="Follow on Instagram"
+      icon={
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white">
+          <Instagram className="h-4 w-4" />
+        </span>
+      }
+    />
+  );
+}
+
+function TiktokLink({ profile }: { profile: FullProfile }) {
+  if (!profile.user.tiktokUrl) return null;
+  return (
+    <SocialLink
+      href={profile.user.tiktokUrl}
+      label="Follow on TikTok"
+      icon={
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white">
+          <Music2 className="h-4 w-4" />
+        </span>
+      }
+    />
+  );
+}
+
+function SocialLink({
+  href,
+  label,
+  icon,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+}) {
   return (
     <Section>
       <a
-        href={profile.user.facebookUrl}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-neutral-200 bg-white px-5 py-4 text-base font-semibold text-ink-900 active:scale-[0.98]"
+        className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3.5 text-base font-bold text-ink-900 transition active:scale-[0.98]"
       >
-        <Facebook className="h-5 w-5 text-[#1877F2]" />
-        Follow on Facebook
+        {icon}
+        <span className="flex-1 text-left">{label}</span>
+        <ChevronRight className="h-4 w-4 text-ink-500" />
       </a>
     </Section>
   );
