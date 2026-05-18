@@ -10,6 +10,7 @@ import {
   uniqueIndex,
   index,
   json,
+  real,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -57,6 +58,8 @@ export const users = pgTable(
       .notNull()
       .default("taking_on_work"),
     googleReviewUrl: text("google_review_url"),
+    googleRating: real("google_rating"),
+    googleReviewCount: integer("google_review_count"),
     facebookUrl: text("facebook_url"),
     instagramUrl: text("instagram_url"),
     tiktokUrl: text("tiktok_url"),

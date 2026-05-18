@@ -544,19 +544,104 @@ function Certifications({ profile }: { profile: FullProfile }) {
 }
 
 function GoogleReviews({ profile }: { profile: FullProfile }) {
-  if (!profile.user.googleReviewUrl) return null;
+  const { googleReviewUrl, googleRating, googleReviewCount } = profile.user;
+  if (!googleReviewUrl) return null;
+
+  const hasRating =
+    typeof googleRating === "number" && googleRating > 0;
+  const reviewCount = googleReviewCount ?? 0;
+
+  // Fallback to the simple button if the tradesman hasn't filled in their
+  // rating / count yet — same shape as a SocialLink so it lives quietly
+  // alongside the other links.
+  if (!hasRating) {
+    return (
+      <SocialLink
+        slug={profile.user.slug}
+        href={googleReviewUrl}
+        label="Read & leave reviews on Google"
+        icon={
+          <Star
+            className="h-5 w-5 fill-yellow-400 text-yellow-400"
+            strokeWidth={1.5}
+          />
+        }
+      />
+    );
+  }
+
+  // Full rating card.
   return (
-    <Section>
+    <Section title="Reviews">
       <a
-        href={profile.user.googleReviewUrl}
+        href={googleReviewUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-neutral-200 bg-white px-5 py-4 text-base font-semibold text-ink-900 active:scale-[0.98]"
+        className="block translate-y-0 overflow-hidden rounded-2xl border-[2.5px] border-ink-900 bg-white shadow-[0_4px_0_0_#0F172A] transition-all duration-75 ease-out active:translate-y-1 active:shadow-[0_0_0_0_#0F172A]"
       >
-        <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-        Read & leave reviews on Google
+        <div className="flex items-center gap-4 p-4">
+          <div className="flex flex-col items-center justify-center">
+            <span className="font-display text-4xl leading-none tracking-tight text-ink-900 tabular-nums">
+              {googleRating!.toFixed(1)}
+            </span>
+            <StarRow rating={googleRating!} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500">
+              On Google
+            </div>
+            <div className="mt-0.5 font-display text-base leading-tight tracking-tight text-ink-900">
+              {reviewCount > 0 ? (
+                <>
+                  {reviewCount.toLocaleString()}{" "}
+                  {reviewCount === 1 ? "review" : "reviews"}
+                </>
+              ) : (
+                "Google reviews"
+              )}
+            </div>
+            <div className="mt-1 text-xs font-bold text-ink-700">
+              Read or leave one →
+            </div>
+          </div>
+        </div>
       </a>
     </Section>
+  );
+}
+
+/**
+ * Five-star row with partial fill on the last not-yet-full star so a 4.9
+ * rating shows as 4 full stars + 90% of a fifth, not as 5 solid stars.
+ */
+function StarRow({ rating }: { rating: number }) {
+  const r = Math.max(0, Math.min(5, rating));
+  return (
+    <div className="mt-1 flex gap-0.5">
+      {[0, 1, 2, 3, 4].map((i) => {
+        const fill = Math.max(0, Math.min(1, r - i));
+        return (
+          <div key={i} className="relative">
+            <Star
+              className="h-3.5 w-3.5 text-neutral-300"
+              strokeWidth={1.5}
+              fill="currentColor"
+            />
+            {fill > 0 && (
+              <div
+                className="pointer-events-none absolute inset-y-0 left-0 overflow-hidden"
+                style={{ width: `${fill * 100}%` }}
+              >
+                <Star
+                  className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400"
+                  strokeWidth={1.5}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

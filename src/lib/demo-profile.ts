@@ -22,6 +22,8 @@ export const DEMO_PROFILE: FullProfile = {
     paymentMethods: "Cash, bank transfer, card on completion",
     availabilityStatus: "taking_on_work",
     googleReviewUrl: "https://www.google.com/maps",
+    googleRating: 4.9,
+    googleReviewCount: 84,
     facebookUrl: "https://facebook.com",
     instagramUrl: "https://instagram.com/dave_the_plumber",
     tiktokUrl: "https://tiktok.com/@daveplumber",

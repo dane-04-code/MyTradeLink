@@ -857,15 +857,7 @@ function SectionDetail({
     case "certifications":
       return <CertificationsEditor profile={profile} setProfile={setProfile} />;
     case "google_reviews":
-      return (
-        <FieldEditor
-          profile={profile}
-          setProfile={setProfile}
-          field="googleReviewUrl"
-          label="Google reviews URL"
-          placeholder="https://g.page/r/..."
-        />
-      );
+      return <GoogleReviewsEditor profile={profile} setProfile={setProfile} />;
     case "areas_covered":
       return (
         <FieldEditor
@@ -1056,6 +1048,125 @@ function ProfilePhotoEditor({
           }
         }}
         onUploadError={(err) => { toast.error(err.message); }}
+      />
+    </div>
+  );
+}
+
+function GoogleReviewsEditor({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  return (
+    <div className="space-y-3">
+      <FieldEditor
+        profile={profile}
+        setProfile={setProfile}
+        field="googleReviewUrl"
+        label="Google reviews link"
+        placeholder="https://g.page/r/..."
+      />
+      <div className="grid grid-cols-2 gap-3">
+        <NumericFieldEditor
+          profile={profile}
+          setProfile={setProfile}
+          field="googleRating"
+          label="Your rating"
+          placeholder="4.9"
+          min={0}
+          max={5}
+          step={0.1}
+        />
+        <NumericFieldEditor
+          profile={profile}
+          setProfile={setProfile}
+          field="googleReviewCount"
+          label="Number of reviews"
+          placeholder="84"
+          min={0}
+          step={1}
+        />
+      </div>
+      <p className="text-[11px] text-ink-500">
+        Find these on your Google Business profile. We&apos;ll display{" "}
+        <strong className="text-ink-900">five stars</strong> with the rating
+        and review count. Leave them blank to show a plain link instead.
+      </p>
+    </div>
+  );
+}
+
+function NumericFieldEditor({
+  profile,
+  setProfile,
+  field,
+  label,
+  placeholder,
+  min,
+  max,
+  step,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+  field: "googleRating" | "googleReviewCount";
+  label: string;
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+}) {
+  const current = profile.user[field];
+  const initial = current === null || current === undefined ? "" : String(current);
+  const [local, setLocal] = useState(initial);
+
+  useEffect(() => {
+    setLocal(initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (local === initial) return;
+      const numeric =
+        local.trim() === ""
+          ? null
+          : field === "googleRating"
+            ? Number(local)
+            : Math.round(Number(local));
+      const clamped =
+        numeric === null || Number.isNaN(numeric)
+          ? null
+          : Math.max(min ?? -Infinity, Math.min(max ?? Infinity, numeric));
+      setProfile((p) => ({
+        ...p,
+        user: { ...p.user, [field]: clamped },
+      }));
+      updateProfile({ [field]: clamped } as never).catch(() =>
+        toast.error("Couldn't save")
+      );
+    }, 500);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [local]);
+
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-semibold text-ink-700">
+        {label}
+      </label>
+      <input
+        type="number"
+        value={local}
+        onChange={(e) => setLocal(e.target.value)}
+        placeholder={placeholder}
+        min={min}
+        max={max}
+        step={step}
+        inputMode="decimal"
+        className="w-full rounded-xl border-2 border-neutral-200 px-3 py-2 text-base tabular-nums focus:border-brand focus:outline-none"
       />
     </div>
   );
