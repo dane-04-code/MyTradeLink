@@ -1073,8 +1073,11 @@ function BannerEditor({
   }
   return (
     <div className="space-y-3">
+      {/* Edge-to-edge preview: break out of the section card's p-4 with
+          negative side margins, so the banner looks like the full-bleed
+          hero it actually is on the public page. */}
       {profile.user.bannerImageUrl ? (
-        <div className="relative aspect-[5/2] overflow-hidden rounded-xl border border-line">
+        <div className="relative -mx-4 aspect-[5/2] overflow-hidden border-y border-ink-900/15">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={profile.user.bannerImageUrl}
@@ -1082,21 +1085,23 @@ function BannerEditor({
             className="h-full w-full object-cover"
           />
           {/* Avatar position indicator so they know where it'll overlap */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pb-1">
-            <div className="h-10 w-10 -translate-y-3 rounded-full border-2 border-white/80 bg-white/40 backdrop-blur-sm" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
+            <div className="h-12 w-12 -translate-y-6 rounded-full border-[3px] border-white/85 bg-white/30 backdrop-blur-sm" />
           </div>
           <button
             type="button"
             onClick={clear}
-            className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-lg bg-white/95 px-2 py-1 text-[11px] font-bold text-ink-900 shadow-sm hover:bg-white"
+            className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-lg bg-white/95 px-2 py-1 text-[11px] font-bold text-ink-900 shadow-sm hover:bg-white"
           >
             <Trash className="h-3 w-3" /> Remove
           </button>
         </div>
       ) : (
-        <div className="flex aspect-[5/2] items-center justify-center rounded-xl border-2 border-dashed border-line bg-muted/50 px-4 text-center text-xs text-ink-500">
-          No banner yet — landscape photo, 1600×640 ideal.<br />
-          Centre of the image works best (top &amp; sides may crop on small screens).
+        <div className="-mx-4 flex aspect-[5/2] flex-col items-center justify-center border-y-2 border-dashed border-line bg-muted/50 px-6 text-center text-xs text-ink-500">
+          <div className="font-bold text-ink-700">No banner yet</div>
+          <div className="mt-1">
+            Wide landscape photo · 1600×640 ideal · centre of the image survives the crop
+          </div>
         </div>
       )}
       <UploadButton
