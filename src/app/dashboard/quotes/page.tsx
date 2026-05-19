@@ -34,7 +34,7 @@ export default async function QuotesPage() {
           </h1>
         </div>
         {counts.all > 0 && (
-          <div className="flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink-700">
+          <div className="flex items-center gap-2 rounded-md border-2 border-ink-900 bg-white px-3 py-1.5 text-xs font-bold text-ink-700 tabular-nums">
             <span className="inline-flex h-2 w-2 rounded-full bg-brand" />
             {counts.new} new · {counts.contacted} contacted · {counts.closed} closed
           </div>
@@ -52,29 +52,25 @@ function FreeUpsell() {
   return (
     <Link
       href="/pricing"
-      className="group relative mb-6 flex items-center gap-4 overflow-hidden rounded-2xl bg-ink-900 p-5 text-white transition hover:bg-ink-800"
+      className="group relative mb-6 flex items-center gap-4 overflow-hidden rounded-xl border-2 border-ink-900 bg-ink-900 p-5 text-white shadow-hard-brand transition active:translate-y-1 active:shadow-press"
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute -right-12 -top-8 h-40 w-40 rotate-[8deg] opacity-30"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, #F97316 0 6px, transparent 6px 18px)",
-        }}
+        className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rotate-[10deg] bg-hatch opacity-40"
       />
-      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand text-ink-900">
+      <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-brand text-ink-900 ring-2 ring-ink-900">
         <Lock className="h-5 w-5" strokeWidth={2.5} />
       </span>
-      <div className="relative flex-1">
-        <div className="font-display text-lg leading-tight tracking-tight">
+      <div className="relative flex-1 min-w-0">
+        <div className="font-display text-lg leading-tight tracking-tight md:text-xl">
           Quote requests are <span className="text-brand">Pro only</span>
         </div>
-        <div className="mt-0.5 text-sm text-white/65">
+        <div className="mt-1 text-sm text-white/70">
           Customers can already call and WhatsApp you on free. Upgrade to add
           the quote form (with photo uploads) and get every lead emailed to you.
         </div>
       </div>
-      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">
+      <div className="relative inline-flex shrink-0 items-center gap-1.5 rounded-md border-2 border-brand bg-brand px-3.5 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">
         <Sparkles className="h-3.5 w-3.5" />
         Upgrade
       </div>

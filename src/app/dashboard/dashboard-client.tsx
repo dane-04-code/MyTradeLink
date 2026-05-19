@@ -7,13 +7,13 @@ import {
   Check,
   Lock,
   ChevronDown,
-  ChevronUp,
   Sparkles,
   GripVertical,
   Eye,
   Plus,
   Trash,
   ShieldCheck,
+  Quote,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -140,6 +140,20 @@ const deleteCertification: typeof serverActions.deleteCertification = (...args) 
   isDemoRoute()
     ? Promise.resolve(DEMO_OK)
     : serverActions.deleteCertification(...args);
+const addTestimonial: typeof serverActions.addTestimonial = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve({
+        id: Math.floor(Math.random() * 1e6),
+        userId: 0,
+        customerName: args[0].customerName,
+        quote: args[0].quote,
+        location: args[0].location ?? null,
+        displayOrder: 0,
+        createdAt: new Date(),
+      })
+    : serverActions.addTestimonial(...args);
+const deleteTestimonial: typeof serverActions.deleteTestimonial = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.deleteTestimonial(...args);
 
 export function DashboardClient({ initialProfile }: { initialProfile: FullProfile }) {
   const [profile, setProfile] = useState<FullProfile>(initialProfile);
@@ -187,12 +201,12 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
         {!isPaid && <UpgradeBanner />}
 
         {/* Mobile Edit / Preview tabs */}
-        <div className="mt-6 flex rounded-2xl border border-line bg-white p-1 lg:hidden">
+        <div className="mt-6 flex rounded-lg border-2 border-ink-900 bg-white p-1 lg:hidden">
           <button
             type="button"
             onClick={() => setMobileTab("edit")}
             className={cn(
-              "flex-1 rounded-xl px-4 py-2.5 text-sm font-bold transition",
+              "flex-1 rounded-md px-4 py-2 text-sm font-bold transition",
               mobileTab === "edit"
                 ? "bg-ink-900 text-white"
                 : "text-ink-700 hover:bg-muted"
@@ -204,7 +218,7 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
             type="button"
             onClick={() => setMobileTab("preview")}
             className={cn(
-              "flex-1 rounded-xl px-4 py-2.5 text-sm font-bold transition",
+              "flex-1 rounded-md px-4 py-2 text-sm font-bold transition",
               mobileTab === "preview"
                 ? "bg-ink-900 text-white"
                 : "text-ink-700 hover:bg-muted"
@@ -239,7 +253,7 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
                 href={`/t/${profile.user.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-800"
+                className="inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-white px-3 py-1.5 text-xs font-bold text-ink-900 shadow-hard-sm transition active:translate-y-0.5 active:shadow-press hover:bg-muted"
               >
                 <Eye className="h-3.5 w-3.5" /> Open page
               </a>
@@ -247,7 +261,7 @@ export function DashboardClient({ initialProfile }: { initialProfile: FullProfil
             {/* Phone-shaped frame, capped at real-phone width so the
                 PublicProfile inside (max-w-md = 448px) fills the frame
                 edge-to-edge — banner spans the full preview width. */}
-            <div className="mx-auto w-full max-w-[380px] overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_30px_60px_rgba(15,23,42,0.25)]">
+            <div className="mx-auto w-full max-w-[380px] overflow-hidden rounded-[36px] border-[10px] border-ink-900 bg-ink-900 shadow-[0_8px_0_0_#0F172A]">
               <div className="flex items-center justify-center bg-ink-900 py-1.5">
                 <div className="h-1 w-16 rounded-full bg-white/30" />
               </div>
@@ -294,17 +308,18 @@ function LinkBar({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-white">
-      <div className="flex flex-wrap items-stretch gap-0 sm:flex-nowrap">
-        <div className="flex items-center gap-2 border-line px-4 py-3 sm:border-r">
-          <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-500">
-            Your link
-          </div>
+    <div className="overflow-hidden rounded-xl border-2 border-ink-900 bg-white shadow-hard">
+      <div className="flex flex-wrap items-stretch sm:flex-nowrap">
+        {/* Address-bar dot cluster — feels like a real browser nav row. */}
+        <div className="hidden items-center gap-1.5 border-ink-900 bg-muted px-4 sm:flex sm:border-r-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-ink-900/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-ink-900/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-brand" />
         </div>
-        <div className="flex flex-1 items-center px-4 py-3">
+        <div className="flex flex-1 items-center px-4 py-3.5">
           {editing ? (
             <div className="flex w-full items-center gap-2">
-              <span className="font-mono text-sm text-ink-500">mytradelink.app/t/</span>
+              <span className="font-mono text-sm text-ink-500">mytradelink.page/t/</span>
               <input
                 value={draft}
                 onChange={(e) =>
@@ -312,13 +327,13 @@ function LinkBar({
                     e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
                   )
                 }
-                className="flex-1 rounded-lg border-2 border-line px-3 py-1.5 font-mono text-sm focus:border-brand focus:outline-none"
+                className="flex-1 rounded-md border-2 border-ink-900 bg-white px-2.5 py-1 font-mono text-sm focus:outline-none"
                 autoFocus
               />
               <button
                 onClick={save}
                 disabled={pending}
-                className="rounded-lg bg-ink-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-800 disabled:opacity-60"
+                className="rounded-md border-2 border-ink-900 bg-brand px-3 py-1 text-xs font-bold text-ink-900 transition active:translate-y-0.5 disabled:opacity-60"
               >
                 Save
               </button>
@@ -327,7 +342,7 @@ function LinkBar({
                   setEditing(false);
                   setDraft(slug);
                 }}
-                className="text-xs font-bold text-ink-500 hover:text-ink-900"
+                className="text-xs font-bold uppercase tracking-wider text-ink-500 hover:text-ink-900"
               >
                 Cancel
               </button>
@@ -335,13 +350,13 @@ function LinkBar({
           ) : (
             <button
               onClick={() => setEditing(true)}
-              className="group flex items-baseline gap-1 truncate text-left font-mono text-sm md:text-base"
+              className="group flex w-full items-baseline gap-1 truncate text-left font-mono"
               title="Click to edit"
             >
-              <span className="text-ink-500">mytradelink.app/t/</span>
-              <span className="font-semibold text-brand">{slug}</span>
-              <span className="ml-2 hidden text-[10px] font-bold uppercase tracking-wider text-ink-500 opacity-0 transition group-hover:opacity-100 sm:inline">
-                edit
+              <span className="text-sm text-ink-500 sm:text-base">mytradelink.page/t/</span>
+              <span className="text-sm font-bold text-brand sm:text-base">{slug}</span>
+              <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-ink-500 opacity-0 transition group-hover:opacity-100">
+                Edit
               </span>
             </button>
           )}
@@ -349,9 +364,10 @@ function LinkBar({
         <QrButton url={publicUrl} slug={slug} />
         <button
           onClick={copy}
-          className="flex items-center justify-center gap-2 border-t border-line bg-ink-900 px-5 text-sm font-bold text-white transition hover:bg-ink-800 sm:border-l sm:border-t-0"
+          aria-label={copied ? "Copied" : "Copy link"}
+          className="flex items-center justify-center gap-2 border-t-2 border-ink-900 bg-ink-900 px-5 py-3 text-sm font-bold text-white transition active:bg-ink-800 sm:border-l-2 sm:border-t-0"
         >
-          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          {copied ? <Check className="h-4 w-4 text-brand" strokeWidth={3} /> : <Copy className="h-4 w-4" />}
           {copied ? "Copied" : "Copy link"}
         </button>
       </div>
@@ -363,29 +379,27 @@ function UpgradeBanner() {
   return (
     <Link
       href="/pricing"
-      className="group relative mt-4 flex items-center gap-4 overflow-hidden rounded-2xl bg-ink-900 p-5 text-white transition hover:bg-ink-800"
+      className="group relative mt-4 flex items-center gap-4 overflow-hidden rounded-xl border-2 border-ink-900 bg-ink-900 p-5 text-white shadow-hard-brand transition active:translate-y-1 active:shadow-press"
     >
+      {/* Hazard hatch in the corner — feels like a real construction tape sticker. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -right-12 -top-8 h-40 w-40 rotate-[8deg] opacity-30"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, #F97316 0 6px, transparent 6px 18px)",
-        }}
+        className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rotate-[10deg] bg-hatch opacity-40"
       />
-      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand text-ink-900">
+      <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-brand text-ink-900 ring-2 ring-ink-900">
         <Sparkles className="h-5 w-5" strokeWidth={2.5} />
       </span>
-      <div className="relative flex-1">
-        <div className="font-display text-lg leading-tight tracking-tight">
+      <div className="relative flex-1 min-w-0">
+        <div className="font-display text-lg leading-tight tracking-tight md:text-xl">
           Unlock the lot for <span className="text-brand">£9/month</span>
         </div>
-        <div className="mt-0.5 text-sm text-white/65">
-          Quote requests · Emergency callout · Intro video · No Mytradelink badge
+        <div className="mt-1 truncate text-sm text-white/70">
+          Quote requests · Emailed to you · Emergency callout · Intro video · No badge
         </div>
       </div>
-      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">
+      <div className="relative inline-flex shrink-0 items-center gap-1.5 rounded-md border-2 border-brand bg-brand px-3.5 py-2 text-sm font-bold text-ink-900 transition group-hover:translate-x-1">
         Upgrade
+        <span aria-hidden>→</span>
       </div>
     </Link>
   );
@@ -517,29 +531,36 @@ function SectionGroupCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-white">
+    <div className="overflow-hidden rounded-xl border-2 border-ink-900 bg-white">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-muted"
       >
-        <span className="h-1.5 w-6 rounded-full bg-brand" />
-        <div className="flex-1">
+        <span className="h-5 w-1.5 rounded-sm bg-brand" />
+        <div className="flex-1 min-w-0">
           <div className="font-display text-base leading-tight tracking-tight text-ink-900">
             {group.title}
           </div>
-          <div className="mt-0.5 text-xs text-ink-500">{group.blurb}</div>
+          <div className="mt-0.5 truncate text-xs text-ink-500">{group.blurb}</div>
         </div>
-        <span className="rounded-full bg-muted px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-ink-700">
-          {enabledCount}/{sectionsInGroup.length} on
+        <span className="hidden rounded-md bg-muted px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-ink-700 sm:inline-block">
+          {enabledCount}/{sectionsInGroup.length}
         </span>
-        <span className="text-ink-500">
-          {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+        <span
+          className={cn(
+            "flex h-7 w-7 items-center justify-center rounded-md text-ink-900 transition",
+            open ? "bg-ink-900 text-white" : "bg-muted"
+          )}
+        >
+          <ChevronDown
+            className={cn("h-4 w-4 transition-transform", open && "rotate-180")}
+          />
         </span>
       </button>
 
       {open && (
-        <div className="border-t border-line bg-muted/40 p-3">
+        <div className="border-t-2 border-ink-900 bg-muted/40 p-3">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -608,9 +629,12 @@ function ThemeCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-white">
+    <div className="overflow-hidden rounded-xl border-2 border-ink-900 bg-white">
       <div className="flex items-center gap-3 px-4 py-3.5">
-        <span className="h-1.5 w-6 rounded-full" style={{ background: accent }} />
+        <span
+          className="h-5 w-1.5 rounded-sm"
+          style={{ background: accent }}
+        />
         <div className="flex-1">
           <div className="font-display text-base leading-tight tracking-tight text-ink-900">
             Theme
@@ -620,8 +644,8 @@ function ThemeCard({
           </div>
         </div>
       </div>
-      <div className="border-t border-line bg-muted/40 p-4">
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+      <div className="border-t-2 border-ink-900 bg-muted/40 p-4">
+        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
           {THEME_PRESETS.map((t) => {
             const active = accent.toLowerCase() === t.accent.toLowerCase();
             return (
@@ -630,22 +654,25 @@ function ThemeCard({
                 type="button"
                 onClick={() => setAccent(t.accent)}
                 className={cn(
-                  "group rounded-xl border-2 bg-white p-2 text-left transition",
+                  "group relative rounded-md border-2 bg-white p-2 text-left transition",
                   active
-                    ? "border-ink-900 ring-2 ring-ink-900/10"
-                    : "border-line hover:border-ink-700"
+                    ? "border-ink-900 shadow-hard-sm"
+                    : "border-line hover:border-ink-900"
                 )}
                 title={t.hint}
               >
                 <div
-                  className="mb-1.5 h-10 w-full rounded-md"
+                  className="mb-1.5 h-10 w-full rounded-sm border border-ink-900/20"
                   style={{ background: t.accent }}
                 />
                 <div className="text-[11px] font-bold text-ink-900">{t.label}</div>
                 {active && (
-                  <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-500">
-                    Active
-                  </div>
+                  <span
+                    aria-hidden
+                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-ink-900 bg-brand text-ink-900"
+                  >
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
                 )}
               </button>
             );
@@ -656,18 +683,18 @@ function ThemeCard({
           <button
             type="button"
             onClick={() => setShowCustom((s) => !s)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-white px-3 py-2 text-xs font-bold text-ink-700 hover:border-ink-500"
+            className="inline-flex items-center gap-1.5 rounded-md border-2 border-line bg-white px-3 py-1.5 text-xs font-bold text-ink-700 transition hover:border-ink-900 hover:text-ink-900"
           >
             <Plus className="h-3.5 w-3.5" />
             {showCustom ? "Hide" : "Custom colour"}
           </button>
           {showCustom && (
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <input
                 type="color"
                 value={customHex}
                 onChange={(e) => setCustomHex(e.target.value)}
-                className="h-10 w-12 cursor-pointer rounded-lg border border-line bg-white"
+                className="h-10 w-12 cursor-pointer rounded-md border-2 border-ink-900 bg-white p-0"
               />
               <input
                 type="text"
@@ -675,7 +702,7 @@ function ThemeCard({
                 onChange={(e) => setCustomHex(e.target.value)}
                 maxLength={7}
                 placeholder="#F97316"
-                className="w-28 rounded-lg border border-line px-3 py-2 font-mono text-sm focus:border-brand focus:outline-none"
+                className="w-28 rounded-md border-2 border-line px-3 py-2 font-mono text-sm focus:border-ink-900 focus:outline-none"
               />
               <button
                 type="button"
@@ -687,7 +714,7 @@ function ThemeCard({
                   setAccent(customHex);
                   toast.success("Theme updated");
                 }}
-                className="rounded-lg bg-ink-900 px-3 py-2 text-xs font-bold text-white hover:bg-ink-800"
+                className="rounded-md border-2 border-ink-900 bg-ink-900 px-3 py-2 text-xs font-bold text-white transition active:translate-y-0.5"
               >
                 Apply
               </button>
@@ -730,8 +757,8 @@ function SortableRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "rounded-2xl border border-line bg-white transition",
-        isDragging && "shadow-[0_20px_40px_rgba(15,23,42,0.15)] ring-2 ring-brand",
+        "rounded-xl border border-line bg-white transition",
+        isDragging && "border-ink-900 shadow-hard",
         locked && "opacity-90"
       )}
     >
@@ -740,7 +767,7 @@ function SortableRow({
           {...attributes}
           {...listeners}
           aria-label="Drag to reorder"
-          className="cursor-grab touch-none rounded-lg p-2 text-ink-500 transition hover:bg-muted hover:text-ink-900 active:cursor-grabbing"
+          className="cursor-grab touch-none rounded-md p-2 text-ink-500 transition hover:bg-muted hover:text-ink-900 active:cursor-grabbing"
         >
           <GripVertical className="h-5 w-5" />
         </button>
@@ -752,7 +779,7 @@ function SortableRow({
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-bold text-ink-900">{label}</span>
             {locked && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-900">
+              <span className="inline-flex items-center gap-1 rounded-sm border border-ink-900 bg-brand px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-ink-900">
                 <Lock className="h-2.5 w-2.5" strokeWidth={3} /> Pro
               </span>
             )}
@@ -765,10 +792,12 @@ function SortableRow({
         {children && (
           <button
             onClick={() => setOpen((o) => !o)}
-            className="rounded-lg p-2 text-ink-500 transition hover:bg-muted hover:text-ink-900"
+            className="rounded-md p-2 text-ink-500 transition hover:bg-muted hover:text-ink-900"
             aria-label={open ? "Collapse" : "Expand"}
           >
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            <ChevronDown
+              className={cn("h-5 w-5 transition-transform", open && "rotate-180")}
+            />
           </button>
         )}
       </div>
@@ -795,18 +824,19 @@ function Toggle({
       disabled={disabled}
       aria-pressed={checked}
       className={cn(
-        "relative h-7 w-12 rounded-full transition",
+        "relative inline-flex h-7 w-[52px] flex-shrink-0 items-center rounded-full border-2 border-ink-900 transition-colors",
         disabled
-          ? "bg-neutral-200 opacity-60"
+          ? "bg-muted opacity-60"
           : checked
             ? "bg-brand"
-            : "bg-neutral-300"
+            : "bg-muted"
       )}
     >
       <span
+        aria-hidden
         className={cn(
-          "absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-white shadow-md transition",
-          checked && "translate-x-5"
+          "block h-5 w-5 rounded-full border-2 border-ink-900 bg-white transition-transform",
+          checked ? "translate-x-[26px]" : "translate-x-[2px]"
         )}
       />
     </button>
@@ -880,6 +910,8 @@ function SectionDetail({
       return <BeforeAfterEditor profile={profile} setProfile={setProfile} />;
     case "certifications":
       return <CertificationsEditor profile={profile} setProfile={setProfile} />;
+    case "testimonials":
+      return <TestimonialsEditor profile={profile} setProfile={setProfile} />;
     case "google_reviews":
       return <GoogleReviewsEditor profile={profile} setProfile={setProfile} />;
     case "areas_covered":
@@ -1017,7 +1049,7 @@ function FieldEditor({
           placeholder={placeholder}
           rows={4}
           maxLength={maxLength}
-          className="w-full rounded-xl border-2 border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
+          className="w-full rounded-xl border-2 border-line px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
         />
       ) : (
         <input
@@ -1025,7 +1057,7 @@ function FieldEditor({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           maxLength={maxLength}
-          className="w-full rounded-xl border-2 border-neutral-200 px-3 py-2 text-base focus:border-brand focus:outline-none"
+          className="w-full rounded-xl border-2 border-line px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
         />
       )}
       {maxLength && (
@@ -1060,8 +1092,8 @@ function ProfilePhotoEditor({
         endpoint="profilePhoto"
         appearance={{
           button:
-            "ut-ready:bg-brand bg-brand text-white rounded-xl px-4 py-2 text-sm font-semibold",
-          allowedContent: "text-neutral-500 text-xs",
+            "ut-ready:bg-brand bg-brand text-ink-900 rounded-md px-4 py-2 text-sm font-bold border-2 border-ink-900",
+          allowedContent: "text-ink-500 text-xs",
         }}
         onClientUploadComplete={(res) => {
           const url = res?.[0]?.url;
@@ -1190,7 +1222,7 @@ function NumericFieldEditor({
         max={max}
         step={step}
         inputMode="decimal"
-        className="w-full rounded-xl border-2 border-neutral-200 px-3 py-2 text-base tabular-nums focus:border-brand focus:outline-none"
+        className="w-full rounded-xl border-2 border-line px-3 py-2 text-base tabular-nums focus:border-ink-900 focus:outline-none"
       />
     </div>
   );
@@ -1246,7 +1278,7 @@ function BannerEditor({
         endpoint="banner"
         appearance={{
           button:
-            "ut-ready:bg-ink-900 bg-ink-900 text-white rounded-xl px-4 py-2 text-sm font-semibold",
+            "ut-ready:bg-ink-900 bg-ink-900 text-white rounded-md px-4 py-2 text-sm font-bold border-2 border-ink-900",
           allowedContent: "text-ink-500 text-xs",
         }}
         onClientUploadComplete={(res) => {
@@ -1276,28 +1308,43 @@ function AvailabilityEditor({
     setProfile((p) => ({ ...p, user: { ...p.user, availabilityStatus: v } }));
     updateProfile({ availabilityStatus: v }).catch(() => toast.error("Couldn't save"));
   }
+  const status = profile.user.availabilityStatus;
   return (
-    <div className="flex gap-2">
+    <div className="grid grid-cols-2 gap-2">
       <button
+        type="button"
         onClick={() => set("taking_on_work")}
         className={cn(
-          "flex-1 rounded-xl border-2 px-3 py-2 text-sm font-semibold",
-          profile.user.availabilityStatus === "taking_on_work"
-            ? "border-green-500 bg-green-50 text-green-800"
-            : "border-neutral-200 text-neutral-600"
+          "flex items-center justify-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm font-bold transition",
+          status === "taking_on_work"
+            ? "border-ink-900 bg-ink-900 text-white shadow-hard-sm"
+            : "border-line bg-white text-ink-700 hover:border-ink-900 hover:text-ink-900"
         )}
       >
+        <span
+          className={cn(
+            "h-2 w-2 rounded-full",
+            status === "taking_on_work" ? "bg-call" : "bg-ink-500/40"
+          )}
+        />
         Taking on work
       </button>
       <button
+        type="button"
         onClick={() => set("fully_booked")}
         className={cn(
-          "flex-1 rounded-xl border-2 px-3 py-2 text-sm font-semibold",
-          profile.user.availabilityStatus === "fully_booked"
-            ? "border-red-500 bg-red-50 text-red-800"
-            : "border-neutral-200 text-neutral-600"
+          "flex items-center justify-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm font-bold transition",
+          status === "fully_booked"
+            ? "border-ink-900 bg-ink-900 text-white shadow-hard-sm"
+            : "border-line bg-white text-ink-700 hover:border-ink-900 hover:text-ink-900"
         )}
       >
+        <span
+          className={cn(
+            "h-2 w-2 rounded-full",
+            status === "fully_booked" ? "bg-emergency" : "bg-ink-500/40"
+          )}
+        />
         Fully booked
       </button>
     </div>
@@ -1355,7 +1402,7 @@ function ServicesEditor({
               <button
                 onClick={() => remove(s.id)}
                 aria-label="Remove"
-                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-red-600"
+                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
               >
                 <Trash className="h-4 w-4" />
               </button>
@@ -1368,18 +1415,18 @@ function ServicesEditor({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Service name (e.g. Bathroom installs)"
-          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-brand focus:outline-none"
+          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
         />
         <input
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
           placeholder="One-line description (optional)"
-          className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-brand focus:outline-none"
+          className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
         />
         <button
           onClick={add}
           disabled={!name.trim()}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-ink-900 px-3 py-2 text-xs font-bold text-white transition hover:bg-ink-800 disabled:opacity-40"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-ink-900 px-3 py-2 text-xs font-bold text-white transition active:translate-y-0.5 hover:bg-ink-800 disabled:opacity-40"
         >
           <Plus className="h-3.5 w-3.5" /> Add service
         </button>
@@ -1453,7 +1500,7 @@ function PhotosEditor({
         endpoint="gallery"
         appearance={{
           button:
-            "ut-ready:bg-ink-900 bg-ink-900 text-white rounded-xl px-4 py-2 text-sm font-semibold",
+            "ut-ready:bg-ink-900 bg-ink-900 text-white rounded-md px-4 py-2 text-sm font-bold border-2 border-ink-900",
           allowedContent: "text-ink-500 text-xs",
         }}
         onClientUploadComplete={async (res) => {
@@ -1565,7 +1612,7 @@ function CertificationsEditor({
               <button
                 onClick={() => remove(c.id)}
                 aria-label="Remove"
-                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-red-600"
+                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
               >
                 <Trash className="h-4 w-4" />
               </button>
@@ -1578,14 +1625,14 @@ function CertificationsEditor({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Gas Safe Registered #12345"
-          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-brand focus:outline-none"
+          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
         />
         <div className="mt-2 flex items-center gap-2">
           <UploadButton
             endpoint="certification"
             appearance={{
               button:
-                "ut-ready:bg-white bg-white text-ink-900 border border-line rounded-lg px-3 py-1.5 text-xs font-bold",
+                "ut-ready:bg-white bg-white text-ink-900 border-2 border-ink-900 rounded-md px-3 py-1.5 text-xs font-bold",
               allowedContent: "hidden",
             }}
             onClientUploadComplete={(res) => {
@@ -1609,9 +1656,115 @@ function CertificationsEditor({
         <button
           onClick={add}
           disabled={!name.trim()}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-ink-900 px-3 py-2 text-xs font-bold text-white transition hover:bg-ink-800 disabled:opacity-40"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-ink-900 px-3 py-2 text-xs font-bold text-white transition active:translate-y-0.5 hover:bg-ink-800 disabled:opacity-40"
         >
           <Plus className="h-3.5 w-3.5" /> Add certification
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function TestimonialsEditor({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  const [customerName, setCustomerName] = useState("");
+  const [quote, setQuote] = useState("");
+  const [location, setLocation] = useState("");
+
+  async function add() {
+    if (!customerName.trim() || !quote.trim()) return;
+    const row = await addTestimonial({
+      customerName: customerName.trim(),
+      quote: quote.trim(),
+      location: location.trim() || undefined,
+    });
+    setProfile((p) => ({ ...p, testimonials: [...p.testimonials, row] }));
+    setCustomerName("");
+    setQuote("");
+    setLocation("");
+  }
+
+  async function remove(id: number) {
+    await deleteTestimonial(id);
+    setProfile((p) => ({
+      ...p,
+      testimonials: p.testimonials.filter((t) => t.id !== id),
+    }));
+  }
+
+  return (
+    <div className="space-y-3">
+      {profile.testimonials.length === 0 ? (
+        <EmptyState
+          title="Add a customer quote"
+          body="Pop in what a happy customer texted you about the job. Two or three short quotes is plenty — they're worth more than a star rating."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {profile.testimonials.map((t) => (
+            <li
+              key={t.id}
+              className="flex items-start justify-between gap-3 rounded-xl border border-line bg-white p-3"
+            >
+              <div className="flex min-w-0 gap-2.5">
+                <span className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-muted">
+                  <Quote className="h-3.5 w-3.5 text-brand" fill="currentColor" strokeWidth={0} />
+                </span>
+                <div className="min-w-0">
+                  <p className="line-clamp-3 text-sm leading-snug text-ink-800">
+                    {t.quote}
+                  </p>
+                  <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-500">
+                    {t.customerName}
+                    {t.location ? ` · ${t.location}` : ""}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => remove(t.id)}
+                aria-label="Remove"
+                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
+              >
+                <Trash className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="rounded-xl border-2 border-dashed border-line bg-white p-3">
+        <input
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          placeholder="Customer name (e.g. Sarah M.)"
+          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
+        />
+        <textarea
+          value={quote}
+          onChange={(e) => setQuote(e.target.value.slice(0, 280))}
+          placeholder="What they said — keep it short and real."
+          rows={3}
+          className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
+        />
+        <div className="mt-1 text-[11px] text-ink-500">
+          {quote.length}/280 characters
+        </div>
+        <input
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Where they're based (optional)"
+          className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
+        />
+        <button
+          onClick={add}
+          disabled={!customerName.trim() || !quote.trim()}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-ink-900 px-3 py-2 text-xs font-bold text-white transition active:translate-y-0.5 hover:bg-ink-800 disabled:opacity-40"
+        >
+          <Plus className="h-3.5 w-3.5" /> Add review
         </button>
       </div>
     </div>

@@ -103,7 +103,7 @@ Use this when creating marketing content (social posts, ads, landing pages, vide
 | **Monospace** (URLs, codes, phone numbers, timestamps) | System monospace stack | — | Built-in |
 
 ### Type rules
-- Display font (Archivo Black) is ALWAYS used for: page headlines, big numbers (e.g. analytics stats, pricing), the MYTRADELINK wordmark, business names on profiles.
+- Display font (Archivo Black) is ALWAYS used for: page headlines, big numbers (e.g. analytics stats, pricing), the MY.TRADE.LINK wordmark, business names on profiles.
 - Body font for everything readable: paragraphs, buttons, labels.
 - Caps + wide tracking (e.g. `letter-spacing: 0.22em`) for category eyebrows ("WHAT YOU GET", "WEEKLY WORKSHEET").
 - Phone numbers always set in `tabular-nums` so digits align.
@@ -149,7 +149,7 @@ background: repeating-linear-gradient(45deg, #F97316 0 6px, transparent 6px 18px
 The marketing centrepiece — the headline "**Your business.** *One link.*" resolves below into a real-looking shareable URL set in monospace, framed like a browser address bar. Used on the landing page hero, the onboarding completion screen, and the dashboard URL bar.
 
 ```
-mytradelink.app/t/dave-plumber
+mytradelink.page/t/dave-plumber
 ```
 
 ### 5.5 Phone mockup
@@ -180,20 +180,23 @@ Analytics + traffic source displays use chunky ink-900 bars with a brand-orange 
 
 ---
 
-## 7. Logo & wordmark
+## 7. Wordmark
 
-**MYTRADELINK** wordmark — always set in Archivo Black, uppercase, slight negative tracking (`-0.02em`).
-
-Logomark — a small ink-900 square (8px radius) with a hammer icon inside in brand orange. Used as the favicon and inside the dashboard header next to the wordmark.
+**MY.TRADE.LINK** — always set in Archivo Black, uppercase, slight negative tracking (`-0.02em`). The two separator dots are brand orange (`#F97316`); the letters take the parent's colour.
 
 ```
-[🔨] MYTRADELINK
+MY.TRADE.LINK
 ```
+
+Implementation lives in `src/components/wordmark.tsx` — use the `<Wordmark />` component everywhere instead of typing the text by hand.
+
+No separate logomark / icon. The wordmark itself carries the brand. No hammer, no favicon icon block, no badge — just the typeset.
 
 Never:
 - Use the wordmark in any other font
 - Italicise it
 - Stretch it horizontally
+- Drop the orange dots
 - Place it on a coloured background other than white or ink-900
 
 ---

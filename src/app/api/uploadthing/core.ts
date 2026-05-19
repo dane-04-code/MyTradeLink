@@ -44,8 +44,10 @@ export const ourFileRouter = {
       return { url: file.ufsUrl };
     }),
 
-  // Public — no auth, used by quote form
-  quotePhotos: f({ image: { maxFileSize: "8MB", maxFileCount: 4 } })
+  // Public — no auth, used by quote form. Tighter caps than the dashboard
+  // uploads because the customer is on a flaky mobile network and the
+  // current Uploadthing region (Singapore) makes large UK uploads timeout-prone.
+  quotePhotos: f({ image: { maxFileSize: "4MB", maxFileCount: 3 } })
     .middleware(async () => ({}))
     .onUploadComplete(async ({ file }) => {
       return { url: file.ufsUrl };

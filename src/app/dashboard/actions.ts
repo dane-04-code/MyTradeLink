@@ -7,12 +7,14 @@ import {
   services,
   photos,
   certifications,
+  testimonials,
 } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { requireUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { uniqueSlug } from "@/lib/slug";
 import type { SectionKey } from "@/lib/sections";
+import { isValidHex } from "@/lib/themes";
 
 export async function toggleSection(key: SectionKey, isEnabled: boolean) {
   const user = await requireUser();
@@ -65,6 +67,11 @@ export async function updateProfile(data: Partial<{
   const sanitized = { ...data };
   if (typeof sanitized.about === "string") {
     sanitized.about = sanitized.about.slice(0, 280);
+  }
+  // accentColor is rendered into a CSS custom property on the public profile.
+  // Drop the field if it's not a valid 6-digit hex.
+  if (typeof sanitized.accentColor === "string" && !isValidHex(sanitized.accentColor)) {
+    delete sanitized.accentColor;
   }
   await db
     .update(users)
@@ -155,6 +162,41 @@ export async function deleteCertification(id: number) {
   await db
     .delete(certifications)
     .where(and(eq(certifications.id, id), eq(certifications.userId, user.id)));
+  revalidatePath(`/t/${user.slug}`);
+  return { ok: true };
+}
+
+export async function addTestimonial(data: {
+  customerName: string;
+  quote: string;
+  location?: string;
+}) {
+  const user = await requireUser();
+  // Server-side caps to match the UI and stop oversized payloads bloating the row.
+  const customerName = data.customerName.trim().slice(0, 120);
+  const quote = data.quote.trim().slice(0, 280);
+  const location = data.location?.trim().slice(0, 120) || null;
+  if (!customerName || !quote) {
+    throw new Error("Customer name and quote are required");
+  }
+  const [row] = await db
+    .insert(testimonials)
+    .values({
+      userId: user.id,
+      customerName,
+      quote,
+      location,
+    })
+    .returning();
+  revalidatePath(`/t/${user.slug}`);
+  return row;
+}
+
+export async function deleteTestimonial(id: number) {
+  const user = await requireUser();
+  await db
+    .delete(testimonials)
+    .where(and(eq(testimonials.id, id), eq(testimonials.userId, user.id)));
   revalidatePath(`/t/${user.slug}`);
   return { ok: true };
 }

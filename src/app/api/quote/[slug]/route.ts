@@ -11,6 +11,10 @@ const schema = z.object({
   website: z.string().max(0).optional().default(""),
   customerName: z.string().min(1).max(120),
   customerPhone: z.string().min(4).max(40),
+  customerEmail: z
+    .union([z.string().email().max(254), z.literal("")])
+    .optional()
+    .default(""),
   jobDescription: z.string().min(1).max(2000),
   postcode: z.string().max(16).optional().nullable(),
   photoUrls: z.array(z.string().url()).max(8).optional().default([]),
@@ -68,10 +72,13 @@ export async function POST(
     return NextResponse.json({ error: "not available" }, { status: 404 });
   }
 
+  const customerEmail = data.customerEmail?.trim() || null;
+
   await db.insert(quoteRequests).values({
     userId: user.id,
     customerName: data.customerName,
     customerPhone: data.customerPhone,
+    customerEmail,
     jobDescription: data.jobDescription,
     postcode: data.postcode ?? null,
     photoUrls: data.photoUrls,
@@ -84,6 +91,7 @@ export async function POST(
         tradesmanName: user.name ?? "there",
         customerName: data.customerName,
         customerPhone: data.customerPhone,
+        customerEmail,
         jobDescription: data.jobDescription,
         postcode: data.postcode ?? null,
       });

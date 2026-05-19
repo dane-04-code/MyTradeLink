@@ -35,12 +35,12 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <div className="space-y-3">
       {/* Plan toggle */}
-      <div className="flex rounded-2xl border border-white/15 bg-white/5 p-1">
+      <div className="flex rounded-lg border-2 border-white/25 bg-white/[0.04] p-1">
         <button
           type="button"
           onClick={() => setPlan("monthly")}
           className={
-            "flex-1 rounded-xl px-3 py-2 text-xs font-bold transition " +
+            "flex-1 rounded-md px-3 py-2 text-xs font-bold transition " +
             (plan === "monthly"
               ? "bg-white text-ink-900"
               : "text-white/70 hover:text-white")
@@ -52,7 +52,7 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
           type="button"
           onClick={() => setPlan("annual")}
           className={
-            "flex-1 rounded-xl px-3 py-2 text-xs font-bold transition " +
+            "flex-1 rounded-md px-3 py-2 text-xs font-bold transition " +
             (plan === "annual"
               ? "bg-white text-ink-900"
               : "text-white/70 hover:text-white")
@@ -65,7 +65,7 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
       <button
         onClick={start}
         disabled={loading}
-        className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-6 py-4 text-base font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400 disabled:opacity-60"
+        className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-brand px-6 py-4 text-base font-bold text-ink-900 transition hover:bg-brand-400 active:translate-y-1 disabled:opacity-60"
       >
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin" />

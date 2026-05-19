@@ -4,6 +4,7 @@ import {
   services,
   photos,
   certifications,
+  testimonials,
   sections,
 } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -21,10 +22,11 @@ export async function getFullProfile(userId: number) {
   const user = await db.query.users.findFirst({ where: eq(users.id, userId) });
   if (!user) return null;
 
-  const [s, p, c, sec] = await Promise.all([
+  const [s, p, c, t, sec] = await Promise.all([
     db.query.services.findMany({ where: eq(services.userId, userId) }),
     db.query.photos.findMany({ where: eq(photos.userId, userId) }),
     db.query.certifications.findMany({ where: eq(certifications.userId, userId) }),
+    db.query.testimonials.findMany({ where: eq(testimonials.userId, userId) }),
     db.query.sections.findMany({ where: eq(sections.userId, userId) }),
   ]);
 
@@ -33,6 +35,7 @@ export async function getFullProfile(userId: number) {
     services: s.sort((a, b) => a.displayOrder - b.displayOrder),
     photos: p,
     certifications: c.sort((a, b) => a.displayOrder - b.displayOrder),
+    testimonials: t.sort((a, b) => a.displayOrder - b.displayOrder),
     sections: sec.sort((a, b) => a.displayOrder - b.displayOrder),
   };
 }

@@ -8,7 +8,7 @@ import type { FullProfile } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mytradelink.app";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mytradelink.page";
 
 async function loadProfile(slug: string): Promise<FullProfile | null> {
   if (slug === "demo") return DEMO_PROFILE;

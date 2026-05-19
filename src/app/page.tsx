@@ -14,6 +14,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
+import { Wordmark } from "@/components/wordmark";
 
 export default async function LandingPage() {
   const { userId } = await auth();
@@ -61,11 +62,8 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <header className="relative z-10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:py-7">
-        <Link href="/" className="group flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-ink-900 transition group-hover:rotate-[-6deg]">
-            <Hammer className="h-5 w-5" strokeWidth={2.5} />
-          </span>
-          <span className="font-display text-xl tracking-tight">MYTRADELINK</span>
+        <Link href="/" className="group flex items-center">
+          <Wordmark className="text-xl transition group-hover:opacity-80" />
         </Link>
         <nav className="flex items-center gap-1 md:gap-3">
           <Link
@@ -77,7 +75,7 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
           {isSignedIn ? (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900 transition hover:bg-white/90"
+              className="inline-flex items-center gap-1.5 rounded-md border-2 border-white bg-white px-4 py-2 text-sm font-bold text-ink-900 transition active:translate-y-0.5 hover:bg-white/90"
             >
               Dashboard <ChevronRight className="h-4 w-4" />
             </Link>
@@ -85,13 +83,13 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
             <>
               <Link
                 href="/sign-in"
-                className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
+                className="hidden rounded-md px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
               >
                 Sign in
               </Link>
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-bold text-ink-900 shadow-[0_4px_14px_rgba(249,115,22,0.4)] transition hover:bg-brand-400"
+                className="inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition active:translate-y-0.5 hover:bg-brand-400"
               >
                 Get my page <ChevronRight className="h-4 w-4" />
               </Link>
@@ -117,7 +115,7 @@ function Hero({ isSignedIn }: { isSignedIn: boolean }) {
 
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-5 pt-10 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16 lg:pb-28">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/80 backdrop-blur">
+          <span className="inline-flex items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/80">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
             Built for UK tradesmen
           </span>
@@ -128,21 +126,21 @@ function Hero({ isSignedIn }: { isSignedIn: boolean }) {
           </h1>
 
           {/* The URL chip — the unforgettable moment */}
-          <div className="mt-7 inline-flex max-w-full items-stretch overflow-hidden rounded-2xl border border-white/15 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur">
-            <div className="hidden items-center gap-2 border-r border-white/10 px-4 sm:flex">
-              <span className="h-2 w-2 rounded-full bg-red-400" />
-              <span className="h-2 w-2 rounded-full bg-yellow-400" />
-              <span className="h-2 w-2 rounded-full bg-green-400" />
+          <div className="mt-7 inline-flex max-w-full items-stretch overflow-hidden rounded-xl border-2 border-white/25 bg-white/[0.04]">
+            <div className="hidden items-center gap-1.5 border-r-2 border-white/15 bg-white/[0.06] px-4 sm:flex">
+              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+              <span className="h-2.5 w-2.5 rounded-full bg-brand" />
             </div>
             <div className="flex items-center gap-2 px-4 py-3 font-mono text-sm md:text-base">
-              <span className="text-white/40">mytradelink.app/t/</span>
-              <span className="font-semibold text-white">dave-plumber</span>
+              <span className="text-white/45">mytradelink.page/t/</span>
+              <span className="font-bold text-white">dave-plumber</span>
               <span className="ml-1 h-4 w-px animate-pulse bg-brand" />
             </div>
             <button
               type="button"
               aria-label="Copy link"
-              className="hidden items-center justify-center border-l border-white/10 bg-white/[0.04] px-4 text-white/60 transition hover:bg-white/[0.08] hover:text-white sm:flex"
+              className="hidden items-center justify-center border-l-2 border-white/15 bg-white/[0.04] px-4 text-white/60 transition hover:bg-white/[0.08] hover:text-white sm:flex"
             >
               <Copy className="h-4 w-4" />
             </button>
@@ -157,14 +155,14 @@ function Hero({ isSignedIn }: { isSignedIn: boolean }) {
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link
               href={isSignedIn ? "/dashboard" : "/sign-up"}
-              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-7 py-4 text-lg font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400 active:scale-[0.98]"
+              className="group inline-flex items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-brand px-7 py-4 text-lg font-bold text-ink-900 transition hover:bg-brand-400 active:translate-y-1"
             >
               Get my free page
               <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
             </Link>
             <Link
               href="/t/demo"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[0.04] px-7 py-4 text-lg font-semibold text-white backdrop-blur transition hover:bg-white/[0.08]"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white bg-transparent px-7 py-4 text-lg font-bold text-white transition hover:bg-white hover:text-ink-900 active:translate-y-1"
             >
               See a live page
             </Link>
@@ -208,37 +206,37 @@ function PhoneMockup() {
       />
       <div className="absolute -inset-10 rounded-[60px] bg-gradient-to-br from-brand/40 via-transparent to-transparent blur-3xl" />
 
-      <div className="relative h-[640px] w-[310px] rounded-[44px] border-[10px] border-ink-900/80 bg-ink-900 shadow-[0_30px_90px_rgba(0,0,0,0.5)] ring-1 ring-white/10">
+      <div className="relative h-[640px] w-[310px] rounded-[44px] border-[10px] border-ink-900/80 bg-ink-900 ring-2 ring-white/15">
         <div className="absolute left-1/2 top-2 z-10 h-5 w-28 -translate-x-1/2 rounded-full bg-ink-900" />
         <div className="h-full w-full overflow-hidden rounded-[34px] bg-white text-ink-900">
           {/* header */}
           <div className="flex flex-col items-center px-5 pt-9 text-center">
             <div className="relative">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-700 text-2xl font-bold text-white ring-4 ring-brand/20">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border-[3px] border-ink-900 bg-brand text-2xl font-bold text-ink-900">
                 DW
               </div>
-              <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 ring-2 ring-white">
+              <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-call">
                 <Check className="h-4 w-4 text-white" strokeWidth={3} />
               </div>
             </div>
             <h2 className="mt-3 font-display text-lg leading-tight tracking-tight">
               Dave Wilson Plumbing
             </h2>
-            <div className="text-sm font-semibold text-brand">
+            <div className="text-sm font-bold uppercase tracking-[0.14em] text-brand">
               Plumber · Manchester
             </div>
-            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1 text-xs font-bold text-green-800">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-sm border border-call bg-white px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-call">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-call" />
               Taking on work
             </div>
           </div>
 
           {/* contact buttons */}
           <div className="space-y-2 px-4 pt-4">
-            <div className="flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 text-sm font-bold text-white shadow-md">
+            <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-ink-900 bg-call py-3 text-sm font-bold text-white shadow-hard-sm">
               <Phone className="h-4 w-4" /> Call Dave
             </div>
-            <div className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-sm font-bold text-white shadow-md">
+            <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-ink-900 bg-whatsapp py-3 text-sm font-bold text-white shadow-hard-sm">
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </div>
           </div>
@@ -270,7 +268,7 @@ function PhoneMockup() {
 
           {/* certs */}
           <div className="px-4 pt-3">
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-lg border-2 border-ink-900 px-3 py-2">
               <ShieldCheck className="h-4 w-4 text-brand" strokeWidth={2.5} />
               <div className="text-[11px] font-bold">Gas Safe Registered</div>
               <span className="ml-auto text-[10px] font-mono text-ink-500">
@@ -281,8 +279,8 @@ function PhoneMockup() {
 
           {/* reviews */}
           <div className="px-4 pt-2">
-            <div className="flex items-center gap-1.5 rounded-xl bg-yellow-50 px-3 py-2 text-[11px]">
-              <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+            <div className="flex items-center gap-1.5 rounded-lg border-2 border-line bg-muted px-3 py-2 text-[11px]">
+              <Star className="h-3 w-3 fill-star text-star" />
               <span className="font-bold">4.9</span>
               <span className="text-ink-500">on Google · 84 reviews</span>
             </div>
@@ -304,7 +302,7 @@ function ProofStrip() {
     { value: "1 link", label: "everywhere" },
   ];
   return (
-    <section className="relative z-10 border-y border-white/10 bg-white/[0.02]">
+    <section className="relative z-10 border-y-2 border-white/15 bg-white/[0.02]">
       <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-white/10 px-5 md:grid-cols-4">
         {items.map((item) => (
           <div key={item.label} className="px-2 py-7 text-center">
@@ -328,7 +326,7 @@ function BeforeAfter() {
   return (
     <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
       <div className="max-w-2xl">
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+        <span className="inline-flex items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/75">
           The problem
         </span>
         <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
@@ -345,8 +343,8 @@ function BeforeAfter() {
 
       <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* BEFORE */}
-        <div className="relative rounded-3xl border border-white/10 bg-white/[0.02] p-6">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-red-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-300">
+        <div className="relative rounded-2xl border-2 border-white/15 bg-white/[0.02] p-6">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-emergency/60 bg-emergency/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.22em] text-emergency">
             Before
           </div>
           <div className="space-y-2 text-sm">
@@ -363,8 +361,8 @@ function BeforeAfter() {
         </div>
 
         {/* AFTER */}
-        <div className="relative overflow-hidden rounded-3xl border border-brand/40 bg-gradient-to-br from-brand/10 via-transparent to-transparent p-6">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-brand/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand">
+        <div className="relative overflow-hidden rounded-2xl border-2 border-brand bg-gradient-to-br from-brand/10 via-transparent to-transparent p-6">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-brand bg-brand/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.22em] text-brand">
             After
           </div>
           <div className="space-y-2 text-sm">
@@ -373,12 +371,12 @@ function BeforeAfter() {
               side="right"
               text="yes — everything's on my page 👇"
             />
-            <div className="ml-auto w-max rounded-2xl bg-white px-4 py-3 text-ink-900 shadow-sm">
+            <div className="ml-auto w-max rounded-lg border-2 border-ink-900 bg-white px-4 py-3 text-ink-900">
               <div className="font-mono text-xs text-ink-500">
-                mytradelink.app/t/dave-plumber
+                mytradelink.page/t/dave-plumber
               </div>
-              <div className="mt-1 flex items-center gap-2 text-[11px] font-semibold">
-                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white text-[10px]">
+              <div className="mt-1 flex items-center gap-2 text-[11px] font-bold">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-ink-900 bg-brand text-[10px] text-ink-900">
                   DW
                 </span>
                 Dave Wilson Plumbing · Manchester
@@ -446,10 +444,10 @@ function HowItWorks() {
     },
   ];
   return (
-    <section className="relative z-10 border-t border-white/10 bg-white/[0.02]">
+    <section className="relative z-10 border-t-2 border-white/15 bg-white/[0.02]">
       <div className="mx-auto max-w-6xl px-5 py-24">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          <span className="inline-flex items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/75">
             How it works
           </span>
           <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
@@ -461,12 +459,12 @@ function HowItWorks() {
           {steps.map((s) => (
             <div
               key={s.n}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-ink-900 p-7 transition hover:border-brand/40"
+              className="group relative overflow-hidden rounded-2xl border-2 border-white/15 bg-ink-900 p-7 transition hover:border-brand"
             >
-              <div className="absolute -right-6 -top-2 font-display text-[140px] leading-none tracking-tighter text-white/[0.04] transition group-hover:text-brand/10">
+              <div className="absolute -right-6 -top-2 font-display text-[140px] leading-none tracking-tighter text-white/[0.04] transition group-hover:text-brand/15">
                 {s.n}
               </div>
-              <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-ink-900 shadow-[0_8px_24px_rgba(249,115,22,0.3)]">
+              <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-md border-2 border-ink-900 bg-brand text-ink-900 ring-2 ring-white/20">
                 {s.icon}
               </div>
               <h3 className="relative mt-5 font-display text-2xl leading-tight tracking-tight">
@@ -521,7 +519,7 @@ function FeatureGrid() {
     <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
       <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          <span className="inline-flex items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/75">
             What you get
           </span>
           <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
@@ -535,7 +533,7 @@ function FeatureGrid() {
         </p>
       </div>
 
-      <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border-2 border-white/15 bg-white/15 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((f) => (
           <div
             key={f.title}
@@ -547,10 +545,10 @@ function FeatureGrid() {
               </h3>
               <span
                 className={[
-                  "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                  "rounded-sm border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em]",
                   f.tag === "Pro"
-                    ? "bg-brand text-ink-900"
-                    : "bg-white/10 text-white/70",
+                    ? "border-ink-900 bg-brand text-ink-900"
+                    : "border-white/15 bg-white/[0.04] text-white/70",
                 ].join(" ")}
               >
                 {f.tag}
@@ -571,11 +569,11 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <section
       id="pricing"
-      className="relative z-10 border-t border-white/10 bg-white/[0.02]"
+      className="relative z-10 border-t-2 border-white/15 bg-white/[0.02]"
     >
       <div className="mx-auto max-w-6xl px-5 py-24">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          <span className="inline-flex items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/75">
             Pricing
           </span>
           <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
@@ -601,7 +599,7 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
             cta={
               <Link
                 href={isSignedIn ? "/dashboard" : "/sign-up"}
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 text-base font-bold transition hover:bg-white/10"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-white/30 bg-transparent px-6 py-3.5 text-base font-bold transition hover:border-white hover:bg-white/[0.06] active:translate-y-0.5"
               >
                 {isSignedIn ? "Go to dashboard" : "Start free"}
               </Link>
@@ -616,6 +614,7 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
             features={[
               "Everything in Free",
               "Quote request form with photo uploads",
+              "Email alerts on every quote",
               "Emergency callout button (24/7)",
               "Intro video on your page",
               "No Mytradelink badge",
@@ -623,7 +622,7 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
             cta={
               <Link
                 href="/pricing"
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand px-6 py-3.5 text-base font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-ink-900 bg-brand px-6 py-3.5 text-base font-bold text-ink-900 transition hover:bg-brand-400 active:translate-y-1"
               >
                 Upgrade to Pro
               </Link>
@@ -655,14 +654,14 @@ function PriceCard({
   return (
     <div
       className={[
-        "relative overflow-hidden rounded-3xl border p-8",
+        "relative overflow-hidden rounded-2xl border-2 p-8",
         highlight
-          ? "border-brand/50 bg-gradient-to-b from-brand/10 to-transparent shadow-[0_0_60px_rgba(249,115,22,0.15)]"
-          : "border-white/10 bg-ink-900",
+          ? "border-brand bg-gradient-to-b from-brand/10 to-transparent"
+          : "border-white/15 bg-ink-900",
       ].join(" ")}
     >
       {highlight && (
-        <div className="absolute right-6 top-6 rounded-full bg-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-ink-900">
+        <div className="absolute right-6 top-6 rounded-sm border-2 border-ink-900 bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-ink-900">
           Most popular
         </div>
       )}
@@ -696,11 +695,11 @@ function PriceCard({
 function FinalCTA({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <section className="relative z-10 mx-auto max-w-6xl px-5 pb-24">
-      <div className="relative overflow-hidden rounded-[32px] bg-brand p-10 text-ink-900 md:p-16">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-ink-900 bg-brand p-10 text-ink-900 md:p-16">
         {/* hatched accent */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-12 -top-12 h-64 w-64 rotate-[12deg] rounded-3xl opacity-25"
+          className="pointer-events-none absolute -right-12 -top-12 h-64 w-64 rotate-[12deg] rounded-2xl opacity-30"
           style={{
             backgroundImage:
               "repeating-linear-gradient(45deg, #0F172A 0 6px, transparent 6px 18px)",
@@ -715,14 +714,14 @@ function FinalCTA({ isSignedIn }: { isSignedIn: boolean }) {
         <div className="relative mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
             href={isSignedIn ? "/dashboard" : "/sign-up"}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-ink-900 px-7 py-4 text-lg font-bold text-white transition hover:bg-ink-800"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-ink-900 px-7 py-4 text-lg font-bold text-white transition hover:bg-ink-800 active:translate-y-1"
           >
             Create my free page
             <ArrowRight className="h-5 w-5" />
           </Link>
           <Link
             href="/t/demo"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-ink-900/15 bg-white/30 px-7 py-4 text-lg font-bold text-ink-900 backdrop-blur transition hover:bg-white/50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-white/40 px-7 py-4 text-lg font-bold text-ink-900 transition hover:bg-white active:translate-y-1"
           >
             See a live page
           </Link>
@@ -737,15 +736,10 @@ function FinalCTA({ isSignedIn }: { isSignedIn: boolean }) {
  * --------------------------------------------------------------------------*/
 function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/10">
+    <footer className="relative z-10 border-t-2 border-white/15">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-10 text-sm text-white/50 md:flex-row">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-ink-900">
-            <Hammer className="h-3.5 w-3.5" strokeWidth={2.5} />
-          </span>
-          <span className="font-display text-base text-white/70">
-            MYTRADELINK
-          </span>
+          <Wordmark className="text-base text-white/70" />
           <span className="ml-2 text-white/30">© {new Date().getFullYear()}</span>
         </div>
         <div className="flex gap-5">

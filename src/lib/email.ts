@@ -38,8 +38,7 @@ function shell(opts: { previewText: string; bodyHtml: string }) {
               <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td style="vertical-align:middle">
-                    <span style="display:inline-block;background:${BRAND};color:${INK};font-weight:900;font-size:14px;padding:5px 9px;border-radius:6px;letter-spacing:-0.02em">M</span>
-                    <span style="display:inline-block;color:#FFFFFF;font-weight:900;font-size:18px;letter-spacing:-0.02em;margin-left:8px;vertical-align:middle">MYTRADELINK</span>
+                    <span style="display:inline-block;color:#FFFFFF;font-weight:900;font-size:20px;letter-spacing:-0.02em">MY<span style="color:${BRAND}">.</span>TRADE<span style="color:${BRAND}">.</span>LINK</span>
                   </td>
                 </tr>
               </table>
@@ -138,6 +137,7 @@ export async function sendNewQuoteEmail(opts: {
   tradesmanName: string;
   customerName: string;
   customerPhone: string;
+  customerEmail?: string | null;
   jobDescription: string;
   postcode?: string | null;
 }) {
@@ -158,19 +158,27 @@ export async function sendNewQuoteEmail(opts: {
         "Phone",
         `<a href="tel:${escape(opts.customerPhone)}" style="color:${INK};font-weight:700;text-decoration:none">${escape(opts.customerPhone)}</a>`
       )}
+      ${opts.customerEmail ? detailRow(
+        "Email",
+        `<a href="mailto:${escape(opts.customerEmail)}" style="color:${INK};font-weight:700;text-decoration:none">${escape(opts.customerEmail)}</a>`
+      ) : ""}
       ${opts.postcode ? detailRow("Postcode", escape(opts.postcode)) : ""}
       ${detailRow("Job", jobHtml)}
     </table>
 
     <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin-top:24px">
       <tr>
-        <td style="padding-right:8px">
+        <td style="padding-right:8px;padding-bottom:8px">
           <a href="tel:${escape(opts.customerPhone)}" style="display:inline-block;background:${BRAND};color:${INK};font-weight:800;text-decoration:none;padding:12px 18px;border:2px solid ${INK};border-radius:12px;box-shadow:0 4px 0 0 ${INK};font-size:14px">Call ${escape(opts.customerName.split(" ")[0])}</a>
         </td>
-        <td style="padding-right:8px">
+        <td style="padding-right:8px;padding-bottom:8px">
           <a href="https://wa.me/${cleanedPhone}" style="display:inline-block;background:#25D366;color:#FFFFFF;font-weight:800;text-decoration:none;padding:12px 18px;border:2px solid ${INK};border-radius:12px;box-shadow:0 4px 0 0 ${INK};font-size:14px">WhatsApp</a>
         </td>
-        <td>
+        ${opts.customerEmail ? `
+        <td style="padding-right:8px;padding-bottom:8px">
+          <a href="mailto:${escape(opts.customerEmail)}" style="display:inline-block;background:#FFFFFF;color:${INK};font-weight:800;text-decoration:none;padding:12px 18px;border:2px solid ${INK};border-radius:12px;font-size:14px">Reply by email</a>
+        </td>` : ""}
+        <td style="padding-bottom:8px">
           <a href="${appUrl}/dashboard/quotes" style="display:inline-block;background:#FFFFFF;color:${INK};font-weight:800;text-decoration:none;padding:12px 18px;border:2px solid ${INK};border-radius:12px;font-size:14px">View in dashboard</a>
         </td>
       </tr>

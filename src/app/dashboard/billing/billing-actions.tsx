@@ -23,7 +23,7 @@ export function BillingActions() {
     <button
       onClick={openPortal}
       disabled={loading}
-      className="inline-flex items-center gap-2 rounded-2xl border-2 border-ink-900 bg-white px-5 py-3 text-sm font-bold text-ink-900 shadow-[0_4px_0_0_#0F172A] transition active:translate-y-1 active:shadow-[0_0_0_0_#0F172A] disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-md border-2 border-ink-900 bg-white px-5 py-3 text-sm font-bold text-ink-900 shadow-hard transition active:translate-y-1 active:shadow-press disabled:opacity-60"
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin" />

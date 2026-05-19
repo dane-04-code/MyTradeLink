@@ -10,13 +10,13 @@ import {
   MessageCircle,
   Facebook,
   ExternalLink,
-  Hammer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { TRADES } from "@/lib/trades";
 import { UploadButton } from "@/lib/uploadthing";
 import { saveStep1, saveStep2, saveStep3, saveStep4 } from "./actions";
 import { cn } from "@/lib/utils";
+import { Wordmark } from "@/components/wordmark";
 
 type State = {
   name: string;
@@ -119,7 +119,7 @@ export function OnboardingWizard({ initial }: { initial: State }) {
             <button
               onClick={submitStep}
               disabled={isPending}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-6 py-5 text-xl font-bold text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)] transition hover:bg-brand-400 active:scale-[0.98] disabled:opacity-60"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-brand px-6 py-5 text-xl font-bold text-ink-900 transition hover:bg-brand-400 active:translate-y-1 disabled:opacity-60"
             >
               {isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -134,7 +134,7 @@ export function OnboardingWizard({ initial }: { initial: State }) {
             <button
               onClick={submitStep}
               disabled={isPending}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 py-5 text-xl font-bold text-ink-900 transition hover:bg-white/90 disabled:opacity-60"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-white bg-white px-6 py-5 text-xl font-bold text-ink-900 transition hover:bg-white/90 active:translate-y-1 disabled:opacity-60"
             >
               Go to dashboard
               <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
@@ -157,13 +157,8 @@ export function OnboardingWizard({ initial }: { initial: State }) {
 
 function Header() {
   return (
-    <div className="mb-8 flex items-center gap-2">
-      <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand text-ink-900">
-        <Hammer className="h-4 w-4" strokeWidth={2.5} />
-      </span>
-      <span className="font-display text-base tracking-tight text-white">
-        MYTRADELINK
-      </span>
+    <div className="mb-8 flex items-center">
+      <Wordmark className="text-base text-white" />
     </div>
   );
 }
@@ -252,7 +247,7 @@ function Step1({
             onChange={(e) => update("name", e.target.value)}
             placeholder="Dave Wilson Plumbing"
             autoFocus
-            className="w-full rounded-2xl border-2 border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-white/30 focus:border-brand focus:bg-white/10 focus:outline-none"
+            className="w-full rounded-xl border-2 border-white/20 bg-white/[0.04] px-5 py-4 text-lg text-white placeholder:text-white/30 transition focus:border-brand focus:bg-white/[0.08] focus:outline-none"
           />
         </Field>
         <Field label="Trade">
@@ -263,10 +258,10 @@ function Step1({
                 type="button"
                 onClick={() => update("trade", t)}
                 className={cn(
-                  "rounded-xl border-2 px-3 py-3 text-left text-[13px] font-bold leading-tight transition active:scale-[0.97]",
+                  "rounded-lg border-2 px-3 py-3 text-left text-[13px] font-bold leading-tight transition",
                   state.trade === t
-                    ? "border-brand bg-brand text-ink-900"
-                    : "border-white/10 bg-white/5 text-white/80 hover:border-white/30"
+                    ? "border-ink-900 bg-brand text-ink-900"
+                    : "border-white/15 bg-white/[0.04] text-white/80 hover:border-white"
                 )}
               >
                 {t}
@@ -306,7 +301,7 @@ function Step2({
             value={state.phone}
             onChange={(e) => update("phone", e.target.value)}
             placeholder="07700 900123"
-            className="w-full rounded-2xl border-2 border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-white/30 focus:border-brand focus:bg-white/10 focus:outline-none"
+            className="w-full rounded-xl border-2 border-white/20 bg-white/[0.04] px-5 py-4 text-lg text-white placeholder:text-white/30 transition focus:border-brand focus:bg-white/[0.08] focus:outline-none"
           />
         </Field>
         <Field label="WhatsApp" hint="Defaults to your phone if blank">
@@ -315,7 +310,7 @@ function Step2({
             value={state.whatsappNumber}
             onChange={(e) => update("whatsappNumber", e.target.value)}
             placeholder="07700 900123"
-            className="w-full rounded-2xl border-2 border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-white/30 focus:border-brand focus:bg-white/10 focus:outline-none"
+            className="w-full rounded-xl border-2 border-white/20 bg-white/[0.04] px-5 py-4 text-lg text-white placeholder:text-white/30 transition focus:border-brand focus:bg-white/[0.08] focus:outline-none"
           />
         </Field>
         <Field label="Town or city">
@@ -324,7 +319,7 @@ function Step2({
             value={state.location}
             onChange={(e) => update("location", e.target.value)}
             placeholder="Manchester"
-            className="w-full rounded-2xl border-2 border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-white/30 focus:border-brand focus:bg-white/10 focus:outline-none"
+            className="w-full rounded-xl border-2 border-white/20 bg-white/[0.04] px-5 py-4 text-lg text-white placeholder:text-white/30 transition focus:border-brand focus:bg-white/[0.08] focus:outline-none"
           />
         </Field>
       </div>
@@ -361,14 +356,14 @@ function Step3({
             <img
               src={state.profilePhotoUrl}
               alt="profile"
-              className="h-44 w-44 rounded-full object-cover ring-[5px] ring-brand"
+              className="h-44 w-44 rounded-full border-[5px] border-brand object-cover"
             />
-            <div className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full bg-green-500 ring-4 ring-ink-900">
+            <div className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-ink-900 bg-call">
               <Check className="h-5 w-5 text-white" strokeWidth={3} />
             </div>
           </div>
         ) : (
-          <div className="flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-700 font-display text-6xl text-white ring-[5px] ring-brand/30">
+          <div className="flex h-44 w-44 items-center justify-center rounded-full border-[5px] border-brand bg-ink-800 font-display text-6xl text-brand">
             {initial}
           </div>
         )}
@@ -377,7 +372,7 @@ function Step3({
           endpoint="profilePhoto"
           appearance={{
             button:
-              "ut-ready:bg-white ut-uploading:opacity-60 bg-white text-ink-900 rounded-2xl px-6 py-4 text-base font-bold",
+              "ut-ready:bg-white ut-uploading:opacity-60 bg-white text-ink-900 rounded-xl px-6 py-4 text-base font-bold border-2 border-white",
             allowedContent: "text-white/50 text-sm",
           }}
           onClientUploadComplete={(res) => {
@@ -452,7 +447,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
     typeof window !== "undefined"
       ? `${window.location.origin}/t/${slug}`
       : `/t/${slug}`;
-  const path = `mytradelink.app/t/${slug}`;
+  const path = `mytradelink.page/t/${slug}`;
 
   const shareText = `Here's my page — ${path}`;
   const whatsapp = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
@@ -463,11 +458,11 @@ function Step5({ slug, state }: { slug: string; state: State }) {
   return (
     <div>
       <div className="mb-7 flex items-center gap-3">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-ink-900 shadow-[0_10px_30px_rgba(249,115,22,0.35)]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-lg border-2 border-ink-900 bg-brand text-ink-900 ring-2 ring-white/15">
           <Check className="h-7 w-7" strokeWidth={3} />
         </div>
         <div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand">
+          <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand">
             All done
           </div>
           <h1 className="font-display text-3xl leading-tight tracking-tight md:text-4xl">
@@ -482,14 +477,19 @@ function Step5({ slug, state }: { slug: string; state: State }) {
       </p>
 
       {/* URL card */}
-      <div className="mt-7 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur">
-        <div className="border-b border-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">
-          Your link
+      <div className="mt-7 overflow-hidden rounded-xl border-2 border-white/25 bg-white/[0.04]">
+        <div className="flex items-center gap-1.5 border-b-2 border-white/15 bg-white/[0.06] px-4 py-2">
+          <span className="h-2 w-2 rounded-full bg-white/15" />
+          <span className="h-2 w-2 rounded-full bg-white/15" />
+          <span className="h-2 w-2 rounded-full bg-brand" />
+          <span className="ml-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/50">
+            Your link
+          </span>
         </div>
         <div className="flex items-center justify-between gap-2 px-4 py-4">
           <div className="flex min-w-0 items-baseline gap-1 truncate font-mono text-base">
-            <span className="text-white/40">mytradelink.app/t/</span>
-            <span className="font-semibold text-brand">{slug}</span>
+            <span className="text-white/45">mytradelink.page/t/</span>
+            <span className="font-bold text-brand">{slug}</span>
           </div>
           <button
             type="button"
@@ -497,7 +497,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
               navigator.clipboard.writeText(url);
               toast.success("Link copied");
             }}
-            className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-xs font-bold text-ink-900 transition hover:bg-white/90"
+            className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-md border-2 border-white bg-white px-3 py-2 text-xs font-bold text-ink-900 transition active:translate-y-0.5 hover:bg-white/90"
           >
             <Copy className="h-3.5 w-3.5" /> Copy
           </button>
@@ -510,7 +510,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-4 text-base font-bold text-white transition hover:brightness-110"
+          className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-whatsapp px-4 py-4 text-base font-bold text-white transition active:translate-y-1 hover:brightness-110"
         >
           <MessageCircle className="h-5 w-5" /> WhatsApp
         </a>
@@ -518,7 +518,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
           href={facebook}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#1877F2] px-4 py-4 text-base font-bold text-white transition hover:brightness-110"
+          className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-fb px-4 py-4 text-base font-bold text-white transition active:translate-y-1 hover:brightness-110"
         >
           <Facebook className="h-5 w-5" /> Facebook
         </a>
@@ -528,7 +528,7 @@ function Step5({ slug, state }: { slug: string; state: State }) {
         href={`/t/${slug}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm font-semibold text-white/80 hover:bg-white/10"
+        className="mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-white/20 bg-white/[0.04] px-4 py-3.5 text-sm font-bold text-white/80 transition hover:border-white hover:text-white"
       >
         <ExternalLink className="h-4 w-4" /> Open my page
       </a>

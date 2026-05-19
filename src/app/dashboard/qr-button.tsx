@@ -76,7 +76,7 @@ export function QrButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex items-center justify-center gap-2 border-l border-line bg-white px-4 text-sm font-bold text-ink-700 transition hover:bg-muted"
+        className="flex items-center justify-center gap-2 border-t-2 border-ink-900 bg-white px-4 py-3 text-sm font-bold text-ink-700 transition hover:bg-muted sm:border-l-2 sm:border-t-0"
         title="Show QR code"
       >
         <QrCode className="h-4 w-4" />
@@ -94,7 +94,7 @@ export function QrButton({
         >
           <div
             ref={dialogRef}
-            className="relative w-full max-w-sm overflow-hidden rounded-3xl border-2 border-ink-900 bg-white shadow-[0_8px_0_0_#0F172A]"
+            className="relative w-full max-w-sm overflow-hidden rounded-xl border-2 border-ink-900 bg-white shadow-[0_8px_0_0_#0F172A]"
           >
             <div className="flex items-start justify-between px-6 pt-6">
               <div>
@@ -116,7 +116,7 @@ export function QrButton({
             </div>
 
             <div className="px-6 pb-6 pt-5">
-              <div className="aspect-square overflow-hidden rounded-2xl border border-line bg-white">
+              <div className="aspect-square overflow-hidden rounded-lg border-2 border-ink-900 bg-white">
                 {thumb ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={thumb} alt="QR code" className="h-full w-full" />
@@ -127,14 +127,14 @@ export function QrButton({
                 )}
               </div>
 
-              <div className="mt-3 truncate rounded-xl bg-muted px-3 py-2 text-center font-mono text-xs text-ink-700">
+              <div className="mt-3 truncate rounded-md bg-muted px-3 py-2 text-center font-mono text-xs text-ink-700">
                 {url}
               </div>
 
               <button
                 type="button"
                 onClick={download}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-ink-900 bg-brand px-4 py-3 text-sm font-bold text-ink-900 shadow-[0_4px_0_0_#0F172A] transition active:translate-y-1 active:shadow-[0_0_0_0_#0F172A]"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-brand px-4 py-3 text-sm font-bold text-ink-900 shadow-hard transition active:translate-y-1 active:shadow-press"
               >
                 <Download className="h-4 w-4" />
                 Download high-res PNG

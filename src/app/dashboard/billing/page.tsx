@@ -25,8 +25,10 @@ export default async function BillingPage() {
       {/* Current plan card */}
       <div
         className={
-          "overflow-hidden rounded-2xl border bg-white " +
-          (isPaid ? "border-brand shadow-[0_4px_0_0_#F97316]" : "border-line")
+          "overflow-hidden rounded-xl border-2 bg-white " +
+          (isPaid
+            ? "border-brand shadow-hard-brand"
+            : "border-ink-900 shadow-hard")
         }
       >
         <div className="flex flex-wrap items-start justify-between gap-4 p-6">
@@ -60,7 +62,7 @@ export default async function BillingPage() {
             ) : (
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-3 text-sm font-bold text-ink-900 shadow-[0_4px_0_0_#0F172A] transition active:translate-y-1 active:shadow-[0_0_0_0_#0F172A]"
+                className="inline-flex items-center gap-2 rounded-md border-2 border-ink-900 bg-brand px-5 py-3 text-sm font-bold text-ink-900 shadow-hard transition active:translate-y-1 active:shadow-press"
               >
                 <Sparkles className="h-4 w-4" /> Upgrade to Pro
               </Link>
@@ -69,7 +71,7 @@ export default async function BillingPage() {
         </div>
 
         {/* Feature comparison strip */}
-        <div className="grid grid-cols-1 divide-y divide-line border-t border-line bg-muted/40 md:grid-cols-2 md:divide-x md:divide-y-0">
+        <div className="grid grid-cols-1 divide-y-2 divide-ink-900 border-t-2 border-ink-900 bg-muted/40 md:grid-cols-2 md:divide-x-2 md:divide-y-0">
           <PlanColumn
             title="On your plan now"
             isHighlighted={!isPaid}
@@ -105,6 +107,7 @@ export default async function BillingPage() {
                   ]
                 : [
                     "Quote request form with photo uploads",
+                    "Email alerts on every quote",
                     "Emergency callout — 24/7",
                     "Intro video",
                     "No Mytradelink badge",
@@ -195,7 +198,7 @@ function InfoCard({
   body: string;
 }) {
   return (
-    <div className="rounded-2xl border border-line bg-white p-5">
+    <div className="rounded-xl border-2 border-line bg-white p-5 transition hover:border-ink-900">
       <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500">
         <span className="text-ink-700">{icon}</span>
         {title}

@@ -6,7 +6,7 @@ Feed this to any AI agent to give it a complete picture of the product. Pair wit
 
 ## 1. What it is
 
-Mytradelink is a digital profile page builder for UK tradesmen — Linktree, but built for plumbers, electricians, builders and their peers. A tradesman signs up, runs a 5-step onboarding wizard, and gets a public page at `mytradelink.app/t/<slug>` they share everywhere (van, WhatsApp bio, Facebook, business cards). The page has tap-to-call, WhatsApp, photo gallery, certifications, Google reviews stars, services list, and optionally a quote request form.
+Mytradelink is a digital profile page builder for UK tradesmen — Linktree, but built for plumbers, electricians, builders and their peers. A tradesman signs up, runs a 5-step onboarding wizard, and gets a public page at `mytradelink.page/t/<slug>` they share everywhere (van, WhatsApp bio, Facebook, business cards). The page has tap-to-call, WhatsApp, photo gallery, certifications, Google reviews stars, services list, and optionally a quote request form.
 
 **One-line:** "Your business. One link."
 
@@ -305,8 +305,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY      # Stripe client
 STRIPE_PRICE_MONTHLY                    # Stripe price ID for £9/mo
 STRIPE_PRICE_ANNUAL                     # Stripe price ID for £89/yr
 RESEND_API_KEY                          # Resend (optional — no-op if missing)
-RESEND_FROM_EMAIL                       # e.g. "Mytradelink <hello@mytradelink.app>"
-NEXT_PUBLIC_APP_URL                     # Canonical URL, e.g. https://mytradelink.app
+RESEND_FROM_EMAIL                       # e.g. "Mytradelink <hello@mytradelink.page>"
+NEXT_PUBLIC_APP_URL                     # Canonical URL, e.g. https://mytradelink.page
 IP_HASH_SALT                            # Optional — analytics IP hash salt (default: "tradelink")
 ADMIN_EMAIL                             # Comma-separated emails allowed to access /admin (operator dashboard)
 ```

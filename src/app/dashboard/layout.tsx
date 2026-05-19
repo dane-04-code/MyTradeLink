@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { requireOnboardedUser } from "@/lib/auth";
-import { Inbox, LayoutGrid, CreditCard, Hammer, Sparkles, BarChart3 } from "lucide-react";
+import { Inbox, LayoutGrid, CreditCard, Sparkles, BarChart3 } from "lucide-react";
 import { NavLink } from "./nav-link";
+import { Wordmark } from "@/components/wordmark";
 
 export const dynamic = "force-dynamic";
 
@@ -14,19 +15,14 @@ export default async function DashboardLayout({
   const user = await requireOnboardedUser();
   return (
     <div className="min-h-screen bg-muted">
-      <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b-2 border-ink-900 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-6">
           <div className="flex items-center gap-6">
             <Link
               href="/dashboard"
-              className="group flex items-center gap-2"
+              className="group flex items-center"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-ink-900 text-brand transition group-hover:rotate-[-6deg]">
-                <Hammer className="h-4 w-4" strokeWidth={2.5} />
-              </span>
-              <span className="font-display text-base tracking-tight text-ink-900">
-                MYTRADELINK
-              </span>
+              <Wordmark className="text-base text-ink-900 transition group-hover:opacity-80" />
             </Link>
             <nav className="hidden items-center gap-1 md:flex">
               <NavLink href="/dashboard" icon={<LayoutGrid className="h-4 w-4" />}>
@@ -47,9 +43,9 @@ export default async function DashboardLayout({
             {user.plan === "free" && (
               <Link
                 href="/pricing"
-                className="hidden items-center gap-1.5 rounded-full bg-ink-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-ink-800 md:inline-flex"
+                className="group hidden items-center gap-1.5 rounded-lg border-2 border-ink-900 bg-brand px-3.5 py-1.5 text-sm font-bold text-ink-900 shadow-hard-sm transition active:translate-y-0.5 active:shadow-press md:inline-flex"
               >
-                <Sparkles className="h-3.5 w-3.5 text-brand" />
+                <Sparkles className="h-3.5 w-3.5" />
                 Upgrade
               </Link>
             )}

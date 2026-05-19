@@ -9,6 +9,7 @@ export type SectionKey =
   | "photo_gallery"
   | "before_after_photos"
   | "certifications"
+  | "testimonials"
   | "google_reviews"
   | "quote_form"
   | "areas_covered"
@@ -44,6 +45,7 @@ export const SECTION_DEFS: SectionDef[] = [
   { key: "photo_gallery", label: "Photo gallery", description: "Show off your work" },
   { key: "before_after_photos", label: "Before & after photos", description: "Side by side transformations" },
   { key: "certifications", label: "Certifications & badges", description: "Gas Safe, NICEIC, etc." },
+  { key: "testimonials", label: "Customer reviews", description: "Quotes from happy customers" },
   { key: "google_reviews", label: "Google reviews link", description: "Send customers to leave a review" },
   { key: "quote_form", label: "Quote request form", description: "Capture leads with photos", paidOnly: true },
   { key: "areas_covered", label: "Areas covered", description: "Towns and postcodes you serve" },
@@ -76,7 +78,7 @@ export const SECTION_GROUPS: SectionGroup[] = [
     id: "trust",
     title: "Trust",
     blurb: "What makes you legit at a glance.",
-    keys: ["about_me", "certifications", "google_reviews"],
+    keys: ["about_me", "certifications", "testimonials", "google_reviews"],
   },
   {
     id: "work",

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Hammer, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Wordmark } from "@/components/wordmark";
 
 /**
  * Global 404 — any unmatched route (other than /t/[slug] which has its own)
@@ -24,13 +25,8 @@ export default function GlobalNotFound() {
 
       <header className="relative z-10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:py-7">
-          <Link href="/" className="group flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-ink-900 transition group-hover:rotate-[-6deg]">
-              <Hammer className="h-5 w-5" strokeWidth={2.5} />
-            </span>
-            <span className="font-display text-xl tracking-tight">
-              MYTRADELINK
-            </span>
+          <Link href="/" className="group flex items-center">
+            <Wordmark className="text-xl transition group-hover:opacity-80" />
           </Link>
         </div>
       </header>

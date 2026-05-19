@@ -147,6 +147,26 @@ export const certifications = pgTable(
   })
 );
 
+export const testimonials = pgTable(
+  "testimonials",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    customerName: varchar("customer_name", { length: 120 }).notNull(),
+    quote: text("quote").notNull(),
+    location: varchar("location", { length: 120 }),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    userIdx: index("testimonials_user_idx").on(t.userId),
+  })
+);
+
 export const sections = pgTable(
   "sections",
   {
@@ -173,6 +193,7 @@ export const quoteRequests = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     customerName: varchar("customer_name", { length: 120 }).notNull(),
     customerPhone: varchar("customer_phone", { length: 40 }).notNull(),
+    customerEmail: varchar("customer_email", { length: 254 }),
     jobDescription: text("job_description").notNull(),
     postcode: varchar("postcode", { length: 16 }),
     photoUrls: json("photo_urls").$type<string[]>().default(sql`'[]'::json`),
@@ -210,6 +231,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   services: many(services),
   photos: many(photos),
   certifications: many(certifications),
+  testimonials: many(testimonials),
   sections: many(sections),
   quoteRequests: many(quoteRequests),
   pageEvents: many(pageEvents),
@@ -223,6 +245,9 @@ export const photosRelations = relations(photos, ({ one }) => ({
 }));
 export const certificationsRelations = relations(certifications, ({ one }) => ({
   user: one(users, { fields: [certifications.userId], references: [users.id] }),
+}));
+export const testimonialsRelations = relations(testimonials, ({ one }) => ({
+  user: one(users, { fields: [testimonials.userId], references: [users.id] }),
 }));
 export const sectionsRelations = relations(sections, ({ one }) => ({
   user: one(users, { fields: [sections.userId], references: [users.id] }),
@@ -239,6 +264,7 @@ export type NewUser = typeof users.$inferInsert;
 export type Service = typeof services.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Certification = typeof certifications.$inferSelect;
+export type Testimonial = typeof testimonials.$inferSelect;
 export type Section = typeof sections.$inferSelect;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;
 export type PageEvent = typeof pageEvents.$inferSelect;

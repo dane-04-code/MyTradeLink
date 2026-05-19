@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Check, Hammer, ChevronRight, X, ShieldCheck } from "lucide-react";
+import { Check, ChevronRight, X, ShieldCheck } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { PricingButtons } from "./pricing-buttons";
+import { Wordmark } from "@/components/wordmark";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export default async function PricingPage() {
 
       <section className="relative z-10 mx-auto max-w-5xl px-5 pb-20 pt-10 lg:pt-16">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/80 backdrop-blur">
+          <span className="inline-flex items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/80">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
             Pricing
           </span>
@@ -68,15 +69,12 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <header className="relative z-10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:py-7">
-        <Link href="/" className="group flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-ink-900 transition group-hover:rotate-[-6deg]">
-            <Hammer className="h-5 w-5" strokeWidth={2.5} />
-          </span>
-          <span className="font-display text-xl tracking-tight">MYTRADELINK</span>
+        <Link href="/" className="group flex items-center">
+          <Wordmark className="text-xl transition group-hover:opacity-80" />
         </Link>
         <Link
           href={isSignedIn ? "/dashboard" : "/sign-in"}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900 transition hover:bg-white/90"
+          className="inline-flex items-center gap-1.5 rounded-md border-2 border-white bg-white px-4 py-2 text-sm font-bold text-ink-900 transition active:translate-y-0.5 hover:bg-white/90"
         >
           {isSignedIn ? "Dashboard" : "Sign in"}
           <ChevronRight className="h-4 w-4" />
@@ -98,14 +96,15 @@ function FreeCard({ isSignedIn }: { isSignedIn: boolean }) {
   ];
   const missing = [
     "Quote request form",
+    "Email alerts on every quote",
     "Emergency callout (24/7)",
     "Intro video",
   ];
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-ink-900 p-8">
+    <div className="rounded-2xl border-2 border-white/15 bg-ink-900 p-8">
       <div className="flex items-baseline gap-2">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+        <span className="text-xs font-bold uppercase tracking-[0.22em] text-white/50">
           Free
         </span>
       </div>
@@ -119,7 +118,7 @@ function FreeCard({ isSignedIn }: { isSignedIn: boolean }) {
 
       <Link
         href={isSignedIn ? "/dashboard" : "/sign-up"}
-        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-base font-bold transition hover:bg-white/10"
+        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-white/30 bg-transparent px-6 py-4 text-base font-bold transition hover:border-white hover:bg-white/[0.06] active:translate-y-0.5"
       >
         {isSignedIn ? "Go to dashboard" : "Start free"}
       </Link>
@@ -168,20 +167,20 @@ function ProCard({ isSignedIn }: { isSignedIn: boolean }) {
     "Email alerts on every quote",
   ];
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-brand bg-gradient-to-b from-brand/15 to-transparent p-8 shadow-[0_0_60px_rgba(249,115,22,0.18)]">
+    <div className="relative overflow-hidden rounded-2xl border-2 border-brand bg-gradient-to-b from-brand/15 to-transparent p-8">
       <span
         aria-hidden
-        className="pointer-events-none absolute -right-16 -top-10 h-48 w-48 rotate-[8deg] opacity-25"
+        className="pointer-events-none absolute -right-16 -top-10 h-48 w-48 rotate-[10deg] opacity-30"
         style={{
           backgroundImage:
             "repeating-linear-gradient(45deg, #F97316 0 8px, transparent 8px 18px)",
         }}
       />
       <div className="relative flex items-baseline justify-between gap-3">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
+        <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
           Pro
         </span>
-        <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-900">
+        <span className="inline-flex items-center gap-1 rounded-sm border-2 border-ink-900 bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-ink-900">
           Most popular
         </span>
       </div>
@@ -221,14 +220,15 @@ function ComparisonTable() {
     { label: "Certifications & reviews link", free: true, pro: true },
     { label: "Theme accent colour", free: "5 presets", pro: "5 presets + custom" },
     { label: "Quote request form (with photos)", free: false, pro: true },
+    { label: "Email alerts on every quote", free: false, pro: true },
     { label: "Emergency 24/7 callout button", free: false, pro: true },
     { label: "Intro video", free: false, pro: true },
     { label: "Mytradelink badge in footer", free: "shown", pro: "removed" },
   ];
 
   return (
-    <div className="mt-14 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02]">
-      <div className="grid grid-cols-[1.4fr_0.8fr_0.8fr] border-b border-white/10 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+    <div className="mt-14 overflow-hidden rounded-2xl border-2 border-white/15 bg-white/[0.02]">
+      <div className="grid grid-cols-[1.4fr_0.8fr_0.8fr] border-b-2 border-white/15 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white/50">
         <div>Feature</div>
         <div className="text-center">Free</div>
         <div className="text-center text-brand">Pro</div>
@@ -309,7 +309,7 @@ function FAQ() {
         {faqs.map((f) => (
           <div
             key={f.q}
-            className="rounded-2xl border border-white/10 bg-white/[0.02] p-5"
+            className="rounded-xl border-2 border-white/15 bg-white/[0.02] p-5 transition hover:border-white/30"
           >
             <div className="font-display text-base leading-tight tracking-tight">
               {f.q}
@@ -324,13 +324,10 @@ function FAQ() {
 
 function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/10">
+    <footer className="relative z-10 border-t-2 border-white/15">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-white/50 md:flex-row">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-ink-900">
-            <Hammer className="h-3.5 w-3.5" strokeWidth={2.5} />
-          </span>
-          <span className="font-display text-base text-white/70">MYTRADELINK</span>
+          <Wordmark className="text-base text-white/70" />
           <span className="ml-2 text-white/30">© {new Date().getFullYear()}</span>
         </div>
         <div className="flex gap-5">

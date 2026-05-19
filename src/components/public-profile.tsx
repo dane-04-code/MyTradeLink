@@ -17,12 +17,14 @@ import {
   Camera,
   Send,
   Loader2,
+  Quote,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
 import { trackEvent, type TrackEventType } from "@/lib/tracker";
 import { StickyContactBar } from "@/components/sticky-contact-bar";
+import { Wordmark } from "@/components/wordmark";
 import type { FullProfile } from "@/lib/queries";
 import type { SectionKey } from "@/lib/sections";
 
@@ -88,6 +90,8 @@ export function PublicProfile({
             return <BeforeAfter key={key} profile={profile} />;
           case "certifications":
             return <Certifications key={key} profile={profile} />;
+          case "testimonials":
+            return <Testimonials key={key} profile={profile} />;
           case "google_reviews":
             return <GoogleReviews key={key} profile={profile} />;
           case "quote_form":
@@ -187,22 +191,12 @@ function ProfileHeader({ profile }: { profile: FullProfile }) {
           <img
             src={user.profilePhotoUrl}
             alt={user.name ?? "Profile"}
-            className={cn(
-              "h-32 w-32 rounded-full object-cover",
-              bannerActive
-                ? "ring-[5px] shadow-[0_8px_24px_rgba(15,23,42,0.25)]"
-                : "ring-[5px]"
-            )}
+            className="h-32 w-32 rounded-full object-cover ring-[5px]"
             style={{ ["--tw-ring-color" as never]: "var(--accent)" }}
           />
         ) : (
           <div
-            className={cn(
-              "flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white",
-              bannerActive
-                ? "ring-[5px] shadow-[0_8px_24px_rgba(15,23,42,0.25)]"
-                : "ring-[5px]"
-            )}
+            className="flex h-32 w-32 items-center justify-center rounded-full font-display text-5xl text-white ring-[5px]"
             style={{
               background: "var(--accent)",
               ["--tw-ring-color" as never]: "var(--accent)",
@@ -234,28 +228,20 @@ function AvailabilityBadge({ profile }: { profile: FullProfile }) {
     <div className="mt-4 flex justify-center px-5">
       <div
         className={cn(
-          "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider",
+          "inline-flex items-center gap-2 rounded-md border-2 bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]",
           taking
-            ? "border-green-200 bg-green-50 text-green-700"
-            : "border-red-200 bg-red-50 text-red-700"
+            ? "border-call text-call"
+            : "border-emergency text-emergency"
         )}
       >
-        <span
-          className={cn(
-            "relative flex h-2 w-2",
-            taking ? "" : ""
+        <span className="relative flex h-2 w-2">
+          {taking && (
+            <span className="absolute inset-0 animate-ping rounded-full bg-call" />
           )}
-        >
-          <span
-            className={cn(
-              "absolute inset-0 rounded-full",
-              taking ? "animate-ping bg-green-400" : ""
-            )}
-          />
           <span
             className={cn(
               "relative h-2 w-2 rounded-full",
-              taking ? "bg-green-500" : "bg-red-500"
+              taking ? "bg-call" : "bg-emergency"
             )}
           />
         </span>
@@ -410,7 +396,7 @@ function AboutMe({ profile }: { profile: FullProfile }) {
         {profile.user.about}
       </p>
       {profile.user.yearsExperience ? (
-        <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm font-medium text-ink-700">
+        <div className="mt-3 inline-flex items-center gap-2 rounded-md border-2 border-line bg-muted px-3 py-1 text-sm font-bold text-ink-700">
           <Clock className="h-4 w-4" /> {profile.user.yearsExperience} years' experience
         </div>
       ) : null}
@@ -422,10 +408,10 @@ function ServicesList({ profile }: { profile: FullProfile }) {
   if (profile.services.length === 0) return null;
   return (
     <Section title="Services">
-      <ul className="space-y-3">
+      <ul className="space-y-2.5">
         {profile.services.map((s) => (
-          <li key={s.id} className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-ink-900">{s.serviceName}</div>
+          <li key={s.id} className="rounded-xl border-2 border-line bg-white p-4">
+            <div className="font-bold text-ink-900">{s.serviceName}</div>
             {s.description && (
               <div className="mt-1 text-sm text-ink-700">{s.description}</div>
             )}
@@ -469,14 +455,14 @@ function Gallery({ profile }: { profile: FullProfile }) {
           <>
             <button
               onClick={() => scroll(-1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 shadow-md hover:bg-white"
+              className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full border-2 border-ink-900 bg-white p-2 shadow-hard-sm hover:bg-muted"
               aria-label="prev"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={() => scroll(1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 shadow-md hover:bg-white"
+              className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full border-2 border-ink-900 bg-white p-2 shadow-hard-sm hover:bg-muted"
               aria-label="next"
             >
               <ChevronRight className="h-5 w-5" />
@@ -530,7 +516,7 @@ function Certifications({ profile }: { profile: FullProfile }) {
         {profile.certifications.map((c) => (
           <div
             key={c.id}
-            className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-ink-800 shadow-sm"
+            className="flex items-center gap-2 rounded-md border-2 border-ink-900 bg-white px-3 py-2 text-sm font-bold text-ink-900"
           >
             {c.badgeUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -542,6 +528,39 @@ function Certifications({ profile }: { profile: FullProfile }) {
           </div>
         ))}
       </div>
+    </Section>
+  );
+}
+
+function Testimonials({ profile }: { profile: FullProfile }) {
+  if (profile.testimonials.length === 0) return null;
+  return (
+    <Section title="What customers say">
+      <ul className="space-y-3">
+        {profile.testimonials.map((t) => (
+          <li
+            key={t.id}
+            className="relative overflow-hidden rounded-2xl border-[2.5px] border-ink-900 bg-white px-4 pb-4 pt-5 shadow-[0_4px_0_0_#0F172A]"
+          >
+            <Quote
+              aria-hidden
+              className="absolute -left-1 -top-1 h-10 w-10 -rotate-12 opacity-15"
+              style={{ color: "var(--accent)" }}
+              fill="currentColor"
+              strokeWidth={0}
+            />
+            <p className="relative whitespace-pre-line text-[15px] leading-relaxed text-ink-800">
+              {t.quote}
+            </p>
+            <div className="mt-3 flex items-baseline gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em]">
+              <span className="text-ink-900">— {t.customerName}</span>
+              {t.location && (
+                <span className="text-ink-500">· {t.location}</span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
     </Section>
   );
 }
@@ -652,7 +671,7 @@ function AreasCovered({ profile }: { profile: FullProfile }) {
   if (!profile.user.areasCovered) return null;
   return (
     <Section title="Areas covered">
-      <div className="flex items-start gap-2 rounded-2xl bg-neutral-50 p-4 text-base text-ink-800">
+      <div className="flex items-start gap-2 rounded-xl border-2 border-line bg-muted p-4 text-base text-ink-800">
         <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0" style={{ color: "var(--accent)" }} />
         <span>{profile.user.areasCovered}</span>
       </div>
@@ -664,7 +683,7 @@ function PaymentMethods({ profile }: { profile: FullProfile }) {
   if (!profile.user.paymentMethods) return null;
   return (
     <Section title="Payment">
-      <div className="flex items-start gap-2 rounded-2xl bg-neutral-50 p-4 text-base text-ink-800">
+      <div className="flex items-start gap-2 rounded-xl border-2 border-line bg-muted p-4 text-base text-ink-800">
         <CreditCard className="mt-0.5 h-5 w-5 flex-shrink-0" style={{ color: "var(--accent)" }} />
         <span>{profile.user.paymentMethods}</span>
       </div>
@@ -734,7 +753,7 @@ function SocialLink({
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trackEvent(slug, "social_click")}
-        className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3.5 text-base font-bold text-ink-900 transition active:scale-[0.98]"
+        className="flex w-full items-center gap-3 rounded-xl border-2 border-line bg-white px-4 py-3.5 text-base font-bold text-ink-900 transition active:translate-y-0.5 hover:border-ink-900"
       >
         {icon}
         <span className="flex-1 text-left">{label}</span>
@@ -762,11 +781,18 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  // Number of photo files currently uploading. While > 0, the submit
+  // button is disabled — submitting mid-upload would drop those photos.
+  const [uploadingCount, setUploadingCount] = useState(0);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (preview) {
       toast.info("This is a preview — the form is fully working on your live page.");
+      return;
+    }
+    if (uploadingCount > 0) {
+      toast.error("Hold on — photos are still uploading.");
       return;
     }
     const form = e.currentTarget;
@@ -776,6 +802,7 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
       website: String(fd.get("website") || ""),
       customerName: String(fd.get("customerName") || ""),
       customerPhone: String(fd.get("customerPhone") || ""),
+      customerEmail: String(fd.get("customerEmail") || ""),
       jobDescription: String(fd.get("jobDescription") || ""),
       postcode: String(fd.get("postcode") || ""),
       photoUrls,
@@ -812,9 +839,9 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
   if (sent) {
     return (
       <Section title="Request sent">
-        <div className="rounded-2xl bg-green-50 p-5 text-green-800">
-          <div className="text-lg font-bold">Got it.</div>
-          <p className="mt-1 text-sm">
+        <div className="rounded-xl border-2 border-call bg-white p-5 text-ink-900">
+          <div className="font-display text-lg leading-tight tracking-tight">Got it.</div>
+          <p className="mt-1 text-sm text-ink-700">
             {profile.user.name?.split(" ")[0] || "They"} will get in touch shortly.
           </p>
         </div>
@@ -848,6 +875,13 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
           className="input"
         />
         <input
+          name="customerEmail"
+          type="email"
+          placeholder="Your email (optional)"
+          autoComplete="email"
+          className="input"
+        />
+        <input
           name="postcode"
           placeholder="Postcode"
           className="input"
@@ -864,37 +898,87 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
             endpoint="quotePhotos"
             appearance={{
               button:
-                "ut-ready:bg-neutral-100 ut-uploading:opacity-60 bg-neutral-100 text-ink-900 rounded-2xl px-5 py-3 text-base font-semibold border border-neutral-200 w-full",
-              allowedContent: "text-neutral-500 text-xs",
+                "ut-ready:bg-muted ut-uploading:bg-muted ut-uploading:opacity-60 bg-muted text-ink-900 rounded-xl px-5 py-3 text-base font-bold border-2 border-line w-full",
+              allowedContent: "text-ink-500 text-xs",
             }}
             content={{
-              button: (
-                <span className="flex items-center gap-2">
-                  <Camera className="h-4 w-4" /> Add photos (optional)
-                </span>
-              ),
+              button: ({ ready, isUploading }) => {
+                if (isUploading) {
+                  return (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading…
+                    </span>
+                  );
+                }
+                if (!ready) {
+                  return <span className="text-ink-500">Loading…</span>;
+                }
+                return (
+                  <span className="flex items-center gap-2">
+                    <Camera className="h-4 w-4" /> Add photos (optional)
+                  </span>
+                );
+              },
+              allowedContent: "Up to 3 photos · 4MB each",
+            }}
+            onBeforeUploadBegin={(files) => {
+              setUploadingCount((c) => c + files.length);
+              return files;
             }}
             onClientUploadComplete={(res) => {
-              if (res) setPhotoUrls((p) => [...p, ...res.map((r) => r.url)]);
+              if (res) {
+                setPhotoUrls((p) => [
+                  ...p,
+                  ...res.map((r) => r.ufsUrl ?? r.url),
+                ]);
+              }
+              setUploadingCount(0);
             }}
-            onUploadError={(err) => { toast.error(err.message); }}
+            onUploadError={(err) => {
+              toast.error(err.message);
+              setUploadingCount(0);
+            }}
           />
+          {uploadingCount > 0 && (
+            <div className="mt-2 flex items-center gap-2 text-xs text-ink-500">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Uploading {uploadingCount} photo{uploadingCount === 1 ? "" : "s"}…
+            </div>
+          )}
           {photoUrls.length > 0 && (
             <div className="mt-2 flex gap-2 overflow-x-auto">
               {photoUrls.map((u) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={u} src={u} alt="" className="h-16 w-16 rounded-lg object-cover" />
+                <div key={u} className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={u} alt="" className="h-16 w-16 rounded-md border-2 border-ink-900 object-cover" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setPhotoUrls((p) => p.filter((url) => url !== u))
+                    }
+                    aria-label="Remove photo"
+                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-ink-900 text-[10px] font-bold text-white"
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
           )}
         </div>
         <button
           type="submit"
-          disabled={submitting}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 text-lg font-bold text-white shadow-lg active:scale-[0.98] disabled:opacity-60"
+          disabled={submitting || uploadingCount > 0}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border-[2.5px] border-ink-900 px-6 py-4 text-lg font-bold text-white shadow-[0_4px_0_0_#0F172A] transition-transform active:translate-y-1 active:shadow-[0_0_0_0_#0F172A] disabled:opacity-60"
           style={{ background: "var(--accent)" }}
         >
-          {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Send className="h-5 w-5" /> Send request</>}
+          {submitting ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : uploadingCount > 0 ? (
+            <>Wait for photos to finish…</>
+          ) : (
+            <><Send className="h-5 w-5" /> Send request</>
+          )}
         </button>
       </form>
     </Section>
@@ -903,14 +987,33 @@ function QuoteForm({ profile, preview }: { profile: FullProfile; preview: boolea
 
 function PoweredByFooter() {
   return (
-    <footer className="mt-12 px-5 pb-2 text-center">
+    <footer className="mt-12 px-5 pb-2">
       <a
         href="/"
-        className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-500 hover:text-ink-700"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group relative block overflow-hidden rounded-xl border-2 border-ink-900 bg-ink-900 px-5 py-4 text-white shadow-hard-brand transition active:translate-y-1 active:shadow-press"
       >
-        <span>Built with</span>
-        <span className="font-display tracking-tight text-ink-900">MYTRADELINK</span>
-        <span className="text-ink-500">— get yours free</span>
+        {/* hazard hatch corner — tiny version of the upgrade banner sticker */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rotate-[10deg] bg-hatch opacity-25"
+        />
+        <div className="relative flex items-center gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-brand">
+              Built with
+            </div>
+            <Wordmark className="mt-0.5 block text-lg leading-tight" />
+            <div className="mt-0.5 text-[11px] text-white/65">
+              One link for your business. Five minutes to set up. Free forever.
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-1 rounded-md border-2 border-brand bg-brand px-3 py-1.5 text-xs font-bold text-ink-900 transition group-hover:translate-x-1">
+            Get yours
+            <span aria-hidden>→</span>
+          </div>
+        </div>
       </a>
     </footer>
   );

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Hammer,
   Inbox,
   LayoutGrid,
   CreditCard,
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 import { DashboardClient } from "@/app/dashboard/dashboard-client";
 import { DEMO_PROFILE } from "@/lib/demo-profile";
+import { Wordmark } from "@/components/wordmark";
 
 export const dynamic = "force-dynamic";
 
@@ -53,13 +53,8 @@ export default function DashboardDemoPage() {
       <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-6">
           <div className="flex items-center gap-6">
-            <Link href="/dashboard-demo" className="group flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-ink-900 text-brand transition group-hover:rotate-[-6deg]">
-                <Hammer className="h-4 w-4" strokeWidth={2.5} />
-              </span>
-              <span className="font-display text-base tracking-tight text-ink-900">
-                MYTRADELINK
-              </span>
+            <Link href="/dashboard-demo" className="group flex items-center">
+              <Wordmark className="text-base text-ink-900 transition group-hover:opacity-80" />
             </Link>
             <nav className="hidden items-center gap-1 md:flex">
               <NavLink href="/dashboard-demo" icon={<LayoutGrid className="h-4 w-4" />}>

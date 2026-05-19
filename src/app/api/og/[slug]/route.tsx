@@ -87,7 +87,7 @@ export async function GET(
                 letterSpacing: "-0.02em",
               }}
             >
-              MYTRADELINK
+              MY<span style={{ color: "#F97316" }}>.</span>TRADE<span style={{ color: "#F97316" }}>.</span>LINK
             </div>
           </div>
 
@@ -191,7 +191,7 @@ export async function GET(
                 display: "flex",
               }}
             >
-              mytradelink.app/t/{slug}
+              mytradelink.page/t/{slug}
             </div>
           </div>
         </div>

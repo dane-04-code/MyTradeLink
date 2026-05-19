@@ -140,7 +140,7 @@ function HeroCard({
   bestCount: number;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border-2 border-ink-900 bg-white shadow-[0_4px_0_0_#0F172A]">
+    <div className="overflow-hidden rounded-xl border-2 border-ink-900 bg-white shadow-hard">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr]">
         {/* Number side */}
         <div className="border-b-2 border-ink-900 p-6 md:border-b-0 md:border-r-2">
@@ -258,7 +258,7 @@ function SubStat({
   spark: SparklineData;
 }) {
   return (
-    <div className="rounded-2xl border-2 border-ink-900 bg-white p-4">
+    <div className="rounded-xl border-2 border-ink-900 bg-white p-4">
       <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-ink-700">
         <span>{icon}</span>
         {label}
@@ -311,7 +311,7 @@ function Referrers({
 }) {
   if (total === 0) {
     return (
-      <div className="mt-6 rounded-2xl border-2 border-ink-900 bg-white p-6">
+      <div className="mt-6 rounded-xl border-2 border-ink-900 bg-white p-6">
         <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500">
           Where they came from
         </div>
@@ -322,7 +322,7 @@ function Referrers({
     );
   }
   return (
-    <div className="mt-6 overflow-hidden rounded-2xl border-2 border-ink-900 bg-white">
+    <div className="mt-6 overflow-hidden rounded-xl border-2 border-ink-900 bg-white">
       <div className="flex items-end justify-between border-b border-ink-900 px-5 py-3">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500">
@@ -376,8 +376,8 @@ function Referrers({
 /* --------------------------------------------------------------------- */
 function EmptyState() {
   return (
-    <div className="rounded-2xl border-2 border-dashed border-ink-900/30 bg-white p-10 text-center">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-ink-900 text-brand">
+    <div className="rounded-xl border-2 border-dashed border-ink-900/30 bg-white p-10 text-center">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-ink-900 text-brand">
         <BarChart3 className="h-6 w-6" />
       </div>
       <div className="mt-4 font-display text-2xl leading-tight tracking-tight text-ink-900">
@@ -398,7 +398,7 @@ function FreeUpsell() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 lg:py-20">
       <div className="text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-900 text-brand">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-lg bg-ink-900 text-brand">
           <BarChart3 className="h-7 w-7" />
         </div>
         <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand">
@@ -415,7 +415,7 @@ function FreeUpsell() {
 
         <Link
           href="/pricing"
-          className="mt-7 inline-flex items-center gap-2 rounded-2xl border-2 border-ink-900 bg-brand px-6 py-3.5 text-base font-bold text-ink-900 shadow-[0_4px_0_0_#0F172A] transition active:translate-y-1 active:shadow-[0_0_0_0_#0F172A]"
+          className="mt-7 inline-flex items-center gap-2 rounded-md border-2 border-ink-900 bg-brand px-6 py-3.5 text-base font-bold text-ink-900 shadow-hard transition active:translate-y-1 active:shadow-press"
         >
           <Sparkles className="h-4 w-4" />
           Upgrade to Pro
