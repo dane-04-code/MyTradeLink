@@ -44,3 +44,33 @@ html, body {
     @apply text-[10px] font-bold uppercase tracking-[0.22em] text-ink-500;
   }
 }
+
+@layer utilities {
+  /* Marquee — used by the landing-page trades ticker. Translates a row of
+     duplicated content -50% so the loop is seamless. */
+  @keyframes marquee-x {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .animate-marquee-x {
+    animation: marquee-x 50s linear infinite;
+  }
+
+  /* Slow pulse used by the live-cursor dot inside the URL chip. */
+  @keyframes soft-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.25; }
+  }
+  .animate-soft-blink {
+    animation: soft-blink 1.2s ease-in-out infinite;
+  }
+
+  /* Subtle rise used by stacked hero elements on first paint. */
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-rise-in {
+    animation: rise-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
