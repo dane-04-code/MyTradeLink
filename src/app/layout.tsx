@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import { MetaPixel } from "@/components/meta-pixel";
 import "./globals.css";
 
 const display = Archivo_Black({
@@ -53,6 +54,7 @@ export default function RootLayout({
     >
       <html lang="en" className={`${display.variable} ${body.variable}`}>
         <body className="min-h-screen bg-white font-sans text-ink-900 antialiased">
+          <MetaPixel />
           {children}
           <Toaster position="top-center" richColors />
         </body>

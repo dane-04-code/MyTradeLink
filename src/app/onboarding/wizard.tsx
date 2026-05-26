@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { TRADES } from "@/lib/trades";
 import { UploadButton } from "@/lib/uploadthing";
 import { saveStep1, saveStep2, saveStep3, saveStep4 } from "./actions";
+import { track } from "@/lib/fpixel";
 import { cn } from "@/lib/utils";
 import { Wordmark } from "@/components/wordmark";
 
@@ -89,6 +90,8 @@ export function OnboardingWizard({ initial }: { initial: State }) {
       // About is optional per PRD §4.1 step 4
       startTransition(async () => {
         await saveStep4({ about: state.about.trim() });
+        // Profile is now live — this is the signup conversion we optimise ads for.
+        track("CompleteRegistration");
         next();
       });
     } else {
