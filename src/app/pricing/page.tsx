@@ -40,7 +40,7 @@ export default async function PricingPage() {
         <FAQ />
 
         <p className="mt-14 text-center text-xs text-white/40">
-          Prices in GBP. VAT included. Cancel anytime, no questions.
+          Prices in AUD. GST included. Cancel anytime, no questions.
         </p>
       </section>
 
@@ -109,7 +109,7 @@ function FreeCard({ isSignedIn }: { isSignedIn: boolean }) {
         </span>
       </div>
       <div className="mt-3 flex items-baseline gap-2">
-        <span className="font-display text-7xl tracking-tight">£0</span>
+        <span className="font-display text-7xl tracking-tight">A$0</span>
         <span className="text-white/55">forever</span>
       </div>
       <div className="mt-1 text-sm text-white/40">
@@ -185,11 +185,11 @@ function ProCard({ isSignedIn }: { isSignedIn: boolean }) {
         </span>
       </div>
       <div className="relative mt-3 flex items-baseline gap-2">
-        <span className="font-display text-7xl tracking-tight">£9</span>
+        <span className="font-display text-7xl tracking-tight">A$15</span>
         <span className="text-white/55">per month</span>
       </div>
       <div className="relative mt-1 text-sm text-brand">
-        Or <strong className="font-bold">£89/year</strong> — two months free.
+        Or <strong className="font-bold">A$149/year</strong>, save A$31.
       </div>
 
       <div className="relative mt-7">
@@ -294,7 +294,7 @@ function FAQ() {
     },
     {
       q: "Do I need a website too?",
-      a: "Most tradesmen don't. One Mytradelink page covers what 90% of customers want — see your work, see your trust badges, call or WhatsApp you.",
+      a: "Most tradies don't. One Mytradelink page covers what 90% of customers want — see your work, see your trust badges, call or WhatsApp you.",
     },
   ];
   return (
@@ -332,6 +332,7 @@ function Footer() {
         </div>
         <div className="flex gap-5">
           <Link href="/" className="hover:text-white">Home</Link>
+          <Link href="/tools" className="hover:text-white">Free tools</Link>
           <Link href="/sign-in" className="hover:text-white">Sign in</Link>
           <Link href="/sign-up" className="hover:text-white">Sign up</Link>
         </div>

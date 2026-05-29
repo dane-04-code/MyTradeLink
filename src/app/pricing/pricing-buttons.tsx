@@ -46,7 +46,7 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
               : "text-white/70 hover:text-white")
           }
         >
-          Monthly · £9
+          Monthly · A$15
         </button>
         <button
           type="button"
@@ -58,7 +58,7 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
               : "text-white/70 hover:text-white")
           }
         >
-          Yearly · £89
+          Yearly · A$149
         </button>
       </div>
 
@@ -71,14 +71,14 @@ export function PricingButtons({ isSignedIn }: { isSignedIn: boolean }) {
           <Loader2 className="h-5 w-5 animate-spin" />
         ) : (
           <>
-            {plan === "annual" ? "Start Pro · £89/yr" : "Start Pro · £9/mo"}
+            {plan === "annual" ? "Start Pro · A$149/yr" : "Start Pro · A$15/mo"}
             <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
           </>
         )}
       </button>
       <p className="text-center text-[11px] text-white/45">
         {plan === "annual"
-          ? "Two months free vs paying monthly · cancel anytime"
+          ? "Save A$31 vs paying monthly · cancel anytime"
           : "Cancel anytime · upgrade to yearly anytime"}
       </p>
     </div>

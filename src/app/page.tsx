@@ -17,6 +17,8 @@ import {
   Droplets,
   MapPin,
   Quote,
+  FileText,
+  Receipt,
 } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { Wordmark } from "@/components/wordmark";
@@ -37,6 +39,7 @@ export default async function LandingPage() {
       <HowItWorks />
       <FeatureGrid />
       <ForTheJobs />
+      <FreeTools />
       <PricingBlock isSignedIn={isSignedIn} />
       <FinalCTA primaryHref={primaryHref} primaryLabel={primaryLabel} />
       <Footer />
@@ -75,6 +78,12 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
           <Wordmark className="text-xl transition group-hover:opacity-80" />
         </Link>
         <nav className="flex items-center gap-1 md:gap-3">
+          <Link
+            href="/tools"
+            className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
+          >
+            Free tools
+          </Link>
           <Link
             href="/pricing"
             className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
@@ -211,7 +220,7 @@ function Hero({
         <div>
           <span className="inline-flex animate-rise-in items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/80">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
-            Built for UK tradesmen
+            Built for Aussie tradies
           </span>
 
           <h1
@@ -302,7 +311,7 @@ function Hero({
             </div>
             <div className="text-sm leading-tight">
               <div className="font-bold text-white">
-                Plumbers, sparks, builders, gas engineers.
+                Plumbers, sparkies, builders, chippies.
               </div>
               <div className="text-white/55">
                 One page that does the talking before you do.
@@ -368,7 +377,7 @@ function PhoneMockup() {
           </span>
         </div>
         <div className="mt-2 font-display text-sm leading-tight">
-          Sarah Davies, Manchester M21
+          Sarah Davies, Bondi NSW 2026
         </div>
         <div className="mt-1 text-[11px] leading-snug text-ink-600">
           Bathroom refit. 2 weeks. Three photos attached.
@@ -395,7 +404,7 @@ function PhoneMockup() {
               Dave Wilson Plumbing
             </h2>
             <div className="text-sm font-bold uppercase tracking-[0.14em] text-brand">
-              Plumber · Manchester
+              Plumber · Sydney
             </div>
             <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-sm border border-call bg-white px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-call">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-call" />
@@ -419,8 +428,8 @@ function PhoneMockup() {
               <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-ink-500">
                 About
               </div>
-              12 years on the tools. Boilers, leaks, bathrooms. Fair prices,
-              on-time, fully insured.
+              12 years on the tools. Hot water, blocked drains, bathrooms. Fair
+              prices, on time, fully licensed.
             </div>
           </div>
 
@@ -442,9 +451,9 @@ function PhoneMockup() {
           <div className="px-4 pt-3">
             <div className="flex items-center gap-2 rounded-lg border-2 border-ink-900 px-3 py-2">
               <ShieldCheck className="h-4 w-4 text-brand" strokeWidth={2.5} />
-              <div className="text-[11px] font-bold">Gas Safe Registered</div>
+              <div className="text-[11px] font-bold">Licensed Plumber</div>
               <span className="ml-auto font-mono text-[10px] text-ink-500">
-                #12345
+                NSW Lic 12345
               </span>
             </div>
           </div>
@@ -469,20 +478,20 @@ function PhoneMockup() {
  * --------------------------------------------------------------------------*/
 function TradesTicker() {
   const entries = [
-    "Plumber · Manchester",
-    "Electrician · Leeds",
-    "Builder · Bristol",
-    "Gas Engineer · Birmingham",
-    "Roofer · Sheffield",
-    "Landscaper · Nottingham",
-    "Joiner · Glasgow",
-    "Heating Engineer · Liverpool",
-    "Decorator · Newcastle",
-    "Bricklayer · Cardiff",
-    "Plasterer · Edinburgh",
-    "Scaffolder · Belfast",
-    "Tiler · Southampton",
-    "Locksmith · Leicester",
+    "Plumber · Sydney",
+    "Sparkie · Melbourne",
+    "Chippy · Brisbane",
+    "Builder · Perth",
+    "Roofer · Adelaide",
+    "Landscaper · Gold Coast",
+    "Concreter · Newcastle",
+    "Gas Fitter · Wollongong",
+    "Painter · Geelong",
+    "Bricklayer · Canberra",
+    "Plasterer · Hobart",
+    "Fencer · Darwin",
+    "Tiler · Sunshine Coast",
+    "Locksmith · Townsville",
   ];
   // duplicate the list once so the marquee can loop seamlessly with translate-50%
   const loop = [...entries, ...entries];
@@ -535,7 +544,7 @@ function BeforeAfter() {
           </h2>
         </div>
         <p className="max-w-md text-lg leading-relaxed text-white/70">
-          Most tradesmen win work through a mess of WhatsApp threads, Facebook
+          Most tradies win work through a mess of WhatsApp threads, Facebook
           comments and word of mouth. Mytradelink gives you one link that does
           the talking, so customers see you&apos;re legit before you&apos;ve
           even picked up the phone.
@@ -554,7 +563,7 @@ function BeforeAfter() {
             <ChatBubble side="right" text="yes" />
             <ChatBubble side="left" text="can u send pics of past work" />
             <ChatBubble side="right" text="i'll look on my phone tonight" />
-            <ChatBubble side="left" text="and the gas safe number?" />
+            <ChatBubble side="left" text="you licensed? got insurance?" />
             <ChatBubble side="right" text="…" muted />
           </div>
           <div className="mt-5 text-sm text-white/50">
@@ -582,7 +591,7 @@ function BeforeAfter() {
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-ink-900 bg-brand text-[10px] text-ink-900">
                   DW
                 </span>
-                Dave Wilson Plumbing · Manchester
+                Dave Wilson Plumbing · Sydney
               </div>
             </div>
             <ChatBubble side="left" text="amazing, when can you come?" />
@@ -751,8 +760,8 @@ function FeatureGrid() {
       tag: "Free",
     },
     {
-      title: "Certifications",
-      body: "Gas Safe, NICEIC, CSCS. Display them as proper trust badges.",
+      title: "Licences and insurance",
+      body: "Electrical, plumbing, White Card, builder's licence. Display them as proper trust badges.",
       tag: "Free",
     },
     {
@@ -833,28 +842,28 @@ function ForTheJobs() {
       trade: "Plumber",
       ref: "JOB-0421",
       icon: <Droplets className="h-5 w-5" />,
-      area: "Manchester · M21",
-      title: "Boiler call-out",
+      area: "Sydney · NSW 2150",
+      title: "Hot water emergency",
       quote:
         "Customer hits Call. You answer. Quote sent before the kettle's boiled.",
       colorHex: "#F97316",
     },
     {
-      trade: "Electrician",
+      trade: "Sparkie",
       ref: "JOB-0422",
       icon: <Plug className="h-5 w-5" />,
-      area: "Leeds · LS6",
+      area: "Melbourne · VIC 3121",
       title: "Full house rewire",
       quote:
-        "Customer sees your Part P and NICEIC before they even ring. Trust earned in a tap.",
+        "Customer sees your electrical licence and insurance before they even ring. Trust earned in a tap.",
       colorHex: "#2563EB",
     },
     {
       trade: "Builder",
       ref: "JOB-0423",
       icon: <HardHat className="h-5 w-5" />,
-      area: "Bristol · BS3",
-      title: "Single-storey extension",
+      area: "Brisbane · QLD 4101",
+      title: "Deck and pergola build",
       quote:
         "They scroll the gallery, read the reviews, send a quote request. You haven't lifted a finger.",
       colorHex: "#EAB308",
@@ -930,6 +939,83 @@ function ForTheJobs() {
 }
 
 /* ----------------------------------------------------------------------------
+ * Free tools — surfaces the top-of-funnel /tools section on the homepage.
+ * Only the tools that are actually built get a card here; the rest live behind
+ * the "See all free tools" link as they ship.
+ * --------------------------------------------------------------------------*/
+function FreeTools() {
+  const tools = [
+    {
+      href: "/tools/quote-template",
+      icon: <FileText className="h-5 w-5" />,
+      name: "Quote Template",
+      body: "Send quotes that win jobs. Fill in the work and the price, look the part every time.",
+    },
+    {
+      href: "/tools/tax-invoice-generator",
+      icon: <Receipt className="h-5 w-5" />,
+      name: "Tax Invoice Generator",
+      body: "Make an ATO-compliant tax invoice in under a minute. Add your ABN, the job and GST, then send it.",
+    },
+  ];
+
+  return (
+    <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
+      <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+        <div>
+          <SectionMarker number="05" tag="Free tools" />
+          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+            Free tools for tradies.
+            <br className="hidden md:block" /> No sign-up needed.
+          </h2>
+        </div>
+        <p className="max-w-sm text-white/65">
+          Quotes, tax invoices and more. Built for the way Aussie tradies
+          actually work. Use them free, then grab your Mytradelink page when
+          you&apos;re ready.
+        </p>
+      </div>
+
+      <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+        {tools.map((t) => (
+          <Link
+            key={t.href}
+            href={t.href}
+            className="group relative overflow-hidden rounded-2xl border-2 border-white/15 bg-ink-900 p-6 transition hover:border-brand"
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-md border-2 border-ink-900 bg-brand text-ink-900 ring-2 ring-white/20">
+                {t.icon}
+              </span>
+              <h3 className="font-display text-2xl leading-tight tracking-tight">
+                {t.name}
+              </h3>
+              <ArrowRight className="ml-auto h-5 w-5 text-white/40 transition-transform duration-200 group-hover:translate-x-1.5 group-hover:text-brand" />
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-white/65">
+              {t.body}
+            </p>
+            <span className="mt-4 inline-flex items-center gap-1.5 rounded-sm border border-white/15 bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
+              Free
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-8">
+        <Link
+          href="/tools"
+          className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-brand transition hover:text-brand-400"
+        >
+          See all free tools
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------------------------
  * Pricing
  * --------------------------------------------------------------------------*/
 function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
@@ -940,7 +1026,7 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
     >
       <div className="mx-auto max-w-6xl px-5 py-24">
         <div className="text-center">
-          <SectionMarker number="05" tag="Pricing" />
+          <SectionMarker number="06" tag="Pricing" />
           <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
             Simple. Honest. No card to start.
           </h2>
@@ -952,13 +1038,13 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
         <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
           <PriceCard
             tier="Free"
-            price="£0"
+            price="A$0"
             cadence="forever"
             features={[
               "Public profile page",
               "Call and WhatsApp buttons",
               "Photo gallery and before/after",
-              "Certifications and Google reviews",
+              "Licences and Google reviews",
               "Small Mytradelink badge in footer",
             ]}
             cta={
@@ -973,9 +1059,9 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
           <PriceCard
             highlight
             tier="Pro"
-            price="£9"
+            price="A$15"
             cadence="per month"
-            sub="£89/year, save £19"
+            sub="A$149/year, save A$31"
             features={[
               "Everything in Free",
               "Quote request form with photo uploads",
@@ -1104,7 +1190,7 @@ function FinalCTA({
           </div>
 
           <h2 className="max-w-2xl font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Stop losing jobs to lads with a website.
+            Stop losing jobs to the bloke with a website.
           </h2>
           <p className="mt-5 max-w-md text-lg text-ink-900/85">
             Five minutes to set up. Free forever. Share one link, win more
@@ -1132,7 +1218,7 @@ function FinalCTA({
             aria-hidden
             className="pointer-events-none absolute right-8 bottom-8 hidden -rotate-12 select-none rounded-sm border-2 border-ink-900/80 px-3 py-1 font-display text-xs uppercase tracking-[0.3em] text-ink-900/80 md:block"
           >
-            Approved · UK Trades
+            Approved · Aussie Trades
           </div>
         </div>
       </div>
@@ -1178,6 +1264,9 @@ function Footer() {
           </span>
         </div>
         <div className="flex gap-5">
+          <Link href="/tools" className="hover:text-white">
+            Free tools
+          </Link>
           <Link href="/pricing" className="hover:text-white">
             Pricing
           </Link>

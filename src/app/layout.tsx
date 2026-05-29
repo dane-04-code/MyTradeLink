@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 import { MetaPixel } from "@/components/meta-pixel";
 import "./globals.css";
 
@@ -22,12 +23,12 @@ const body = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Mytradelink — Your business. One link.",
   description:
-    "A professional page that wins UK tradesmen jobs. Set up in 5 minutes.",
+    "A professional page that wins Australian tradies more work. Set up in 5 minutes.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
     title: "Mytradelink — Your business. One link.",
     description:
-      "A professional page that wins UK tradesmen jobs. Set up in 5 minutes.",
+      "A professional page that wins Australian tradies more work. Set up in 5 minutes.",
     type: "website",
   },
 };
@@ -56,6 +57,7 @@ export default function RootLayout({
         <body className="min-h-screen bg-white font-sans text-ink-900 antialiased">
           <MetaPixel />
           {children}
+          <Analytics />
           <Toaster position="top-center" richColors />
         </body>
       </html>
