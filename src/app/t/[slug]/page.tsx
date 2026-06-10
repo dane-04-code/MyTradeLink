@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProfileBySlug } from "@/lib/queries";
 import { PublicProfile } from "@/components/public-profile";
-import { localBusinessJsonLd } from "@/lib/structured-data";
+import { PublicCvProfile } from "@/components/public-cv-profile";
+import { localBusinessJsonLd, personJsonLd } from "@/lib/structured-data";
 import { DEMO_PROFILE } from "@/lib/demo-profile";
 import type { FullProfile } from "@/lib/queries";
 
@@ -25,10 +26,16 @@ export async function generateMetadata(
   const name = u.name ?? "Mytradelink";
   const tradePart = u.trade ?? "Tradesman";
   const locationPart = u.location ? ` in ${u.location}` : "";
-  const title = `${name} — ${tradePart}${locationPart} | Mytradelink`;
+  const lookingForWork = u.accountGoal === "looking_for_work";
+
+  const title = lookingForWork
+    ? `${name} — ${tradePart} looking for work | Mytradelink`
+    : `${name} — ${tradePart}${locationPart} | Mytradelink`;
   const description =
     u.about?.slice(0, 200) ??
-    `Contact ${u.name ?? "this tradesman"}${u.trade ? `, a ${u.trade}` : ""}${u.location ? ` in ${u.location}` : ""}, for a quote.`;
+    (lookingForWork
+      ? `${u.name ?? "This tradesperson"}${u.trade ? `, a ${u.trade}` : ""}${u.location ? ` in ${u.location}` : ""}, is looking for work. Get in touch.`
+      : `Contact ${u.name ?? "this tradesman"}${u.trade ? `, a ${u.trade}` : ""}${u.location ? ` in ${u.location}` : ""}, for a quote.`);
   const canonical = `${APP_URL}/t/${slug}`;
   const ogParams = new URLSearchParams({
     name: u.name ?? "",
@@ -67,7 +74,11 @@ export default async function PublicTradePage({
   const profile = await loadProfile(slug);
   if (!profile) notFound();
 
-  const jsonLd = localBusinessJsonLd(profile, `${APP_URL}/t/${slug}`);
+  const lookingForWork = profile.user.accountGoal === "looking_for_work";
+  const pageUrl = `${APP_URL}/t/${slug}`;
+  const jsonLd = lookingForWork
+    ? personJsonLd(profile, pageUrl)
+    : localBusinessJsonLd(profile, pageUrl);
 
   return (
     <main className="min-h-screen bg-muted py-0">
@@ -75,7 +86,11 @@ export default async function PublicTradePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PublicProfile profile={profile} />
+      {lookingForWork ? (
+        <PublicCvProfile profile={profile} />
+      ) : (
+        <PublicProfile profile={profile} />
+      )}
     </main>
   );
 }
