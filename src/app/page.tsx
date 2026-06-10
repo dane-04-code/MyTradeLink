@@ -965,9 +965,8 @@ function FreeTools() {
           </h2>
         </div>
         <p className="max-w-sm text-white/65">
-          Quotes, tax invoices and more. Built for the way Aussie tradies
-          actually work. Use them free, then grab your Mytradelink page when
-          you&apos;re ready.
+          Quotes, tax invoices and more. Use them free, then grab your
+          Mytradelink page when you&apos;re ready.
         </p>
       </div>
 
