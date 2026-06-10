@@ -218,11 +218,6 @@ function Hero({
 
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-5 pt-10 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16 lg:pb-28">
         <div>
-          <span className="inline-flex animate-rise-in items-center gap-2 rounded-md border-2 border-white/20 bg-white/[0.03] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-white/80">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
-            Built for Aussie tradies
-          </span>
-
           <h1
             className="mt-7 animate-rise-in font-display text-[14vw] leading-[0.88] tracking-[-0.03em] sm:text-[88px] md:text-[104px] lg:text-[112px]"
             style={{ animationDelay: "60ms" }}
