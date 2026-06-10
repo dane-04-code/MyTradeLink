@@ -47,16 +47,16 @@ const STEPS: { n: number; tag: string; title: string }[] = [
 
 export function OnboardingWizard({ initial }: { initial: WizardInitial }) {
   const router = useRouter();
-  const [chosen, setChosen] = useState(false);
+  // Show the goal chooser only for genuinely fresh accounts. A user who has
+  // already saved their name (started either flow) skips it on reload so an
+  // in-progress business user isn't bounced back a screen.
+  const [chosen, setChosen] = useState(Boolean(initial.name?.trim()));
   const [goal, setGoal] = useState<AccountGoal>(initial.accountGoal);
   const [step, setStep] = useState(1);
   const [state, setState] = useState<State>(initial);
   const [isPending, startTransition] = useTransition();
 
   const totalSteps = STEPS.length;
-
-  // First screen: pick a goal. Always shown on entry so a returning,
-  // not-yet-onboarded user can still change their mind.
   if (!chosen) {
     return (
       <GoalChooser
@@ -238,7 +238,7 @@ function GoalChooser({
                 className={cn(
                   "w-full rounded-xl border-2 px-5 py-5 text-left transition active:translate-y-0.5",
                   goal === o.value
-                    ? "border-2 border-ink-900 bg-brand text-ink-900"
+                    ? "border-ink-900 bg-brand text-ink-900"
                     : "border-white/15 bg-white/[0.04] text-white hover:border-white"
                 )}
               >
