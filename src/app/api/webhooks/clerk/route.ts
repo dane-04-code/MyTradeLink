@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { sections, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { uniqueSlug } from "@/lib/slug";
-import { DEFAULT_ENABLED, SECTION_DEFS } from "@/lib/sections";
+import { sectionDefsForGoal, defaultEnabledForGoal } from "@/lib/sections";
 
 export const runtime = "nodejs";
 
@@ -60,11 +60,13 @@ export async function POST(req: Request) {
         .values({ clerkId, email, name: name || null, slug })
         .returning();
 
+      const seedDefs = sectionDefsForGoal("business");
+      const seedEnabled = defaultEnabledForGoal("business");
       await db.insert(sections).values(
-        SECTION_DEFS.map((def, idx) => ({
+        seedDefs.map((def, idx) => ({
           userId: created.id,
           sectionKey: def.key,
-          isEnabled: DEFAULT_ENABLED.includes(def.key),
+          isEnabled: seedEnabled.includes(def.key),
           displayOrder: idx,
         }))
       );

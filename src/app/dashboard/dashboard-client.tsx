@@ -35,11 +35,10 @@ import { CSS } from "@dnd-kit/utilities";
 
 import type { FullProfile } from "@/lib/queries";
 import {
-  SECTION_DEFS,
-  SECTION_GROUPS,
   type SectionGroup as SectionGroupDef,
   type SectionKey,
   sectionDef,
+  sectionGroupsForGoal,
 } from "@/lib/sections";
 import { THEME_PRESETS, isValidHex } from "@/lib/themes";
 import { PublicProfile } from "@/components/public-profile";
@@ -47,6 +46,7 @@ import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
 import { QrButton } from "./qr-button";
 import * as serverActions from "./actions";
+import { LfwEditors } from "./lfw-editors";
 
 /**
  * Pick a greeting that works for both a personal name ("Dave Wilson") and
@@ -140,6 +140,10 @@ const deleteCertification: typeof serverActions.deleteCertification = (...args) 
   isDemoRoute()
     ? Promise.resolve(DEMO_OK)
     : serverActions.deleteCertification(...args);
+const setAccountGoal: typeof serverActions.setAccountGoal = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.setAccountGoal(...args);
+const setPublicEmail: typeof serverActions.setPublicEmail = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.setPublicEmail(...args);
 const addTestimonial: typeof serverActions.addTestimonial = (...args) =>
   isDemoRoute()
     ? Promise.resolve({
@@ -412,8 +416,12 @@ function SectionsEditor({
   profile: FullProfile;
   setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
 }) {
+  const goal = profile.user.accountGoal;
+  const isLfw = goal === "looking_for_work";
+  const groups = useMemo(() => sectionGroupsForGoal(goal), [goal]);
   return (
     <div>
+      <GoalToggle profile={profile} setProfile={setProfile} />
       <div className="mb-4">
         <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-500">
           Page sections
@@ -425,16 +433,23 @@ function SectionsEditor({
       </div>
 
       <div className="space-y-3">
-        {SECTION_GROUPS.map((group) => (
+        {groups.map((group) => (
           <SectionGroupCard
             key={group.id}
             group={group}
+            groups={groups}
             profile={profile}
             setProfile={setProfile}
           />
         ))}
         <ThemeCard profile={profile} setProfile={setProfile} />
       </div>
+
+      {isLfw && (
+        <div className="mt-3">
+          <LfwEditors profile={profile} setProfile={setProfile} />
+        </div>
+      )}
     </div>
   );
 }
@@ -446,10 +461,12 @@ function SectionsEditor({
  */
 function SectionGroupCard({
   group,
+  groups,
   profile,
   setProfile,
 }: {
   group: SectionGroupDef;
+  groups: SectionGroupDef[];
   profile: FullProfile;
   setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
 }) {
@@ -471,10 +488,10 @@ function SectionGroupCard({
   const enabledCount = sectionsInGroup.filter((s) => s.isEnabled).length;
 
   function rebuildGlobalOrder(updatedKeysForThisGroup: SectionKey[]) {
-    const groupOrderIndex = SECTION_GROUPS.findIndex((g) => g.id === group.id);
+    const groupOrderIndex = groups.findIndex((g) => g.id === group.id);
 
     const fullOrder: SectionKey[] = [];
-    SECTION_GROUPS.forEach((g, gIdx) => {
+    groups.forEach((g, gIdx) => {
       if (gIdx === groupOrderIndex) {
         fullOrder.push(...updatedKeysForThisGroup);
       } else {
@@ -843,6 +860,87 @@ function Toggle({
   );
 }
 
+/**
+ * Goal toggle — segmented control matching the availability/tab toggles.
+ * Switching reseeds sections additively (nothing is deleted) and changes
+ * which sections show. Bound to setAccountGoal.
+ */
+function GoalToggle({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  const goal = profile.user.accountGoal;
+  const [pending, startTransition] = useTransition();
+
+  function set(next: "looking_for_work" | "business") {
+    if (next === goal || pending) return;
+    setProfile((p) => ({ ...p, user: { ...p.user, accountGoal: next } }));
+    startTransition(async () => {
+      try {
+        await setAccountGoal(next);
+        toast.success(
+          next === "looking_for_work"
+            ? "Set to looking for work"
+            : "Set to promoting your business"
+        );
+      } catch {
+        // Roll back on failure.
+        setProfile((p) => ({ ...p, user: { ...p.user, accountGoal: goal } }));
+        toast.error("Couldn't switch");
+      }
+    });
+  }
+
+  return (
+    <div className="mb-4 overflow-hidden rounded-xl border-2 border-ink-900 bg-white">
+      <div className="flex items-center gap-3 px-4 py-3.5">
+        <span className="h-5 w-1.5 rounded-sm bg-brand" />
+        <div className="flex-1">
+          <div className="font-display text-base leading-tight tracking-tight text-ink-900">
+            What&apos;s your page for?
+          </div>
+          <div className="mt-0.5 text-xs text-ink-500">
+            Switching changes which sections show. Nothing gets deleted.
+          </div>
+        </div>
+      </div>
+      <div className="border-t-2 border-ink-900 bg-muted/40 p-3">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => set("looking_for_work")}
+            disabled={pending}
+            className={cn(
+              "rounded-lg border-2 px-3 py-2.5 text-sm font-bold transition disabled:opacity-60",
+              goal === "looking_for_work"
+                ? "border-ink-900 bg-ink-900 text-white shadow-hard-sm"
+                : "border-line bg-white text-ink-700 hover:border-ink-900 hover:text-ink-900"
+            )}
+          >
+            I&apos;m looking for work
+          </button>
+          <button
+            type="button"
+            onClick={() => set("business")}
+            disabled={pending}
+            className={cn(
+              "rounded-lg border-2 px-3 py-2.5 text-sm font-bold transition disabled:opacity-60",
+              goal === "business"
+                ? "border-ink-900 bg-ink-900 text-white shadow-hard-sm"
+                : "border-line bg-white text-ink-700 hover:border-ink-900 hover:text-ink-900"
+            )}
+          >
+            I&apos;m promoting my business
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------- Section detail editors ------------------------------- */
 
 function SectionDetail({
@@ -980,6 +1078,23 @@ function SectionDetail({
           Customers can request a quote from your page. {profile.user.plan === "paid" ? "Photo upload is enabled." : "Upgrade to enable photo uploads."}
         </p>
       );
+    case "email_button":
+      return <PublicEmailEditor profile={profile} setProfile={setProfile} />;
+    case "education":
+      return (
+        <p className="text-sm text-ink-500">
+          Add your training and college below. Scroll down to the{" "}
+          <strong className="text-ink-900">Training &amp; education</strong>{" "}
+          editor.
+        </p>
+      );
+    case "skills":
+      return (
+        <p className="text-sm text-ink-500">
+          Add the skills you have on the tools below, in the{" "}
+          <strong className="text-ink-900">Skills</strong> editor.
+        </p>
+      );
     default:
       return null;
   }
@@ -1065,6 +1180,52 @@ function FieldEditor({
           {local.length}/{maxLength} characters
         </p>
       )}
+    </div>
+  );
+}
+
+/**
+ * Public email editor for the email_button section. Auto-saves to
+ * users.publicEmail via setPublicEmail (basic shape validated server-side).
+ */
+function PublicEmailEditor({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  const value = profile.user.publicEmail ?? "";
+  const [local, setLocal] = useState(value);
+
+  useEffect(() => {
+    setLocal(value);
+  }, [value]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (local === value) return;
+      setProfile((p) => ({ ...p, user: { ...p.user, publicEmail: local || null } }));
+      setPublicEmail(local).catch(() =>
+        toast.error("Enter a valid email address")
+      );
+    }, 600);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [local]);
+
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-semibold text-ink-700">
+        Email for employers to reach you
+      </label>
+      <input
+        type="email"
+        value={local}
+        onChange={(e) => setLocal(e.target.value)}
+        placeholder="you@example.com"
+        className="w-full rounded-xl border-2 border-line px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
+      />
     </div>
   );
 }

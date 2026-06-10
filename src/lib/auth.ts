@@ -1,10 +1,10 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { users, sections } from "@/lib/db/schema";
+import { users, sections, type AccountGoal } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { uniqueSlug } from "@/lib/slug";
-import { DEFAULT_ENABLED, SECTION_DEFS } from "@/lib/sections";
+import { sectionDefsForGoal, defaultEnabledForGoal } from "@/lib/sections";
 
 export async function getOrCreateUser() {
   const { userId } = await auth();
@@ -14,7 +14,7 @@ export async function getOrCreateUser() {
     where: eq(users.clerkId, userId),
   });
   if (existing) {
-    await topUpSections(existing.id);
+    await topUpSections(existing);
     // Backfill: if an earlier visit created the row without an email
     // (pre-this-fix), pull it from Clerk now so quote/welcome alerts can fire.
     if (!existing.email) {
@@ -52,12 +52,14 @@ export async function getOrCreateUser() {
     .values({ clerkId: userId, email, name, slug })
     .returning();
 
-  // Seed default sections
+  // Seed default sections for a new business account
+  const seedDefs = sectionDefsForGoal("business");
+  const seedEnabled = defaultEnabledForGoal("business");
   await db.insert(sections).values(
-    SECTION_DEFS.map((def, idx) => ({
+    seedDefs.map((def, idx) => ({
       userId: created.id,
       sectionKey: def.key,
-      isEnabled: DEFAULT_ENABLED.includes(def.key),
+      isEnabled: seedEnabled.includes(def.key),
       displayOrder: idx,
     }))
   );
@@ -65,25 +67,29 @@ export async function getOrCreateUser() {
   return created;
 }
 
-// Idempotent: when SECTION_DEFS grows, existing users gain rows for the
-// new keys on their next visit. onConflictDoNothing makes this a no-op
-// once the rows exist.
-async function topUpSections(userId: number) {
-  const existing = await db.query.sections.findMany({
-    where: eq(sections.userId, userId),
+// Idempotent: when the section catalog grows for a given goal, existing users
+// gain rows for the new keys on their next visit. onConflictDoNothing makes
+// this a no-op once the rows exist.
+async function topUpSections(user: { id: number; accountGoal: AccountGoal }) {
+  const goal = user.accountGoal;
+  const defs = sectionDefsForGoal(goal);
+  const enabledDefaults = defaultEnabledForGoal(goal);
+
+  const existingRows = await db.query.sections.findMany({
+    where: eq(sections.userId, user.id),
     columns: { sectionKey: true },
   });
-  const have = new Set(existing.map((r) => r.sectionKey));
-  const missing = SECTION_DEFS.filter((d) => !have.has(d.key));
+  const have = new Set(existingRows.map((r) => r.sectionKey));
+  const missing = defs.filter((d) => !have.has(d.key));
   if (missing.length === 0) return;
-  const baseOrder = existing.length;
+  const baseOrder = existingRows.length;
   await db
     .insert(sections)
     .values(
       missing.map((def, idx) => ({
-        userId,
+        userId: user.id,
         sectionKey: def.key,
-        isEnabled: DEFAULT_ENABLED.includes(def.key),
+        isEnabled: enabledDefaults.includes(def.key),
         displayOrder: baseOrder + idx,
       }))
     )
