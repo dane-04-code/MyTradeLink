@@ -236,4 +236,5 @@ export const DEMO_PROFILE: FullProfile = {
     { id: 18, userId: 0, sectionKey: "instagram_link", isEnabled: true, displayOrder: 17 },
     { id: 19, userId: 0, sectionKey: "tiktok_link", isEnabled: true, displayOrder: 18 },
   ],
+  education: [],
 };
