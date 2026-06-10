@@ -14,10 +14,12 @@ import {
 import { toast } from "sonner";
 import { TRADES } from "@/lib/trades";
 import { UploadButton } from "@/lib/uploadthing";
-import { saveStep1, saveStep2, saveStep3, saveStep4 } from "./actions";
+import { saveStep1, saveStep2, saveStep3, saveStep4, saveGoal } from "./actions";
 import { track } from "@/lib/fpixel";
 import { cn } from "@/lib/utils";
-import { Wordmark } from "@/components/wordmark";
+import { Header, BlueprintGrid, Progress, Field } from "./ui";
+import { LfwWizard, type LfwInitial } from "./lfw-wizard";
+import type { AccountGoal } from "@/lib/db/schema";
 
 type State = {
   name: string;
@@ -30,6 +32,11 @@ type State = {
   slug: string;
 };
 
+type WizardInitial = State & {
+  accountGoal: AccountGoal;
+  lfw: LfwInitial;
+};
+
 const STEPS: { n: number; tag: string; title: string }[] = [
   { n: 1, tag: "Business", title: "What's your business?" },
   { n: 2, tag: "Reach", title: "How do customers reach you?" },
@@ -38,13 +45,37 @@ const STEPS: { n: number; tag: string; title: string }[] = [
   { n: 5, tag: "Live", title: "You're live" },
 ];
 
-export function OnboardingWizard({ initial }: { initial: State }) {
+export function OnboardingWizard({ initial }: { initial: WizardInitial }) {
   const router = useRouter();
+  const [chosen, setChosen] = useState(false);
+  const [goal, setGoal] = useState<AccountGoal>(initial.accountGoal);
   const [step, setStep] = useState(1);
   const [state, setState] = useState<State>(initial);
   const [isPending, startTransition] = useTransition();
 
   const totalSteps = STEPS.length;
+
+  // First screen: pick a goal. Always shown on entry so a returning,
+  // not-yet-onboarded user can still change their mind.
+  if (!chosen) {
+    return (
+      <GoalChooser
+        goal={goal}
+        setGoal={setGoal}
+        isPending={isPending}
+        onContinue={() => {
+          startTransition(async () => {
+            await saveGoal(goal);
+            setChosen(true);
+          });
+        }}
+      />
+    );
+  }
+
+  if (goal === "looking_for_work") {
+    return <LfwWizard initial={initial.lfw} />;
+  }
 
   function update<K extends keyof State>(key: K, value: State[K]) {
     setState((s) => ({ ...s, [key]: value }));
@@ -158,64 +189,89 @@ export function OnboardingWizard({ initial }: { initial: State }) {
   );
 }
 
-function Header() {
-  return (
-    <div className="mb-8 flex items-center">
-      <Wordmark className="text-base text-white" />
-    </div>
-  );
-}
-
-function BlueprintGrid() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 opacity-[0.05]"
-      style={{
-        backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-        backgroundSize: "48px 48px",
-        maskImage:
-          "radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 90%)",
-      }}
-    />
-  );
-}
-
-function Progress({
-  step,
-  total,
-  current,
+/* ------------------------------------------------------------------ */
+/* Goal chooser — the new first screen                                */
+/* ------------------------------------------------------------------ */
+function GoalChooser({
+  goal,
+  setGoal,
+  isPending,
+  onContinue,
 }: {
-  step: number;
-  total: number;
-  current: string;
+  goal: AccountGoal;
+  setGoal: (g: AccountGoal) => void;
+  isPending: boolean;
+  onContinue: () => void;
 }) {
+  const options: { value: AccountGoal; title: string; sub: string }[] = [
+    {
+      value: "looking_for_work",
+      title: "I'm looking for work",
+      sub: "Show your quals and get hired",
+    },
+    {
+      value: "business",
+      title: "I'm promoting my business",
+      sub: "Win customers for your trade",
+    },
+  ];
+
   return (
-    <div>
-      <div className="mb-3 flex items-end justify-between">
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand">
-            Step {step} / {total}
-          </div>
-          <div className="mt-0.5 font-display text-sm text-white">
-            {current}
+    <div className="relative isolate min-h-screen overflow-hidden">
+      <BlueprintGrid />
+      <div className="relative mx-auto flex min-h-screen w-full max-w-xl flex-col px-5 pt-6 pb-10">
+        <Header />
+
+        <div className="mt-8 flex-1">
+          <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">
+            What brings <br />
+            <span className="text-brand">you here?</span>
+          </h1>
+          <p className="mt-3 text-white/60">Pick the one that fits you.</p>
+
+          <div className="mt-8 space-y-3">
+            {options.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => setGoal(o.value)}
+                className={cn(
+                  "w-full rounded-xl border-2 px-5 py-5 text-left transition active:translate-y-0.5",
+                  goal === o.value
+                    ? "border-2 border-ink-900 bg-brand text-ink-900"
+                    : "border-white/15 bg-white/[0.04] text-white hover:border-white"
+                )}
+              >
+                <div className="text-lg font-bold">{o.title}</div>
+                <div
+                  className={cn(
+                    "mt-0.5 text-sm",
+                    goal === o.value ? "text-ink-900/70" : "text-white/50"
+                  )}
+                >
+                  {o.sub}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
-        <div className="text-xs text-white/40">
-          {Math.round((step / total) * 100)}%
-        </div>
-      </div>
-      <div className="flex gap-1.5">
-        {Array.from({ length: total }).map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "h-1.5 flex-1 rounded-full transition-all duration-300",
-              i < step ? "bg-brand" : "bg-white/10"
+
+        <div className="mt-10">
+          <button
+            onClick={onContinue}
+            disabled={isPending}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-brand px-6 py-5 text-xl font-bold text-ink-900 transition hover:bg-brand-400 active:translate-y-1 disabled:opacity-60"
+          >
+            {isPending ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
+              </>
             )}
-          />
-        ))}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -539,25 +595,3 @@ function Step5({ slug, state }: { slug: string; state: State }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Shared field shell                                                 */
-/* ------------------------------------------------------------------ */
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <div className="mb-2 flex items-baseline justify-between">
-        <label className="text-sm font-bold text-white">{label}</label>
-        {hint && <span className="text-xs text-white/40">{hint}</span>}
-      </div>
-      {children}
-    </div>
-  );
-}
