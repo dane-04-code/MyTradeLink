@@ -105,10 +105,16 @@ export function LfwWizard({ initial }: { initial: LfwInitial }) {
       });
     } else if (step === 5) {
       // Photos optional — finish onboarding here, before the live screen.
+      // Only advance if the completion flag actually saved, otherwise the user
+      // would land on "you're live" but get bounced back to onboarding later.
       startTransition(async () => {
-        await finishLfwOnboarding();
-        track("CompleteRegistration");
-        next();
+        try {
+          await finishLfwOnboarding();
+          track("CompleteRegistration");
+          next();
+        } catch {
+          toast.error("Something went wrong — give it another go.");
+        }
       });
     } else {
       // Steps 2, 3, 4 save inline via their own server actions; just advance.
