@@ -15,6 +15,8 @@ import { revalidatePath } from "next/cache";
 import { uniqueSlug } from "@/lib/slug";
 import type { SectionKey } from "@/lib/sections";
 import { isValidHex } from "@/lib/themes";
+import { reseedSectionsForGoal } from "@/lib/sections-server";
+import type { AccountGoal } from "@/lib/db/schema";
 
 export async function toggleSection(key: SectionKey, isEnabled: boolean) {
   const user = await requireUser();
@@ -76,6 +78,32 @@ export async function updateProfile(data: Partial<{
   await db
     .update(users)
     .set({ ...sanitized, updatedAt: new Date() })
+    .where(eq(users.id, user.id));
+  revalidatePath(`/t/${user.slug}`);
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
+export async function setAccountGoal(goal: AccountGoal) {
+  const user = await requireUser();
+  // Additive reseed — never deletes sections, just adds any the new goal
+  // needs and flips accountGoal. Idempotent (see sections-server.ts).
+  await reseedSectionsForGoal(user.id, goal);
+  revalidatePath(`/t/${user.slug}`);
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
+export async function setPublicEmail(email: string) {
+  const user = await requireUser();
+  const trimmed = email.trim().slice(0, 254);
+  // Allow clearing, or a basic something@something.tld shape.
+  if (trimmed !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    throw new Error("Enter a valid email address");
+  }
+  await db
+    .update(users)
+    .set({ publicEmail: trimmed || null, updatedAt: new Date() })
     .where(eq(users.id, user.id));
   revalidatePath(`/t/${user.slug}`);
   revalidatePath("/dashboard");
