@@ -21,6 +21,8 @@ export const DEMO_PROFILE: FullProfile = {
     responseTime: "Usually within an hour",
     paymentMethods: "Cash, bank transfer, card on completion",
     availabilityStatus: "taking_on_work",
+    accountGoal: "business",
+    publicEmail: null,
     googleReviewUrl: "https://www.google.com/maps",
     googleRating: 4.9,
     googleReviewCount: 84,

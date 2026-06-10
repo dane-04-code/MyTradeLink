@@ -19,6 +19,10 @@ export const availabilityEnum = pgEnum("availability_status", [
   "taking_on_work",
   "fully_booked",
 ]);
+export const accountGoalEnum = pgEnum("account_goal", [
+  "business",
+  "looking_for_work",
+]);
 export const photoTypeEnum = pgEnum("photo_type", [
   "profile",
   "gallery",
@@ -57,6 +61,10 @@ export const users = pgTable(
     availabilityStatus: availabilityEnum("availability_status")
       .notNull()
       .default("taking_on_work"),
+    accountGoal: accountGoalEnum("account_goal")
+      .notNull()
+      .default("business"),
+    publicEmail: varchar("public_email", { length: 254 }),
     googleReviewUrl: text("google_review_url"),
     googleRating: real("google_rating"),
     googleReviewCount: integer("google_review_count"),
@@ -147,6 +155,27 @@ export const certifications = pgTable(
   })
 );
 
+export const education = pgTable(
+  "education",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    institution: varchar("institution", { length: 160 }).notNull(),
+    qualification: varchar("qualification", { length: 160 }),
+    startYear: integer("start_year"),
+    endYear: integer("end_year"),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    userIdx: index("education_user_idx").on(t.userId),
+  })
+);
+
 export const testimonials = pgTable(
   "testimonials",
   {
@@ -231,6 +260,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   services: many(services),
   photos: many(photos),
   certifications: many(certifications),
+  education: many(education),
   testimonials: many(testimonials),
   sections: many(sections),
   quoteRequests: many(quoteRequests),
@@ -245,6 +275,9 @@ export const photosRelations = relations(photos, ({ one }) => ({
 }));
 export const certificationsRelations = relations(certifications, ({ one }) => ({
   user: one(users, { fields: [certifications.userId], references: [users.id] }),
+}));
+export const educationRelations = relations(education, ({ one }) => ({
+  user: one(users, { fields: [education.userId], references: [users.id] }),
 }));
 export const testimonialsRelations = relations(testimonials, ({ one }) => ({
   user: one(users, { fields: [testimonials.userId], references: [users.id] }),
@@ -269,3 +302,6 @@ export type Section = typeof sections.$inferSelect;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;
 export type PageEvent = typeof pageEvents.$inferSelect;
 export type EventType = PageEvent["eventType"];
+export type Education = typeof education.$inferSelect;
+export type NewEducation = typeof education.$inferInsert;
+export type AccountGoal = (typeof accountGoalEnum.enumValues)[number];
