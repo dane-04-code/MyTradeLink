@@ -73,4 +73,66 @@ html, body {
   .animate-rise-in {
     animation: rise-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
+
+  /* Gentle vertical drift for the floating lead cards in the hero showcase.
+     Three speeds/offsets so cards never move in lockstep. */
+  @keyframes float-soft {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+  .animate-float-soft {
+    animation: float-soft 5.5s ease-in-out infinite;
+  }
+  .animate-float-soft-delayed {
+    animation: float-soft 6.5s ease-in-out 1.2s infinite;
+  }
+  .animate-float-soft-slow {
+    animation: float-soft 7.5s ease-in-out 0.6s infinite;
+  }
+
+  /* Faint dot grid for light surfaces — replaces the dark blueprint grid. */
+  .bg-dot-grid {
+    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.1) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+}
+
+/* Shine sweep on primary CTAs — a soft light band crosses the button once
+   per hover. Lives outside @layer so the hover selector wins. */
+.cta-sheen {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.cta-sheen::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: translateX(-160%) skewX(-18deg);
+}
+.group:hover .cta-sheen::after {
+  animation: sheen-sweep 0.9s ease;
+}
+@keyframes sheen-sweep {
+  to { transform: translateX(420%) skewX(-18deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-x,
+  .animate-soft-blink,
+  .animate-rise-in,
+  .animate-float-soft,
+  .animate-float-soft-delayed,
+  .animate-float-soft-slow {
+    animation: none;
+  }
+  .group:hover .cta-sheen::after {
+    animation: none;
+  }
 }
