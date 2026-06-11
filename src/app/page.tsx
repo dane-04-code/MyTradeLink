@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Bricolage_Grotesque } from "next/font/google";
 import {
   Phone,
   MessageCircle,
@@ -6,22 +7,31 @@ import {
   Star,
   ShieldCheck,
   ArrowRight,
-  Hammer,
-  Wrench,
   Zap,
-  Copy,
   Camera,
   ChevronRight,
-  Plug,
-  HardHat,
-  Droplets,
   MapPin,
-  Quote,
   FileText,
   Receipt,
+  Sparkles,
+  UserPlus,
+  Pencil,
+  Share2,
+  Mail,
+  Siren,
+  ToggleRight,
 } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { Wordmark } from "@/components/wordmark";
+import { Reveal } from "@/components/landing/reveal";
+import { ClaimBar } from "@/components/landing/claim-bar";
+import { PhoneShowcase } from "@/components/landing/phone-showcase";
+
+const displayFont = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-display-landing",
+  display: "swap",
+});
 
 export default async function LandingPage() {
   const { userId } = await auth();
@@ -30,86 +40,70 @@ export default async function LandingPage() {
   const primaryLabel = isSignedIn ? "Open my dashboard" : "Create my page now";
 
   return (
-    <main className="min-h-screen bg-ink-900 text-white selection:bg-brand selection:text-ink-900">
-      <BlueprintGrid />
+    <main
+      className={`${displayFont.variable} min-h-screen bg-white text-ink-900 selection:bg-brand selection:text-ink-900`}
+    >
       <Header isSignedIn={isSignedIn} />
-      <Hero primaryHref={primaryHref} primaryLabel={primaryLabel} />
-      <TradesTicker />
+      <Hero isSignedIn={isSignedIn} primaryHref={primaryHref} />
+      <TradesMarquee />
       <BeforeAfter />
       <HowItWorks />
-      <FeatureGrid />
-      <ForTheJobs />
+      <BentoFeatures />
       <FreeTools />
       <PricingBlock isSignedIn={isSignedIn} />
       <FinalCTA primaryHref={primaryHref} primaryLabel={primaryLabel} />
-      <Footer />
       <MobileStickyCTA primaryHref={primaryHref} primaryLabel={primaryLabel} />
     </main>
   );
 }
 
 /* ----------------------------------------------------------------------------
- * Background — fixed blueprint grid that gives the page a build-site feel
- * --------------------------------------------------------------------------*/
-function BlueprintGrid() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 opacity-[0.07]"
-      style={{
-        backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-        backgroundSize: "48px 48px",
-        maskImage:
-          "radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 90%)",
-      }}
-    />
-  );
-}
-
-/* ----------------------------------------------------------------------------
- * Header
+ * Header — sticky glass bar. Logo left, quiet nav, one loud CTA.
  * --------------------------------------------------------------------------*/
 function Header({ isSignedIn }: { isSignedIn: boolean }) {
   return (
-    <header className="relative z-10">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:py-7">
+    <header className="sticky top-0 z-50 border-b border-line/70 bg-white/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
         <Link href="/" className="group flex items-center">
-          <Wordmark className="text-xl transition group-hover:opacity-80" />
+          <Wordmark className="text-lg transition group-hover:opacity-75" />
         </Link>
-        <nav className="flex items-center gap-1 md:gap-3">
+        <nav className="flex items-center gap-1 md:gap-2">
           <Link
             href="/tools"
-            className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
+            className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-ink-600 transition hover:bg-muted hover:text-ink-900 md:inline-flex"
           >
             Free tools
           </Link>
           <Link
             href="/pricing"
-            className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
+            className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-ink-600 transition hover:bg-muted hover:text-ink-900 md:inline-flex"
           >
             Pricing
           </Link>
           {isSignedIn ? (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-md border-2 border-white bg-white px-4 py-2 text-sm font-bold text-ink-900 transition active:translate-y-0.5 hover:bg-white/90"
+              className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-ink-900 px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_-8px_rgba(15,23,42,0.5)] transition hover:bg-ink-800 active:scale-[0.98]"
             >
-              Dashboard <ChevronRight className="h-4 w-4" />
+              <span aria-hidden className="cta-sheen" />
+              Dashboard
+              <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
           ) : (
             <>
               <Link
                 href="/sign-in"
-                className="hidden rounded-md px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white md:inline-flex"
+                className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-ink-600 transition hover:bg-muted hover:text-ink-900 md:inline-flex"
               >
                 Sign in
               </Link>
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-brand px-4 py-2 text-sm font-bold text-ink-900 transition active:translate-y-0.5 hover:bg-brand-400"
+                className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-ink-900 shadow-[0_8px_20px_-8px_rgba(249,115,22,0.6)] transition hover:bg-brand-400 hover:shadow-[0_10px_24px_-8px_rgba(249,115,22,0.75)] active:scale-[0.98]"
               >
-                Get my page <ChevronRight className="h-4 w-4" />
+                <span aria-hidden className="cta-sheen" />
+                Get my page
+                <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
               </Link>
             </>
           )}
@@ -120,116 +114,55 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
 }
 
 /* ----------------------------------------------------------------------------
- * BigCTA — the upgraded primary call-to-action. Bigger than .btn-primary,
- * with a 6px hard ink shadow that compresses to zero on press, a hatched
- * accent strip on the leading edge, and a small caption ribbon underneath.
- * Used in the hero and final CTA so the same shape language repeats.
- * --------------------------------------------------------------------------*/
-function BigCTA({
-  href,
-  label,
-  variant = "orange",
-  size = "lg",
-  full = false,
-}: {
-  href: string;
-  label: string;
-  variant?: "orange" | "dark" | "white";
-  size?: "lg" | "xl";
-  full?: boolean;
-}) {
-  const palette =
-    variant === "orange"
-      ? "border-ink-900 bg-brand text-ink-900 hover:bg-brand-400"
-      : variant === "dark"
-        ? "border-ink-900 bg-ink-900 text-white hover:bg-ink-800"
-        : "border-ink-900 bg-white text-ink-900 hover:bg-muted";
-
-  const sizing =
-    size === "xl"
-      ? "px-8 py-5 text-xl sm:text-2xl"
-      : "px-7 py-4 text-lg sm:text-xl";
-
-  return (
-    <Link
-      href={href}
-      className={[
-        "group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-2xl border-[3px] font-bold",
-        "shadow-[0_6px_0_0_#0F172A] transition will-change-transform",
-        "hover:translate-y-[2px] hover:shadow-[0_4px_0_0_#0F172A]",
-        "active:translate-y-[6px] active:shadow-[0_0_0_0_#0F172A]",
-        full ? "w-full" : "",
-        sizing,
-        palette,
-      ].join(" ")}
-    >
-      {/* hatched leading-edge stripe — construction-tape tag */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 w-2.5"
-        style={{
-          backgroundImage:
-            variant === "orange"
-              ? "repeating-linear-gradient(45deg, #0F172A 0 4px, transparent 4px 10px)"
-              : "repeating-linear-gradient(45deg, #F97316 0 4px, transparent 4px 10px)",
-        }}
-      />
-      <span className="ml-2 whitespace-nowrap">{label}</span>
-      <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1.5" />
-    </Link>
-  );
-}
-
-/* Small caption ribbon shown beneath the BigCTA — gives the three bullets
- * (free, no card, 5 min) without forcing them into the button itself. */
-function CTACaption({ light }: { light?: boolean }) {
-  const tone = light ? "text-ink-700/80" : "text-white/55";
-  const dot = light ? "bg-ink-900" : "bg-brand";
-  return (
-    <div
-      className={`mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-bold uppercase tracking-[0.2em] ${tone}`}
-    >
-      <span>Free forever</span>
-      <span className={`h-1 w-1 rounded-full ${dot}`} />
-      <span>5 min setup</span>
-      <span className={`h-1 w-1 rounded-full ${dot}`} />
-      <span>No card needed</span>
-    </div>
-  );
-}
-
-/* ----------------------------------------------------------------------------
- * Hero — massive headline + URL chip + phone preview + bigger CTA stack
+ * Hero — claim-your-link bar front and centre, phone showcase with live
+ * lead cards on the right.
  * --------------------------------------------------------------------------*/
 function Hero({
+  isSignedIn,
   primaryHref,
-  primaryLabel,
 }: {
+  isSignedIn: boolean;
   primaryHref: string;
-  primaryLabel: string;
 }) {
   return (
-    <section className="relative z-10 overflow-hidden">
-      {/* orange glow behind the headline */}
+    <section className="relative overflow-hidden">
+      {/* warm wash + faint dot grid */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-32 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-brand/30 blur-[120px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-[radial-gradient(80%_60%_at_50%_0%,rgba(249,115,22,0.09),transparent)]"
+      />
+      <div
+        aria-hidden
+        className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 h-[520px] opacity-50 [mask-image:linear-gradient(to_bottom,#000,transparent)]"
       />
 
-      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-5 pt-10 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16 lg:pb-28">
+      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 px-5 pb-20 pt-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-28 lg:pt-20">
         <div>
-          <h1
-            className="mt-7 animate-rise-in font-display text-[14vw] leading-[0.88] tracking-[-0.03em] sm:text-[88px] md:text-[104px] lg:text-[112px]"
-            style={{ animationDelay: "60ms" }}
+          <Link
+            href="/tools"
+            className="group inline-flex animate-rise-in items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-2 pr-3.5 text-sm font-semibold text-ink-600 shadow-sm transition hover:border-brand-300 hover:text-ink-900"
+            style={{ animationDelay: "40ms" }}
           >
-            <span className="block">Your business.</span>
-            <span className="relative block text-brand">
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand/15 px-2 py-0.5 text-xs font-bold text-brand-700">
+              <Sparkles className="h-3 w-3" />
+              New
+            </span>
+            Free quote and invoice tools
+            <ArrowRight className="h-3.5 w-3.5 text-ink-500 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </Link>
+
+          <h1
+            className="mt-6 animate-rise-in font-display-2 text-[13vw] font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-7xl lg:text-[80px]"
+            style={{ animationDelay: "100ms" }}
+          >
+            Your business.
+            <br />
+            <span className="relative inline-block bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">
               One link.
-              {/* hand-drawn-style ink underline marker */}
               <svg
                 aria-hidden
                 viewBox="0 0 360 18"
-                className="absolute -bottom-2 left-0 h-3 w-[58%] text-ink-900"
+                className="absolute -bottom-1.5 left-0 h-3 w-[60%] text-brand-300"
                 preserveAspectRatio="none"
               >
                 <path
@@ -243,80 +176,62 @@ function Hero({
             </span>
           </h1>
 
-          {/* The URL chip — the unforgettable moment */}
-          <div
-            className="mt-8 inline-flex max-w-full animate-rise-in items-stretch overflow-hidden rounded-xl border-2 border-white/25 bg-white/[0.04]"
-            style={{ animationDelay: "140ms" }}
-          >
-            <div className="hidden items-center gap-1.5 border-r-2 border-white/15 bg-white/[0.06] px-4 sm:flex">
-              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-              <span className="h-2.5 w-2.5 rounded-full bg-brand" />
-            </div>
-            <div className="flex items-center gap-2 px-4 py-3 font-mono text-sm md:text-base">
-              <span className="text-white/45">mytradelink.page/t/</span>
-              <span className="font-bold text-white">dave-plumber</span>
-              <span className="ml-1 h-4 w-px animate-soft-blink bg-brand" />
-            </div>
-            <button
-              type="button"
-              aria-label="Copy link"
-              className="hidden items-center justify-center border-l-2 border-white/15 bg-white/[0.04] px-4 text-white/60 transition hover:bg-white/[0.08] hover:text-white sm:flex"
-            >
-              <Copy className="h-4 w-4" />
-            </button>
-          </div>
-
           <p
-            className="mt-7 max-w-md animate-rise-in text-lg leading-relaxed text-white/70 md:text-xl"
-            style={{ animationDelay: "200ms" }}
+            className="mt-6 max-w-lg animate-rise-in text-lg leading-relaxed text-ink-600 md:text-xl"
+            style={{ animationDelay: "170ms" }}
           >
-            One professional page. Photos, reviews, call and WhatsApp buttons,
-            quote requests. Share it on your van, in your bio, on a card. Set
-            up in five minutes.
+            One professional page with your photos, reviews, licences, call and
+            WhatsApp buttons. Share it on your van, in your bio, on a card.
+            Live in five minutes.
           </p>
 
           <div
-            className="mt-9 animate-rise-in"
-            style={{ animationDelay: "260ms" }}
+            className="mt-8 animate-rise-in"
+            style={{ animationDelay: "240ms" }}
           >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-              <BigCTA href={primaryHref} label={primaryLabel} size="lg" />
-              <Link
-                href="/t/demo"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border-[3px] border-white/80 bg-transparent px-7 py-4 text-lg font-bold text-white transition hover:bg-white hover:text-ink-900 active:translate-y-1"
-              >
-                See a live page
-              </Link>
-            </div>
-            <CTACaption />
+            {isSignedIn ? (
+              <div>
+                <BigCTA href={primaryHref} label="Open my dashboard" />
+                <p className="mt-2.5 pl-1 text-sm text-ink-500">
+                  Your page is waiting. Jump back in.
+                </p>
+              </div>
+            ) : (
+              <ClaimBar />
+            )}
+            <Link
+              href="/t/demo"
+              className="group mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-ink-700 transition hover:text-brand-600"
+            >
+              See a live page first
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
           </div>
 
-          {/* Trade type stack — honest positioning, no fake counts */}
           <div
-            className="mt-8 flex animate-rise-in items-center gap-4"
-            style={{ animationDelay: "320ms" }}
+            className="mt-9 flex animate-rise-in items-center gap-4"
+            style={{ animationDelay: "310ms" }}
           >
-            <div className="flex -space-x-2">
-              <AvatarChip initials="DW" bg="#F97316" fg="#0F172A" />
+            <div className="flex -space-x-2.5">
+              <AvatarChip initials="DW" bg="#F97316" fg="#FFFFFF" />
               <AvatarChip initials="SP" bg="#2563EB" fg="#FFFFFF" />
               <AvatarChip initials="MH" bg="#DC2626" fg="#FFFFFF" />
               <AvatarChip initials="JT" bg="#EAB308" fg="#0F172A" />
               <AvatarChip initials="RB" bg="#16A34A" fg="#FFFFFF" />
             </div>
             <div className="text-sm leading-tight">
-              <div className="font-bold text-white">
+              <div className="font-bold text-ink-900">
                 Plumbers, sparkies, builders, chippies.
               </div>
-              <div className="text-white/55">
+              <div className="text-ink-500">
                 One page that does the talking before you do.
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative flex items-center justify-center">
-          <PhoneMockup />
+        <div className="relative flex items-center justify-center px-6 sm:px-0">
+          <PhoneShowcase />
         </div>
       </div>
     </section>
@@ -334,7 +249,7 @@ function AvatarChip({
 }) {
   return (
     <div
-      className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-ink-900 ring-2 ring-ink-900/60 font-display text-[13px]"
+      className="flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-white text-[12px] font-extrabold shadow-sm"
       style={{ background: bg, color: fg }}
     >
       {initials}
@@ -343,135 +258,49 @@ function AvatarChip({
 }
 
 /* ----------------------------------------------------------------------------
- * Phone mockup — drawn to look like a finished Mytradelink profile.
- * Now slightly tilted and with a peeking job-ticket card behind it for depth.
+ * BigCTA — the loud primary button used in hero (signed-in) and final CTA.
  * --------------------------------------------------------------------------*/
-function PhoneMockup() {
+function BigCTA({
+  href,
+  label,
+  variant = "orange",
+}: {
+  href: string;
+  label: string;
+  variant?: "orange" | "white";
+}) {
+  const palette =
+    variant === "orange"
+      ? "bg-brand text-ink-900 shadow-[0_12px_32px_-10px_rgba(249,115,22,0.6)] hover:bg-brand-400 hover:shadow-[0_16px_36px_-10px_rgba(249,115,22,0.75)]"
+      : "bg-white text-ink-900 shadow-[0_12px_32px_-10px_rgba(255,255,255,0.35)] hover:bg-brand-50";
   return (
-    <div className="relative">
-      {/* angled "construction tape" accent */}
-      <div
-        aria-hidden
-        className="absolute -left-12 -top-6 hidden h-12 w-44 rotate-[-12deg] rounded-sm bg-brand text-ink-900 lg:flex"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, #0F172A 0 6px, transparent 6px 18px)",
-        }}
-      />
-      <div className="absolute -inset-10 rounded-[60px] bg-gradient-to-br from-brand/40 via-transparent to-transparent blur-3xl" />
-
-      {/* peeking quote-request job-ticket card behind the phone */}
-      <div
-        aria-hidden
-        className="absolute -right-6 top-24 hidden w-60 rotate-[6deg] rounded-xl border-2 border-ink-900 bg-white p-3 text-ink-900 shadow-hard md:block"
-      >
-        <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em] text-ink-500">
-          <span>New quote</span>
-          <span className="rounded-sm bg-brand px-1.5 py-0.5 text-ink-900">
-            JOB-2025
-          </span>
-        </div>
-        <div className="mt-2 font-display text-sm leading-tight">
-          Sarah Davies, Bondi NSW 2026
-        </div>
-        <div className="mt-1 text-[11px] leading-snug text-ink-600">
-          Bathroom refit. 2 weeks. Three photos attached.
-        </div>
-        <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-call">
-          <span className="h-1.5 w-1.5 rounded-full bg-call" /> 2 min ago
-        </div>
-      </div>
-
-      <div className="relative h-[640px] w-[310px] -rotate-[3deg] rounded-[44px] border-[10px] border-ink-900/80 bg-ink-900 ring-2 ring-white/15">
-        <div className="absolute left-1/2 top-2 z-10 h-5 w-28 -translate-x-1/2 rounded-full bg-ink-900" />
-        <div className="h-full w-full overflow-hidden rounded-[34px] bg-white text-ink-900">
-          {/* header */}
-          <div className="flex flex-col items-center px-5 pt-9 text-center">
-            <div className="relative">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border-[3px] border-ink-900 bg-brand text-2xl font-bold text-ink-900">
-                DW
-              </div>
-              <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-call">
-                <Check className="h-4 w-4 text-white" strokeWidth={3} />
-              </div>
-            </div>
-            <h2 className="mt-3 font-display text-lg leading-tight tracking-tight">
-              Dave Wilson Plumbing
-            </h2>
-            <div className="text-sm font-bold uppercase tracking-[0.14em] text-brand">
-              Plumber · Sydney
-            </div>
-            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-sm border border-call bg-white px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-call">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-call" />
-              Taking on work
-            </div>
-          </div>
-
-          {/* contact buttons */}
-          <div className="space-y-2 px-4 pt-4">
-            <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-ink-900 bg-call py-3 text-sm font-bold text-white shadow-hard-sm">
-              <Phone className="h-4 w-4" /> Call Dave
-            </div>
-            <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-ink-900 bg-whatsapp py-3 text-sm font-bold text-white shadow-hard-sm">
-              <MessageCircle className="h-4 w-4" /> WhatsApp
-            </div>
-          </div>
-
-          {/* about */}
-          <div className="px-4 pt-4">
-            <div className="rounded-xl bg-slate-50 p-3 text-left text-[11px] leading-relaxed text-ink-700">
-              <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-ink-500">
-                About
-              </div>
-              12 years on the tools. Hot water, blocked drains, bathrooms. Fair
-              prices, on time, fully licensed.
-            </div>
-          </div>
-
-          {/* gallery */}
-          <div className="px-4 pt-3">
-            <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-ink-500">
-              Recent work
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-gradient-to-br from-sky-300 to-sky-500">
-                <Camera className="absolute bottom-1 right-1 h-3 w-3 text-white/80" />
-              </div>
-              <div className="aspect-square rounded-lg bg-gradient-to-br from-orange-300 to-orange-500" />
-              <div className="aspect-square rounded-lg bg-gradient-to-br from-slate-300 to-slate-500" />
-            </div>
-          </div>
-
-          {/* certs */}
-          <div className="px-4 pt-3">
-            <div className="flex items-center gap-2 rounded-lg border-2 border-ink-900 px-3 py-2">
-              <ShieldCheck className="h-4 w-4 text-brand" strokeWidth={2.5} />
-              <div className="text-[11px] font-bold">Licensed Plumber</div>
-              <span className="ml-auto font-mono text-[10px] text-ink-500">
-                NSW Lic 12345
-              </span>
-            </div>
-          </div>
-
-          {/* reviews */}
-          <div className="px-4 pt-2">
-            <div className="flex items-center gap-1.5 rounded-lg border-2 border-line bg-muted px-3 py-2 text-[11px]">
-              <Star className="h-3 w-3 fill-star text-star" />
-              <span className="font-bold">4.9</span>
-              <span className="text-ink-500">on Google · 84 reviews</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Link
+      href={href}
+      className={`group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl px-8 py-4 text-lg font-bold transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] ${palette}`}
+    >
+      <span aria-hidden className="cta-sheen" />
+      {label}
+      <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
+    </Link>
   );
 }
 
 /* ----------------------------------------------------------------------------
- * Trades ticker — endless marquee of trade types and UK cities. Reads like a
- * job-board headline crawl, replacing the empty-stat proof strip.
+ * Section eyebrow — quiet pill with a live orange dot.
  * --------------------------------------------------------------------------*/
-function TradesTicker() {
+function Eyebrow({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-ink-600 shadow-sm">
+      <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+      {label}
+    </span>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Trades marquee — endless crawl of trades and cities.
+ * --------------------------------------------------------------------------*/
+function TradesMarquee() {
   const entries = [
     "Plumber · Sydney",
     "Sparkie · Melbourne",
@@ -488,32 +317,29 @@ function TradesTicker() {
     "Tiler · Sunshine Coast",
     "Locksmith · Townsville",
   ];
-  // duplicate the list once so the marquee can loop seamlessly with translate-50%
   const loop = [...entries, ...entries];
 
   return (
     <section
       aria-label="Trades using Mytradelink"
-      className="relative z-10 border-y-2 border-white/15 bg-black/40 backdrop-blur-sm"
+      className="border-y border-line bg-muted/60"
     >
       <div className="relative overflow-hidden">
-        {/* fade-out edges */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-ink-900 to-transparent"
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-ink-900 to-transparent"
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent"
         />
-
-        <div className="animate-marquee-x flex w-max items-center gap-10 py-5 whitespace-nowrap">
+        <div className="animate-marquee-x flex w-max items-center gap-10 whitespace-nowrap py-4">
           {loop.map((entry, i) => (
             <span key={i} className="inline-flex items-center gap-3">
-              <span className="font-display text-base uppercase tracking-[0.18em] text-white/85">
+              <span className="text-sm font-bold uppercase tracking-[0.18em] text-ink-500">
                 {entry}
               </span>
-              <span className="h-2 w-2 rotate-45 bg-brand" aria-hidden />
+              <span className="h-1.5 w-1.5 rotate-45 bg-brand" aria-hidden />
             </span>
           ))}
         </div>
@@ -523,107 +349,78 @@ function TradesTicker() {
 }
 
 /* ----------------------------------------------------------------------------
- * Before / After — the messy WhatsApp thread vs a clean Mytradelink share.
- * Now stamped with "MESSY" / "BOOKED" overlays for instant read.
+ * Before / After — messy WhatsApp thread vs one clean link.
  * --------------------------------------------------------------------------*/
 function BeforeAfter() {
   return (
-    <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
-      <div className="grid items-end gap-10 md:grid-cols-[1.2fr_1fr]">
-        <div>
-          <SectionMarker number="01" tag="The problem" />
-          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Stop sending screenshots
-            <br />
-            of screenshots.
-          </h2>
+    <section className="mx-auto max-w-6xl px-5 py-24">
+      <Reveal>
+        <div className="grid items-end gap-8 md:grid-cols-[1.2fr_1fr]">
+          <div>
+            <Eyebrow label="The problem" />
+            <h2 className="mt-5 font-display-2 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
+              Stop sending screenshots
+              <br />
+              of screenshots.
+            </h2>
+          </div>
+          <p className="max-w-md text-lg leading-relaxed text-ink-600">
+            Most tradies win work through a mess of WhatsApp threads, Facebook
+            comments and word of mouth. Mytradelink gives you one link that
+            shows you&apos;re legit before you&apos;ve even picked up the
+            phone.
+          </p>
         </div>
-        <p className="max-w-md text-lg leading-relaxed text-white/70">
-          Most tradies win work through a mess of WhatsApp threads, Facebook
-          comments and word of mouth. Mytradelink gives you one link that does
-          the talking, so customers see you&apos;re legit before you&apos;ve
-          even picked up the phone.
-        </p>
-      </div>
+      </Reveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* BEFORE */}
-        <div className="relative rounded-2xl border-2 border-white/15 bg-white/[0.02] p-6">
-          <Stamp label="Messy" tone="emergency" rotate={-6} />
-          <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-emergency/60 bg-emergency/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.22em] text-emergency">
-            Before
-          </div>
-          <div className="space-y-2 text-sm">
-            <ChatBubble side="left" text="hi do u do bathrooms" />
-            <ChatBubble side="right" text="yes" />
-            <ChatBubble side="left" text="can u send pics of past work" />
-            <ChatBubble side="right" text="i'll look on my phone tonight" />
-            <ChatBubble side="left" text="you licensed? got insurance?" />
-            <ChatBubble side="right" text="…" muted />
-          </div>
-          <div className="mt-5 text-sm text-white/50">
-            Three days, no booking. The customer rings someone else.
-          </div>
-        </div>
-
-        {/* AFTER */}
-        <div className="relative overflow-hidden rounded-2xl border-2 border-brand bg-gradient-to-br from-brand/10 via-transparent to-transparent p-6">
-          <Stamp label="Booked" tone="call" rotate={5} />
-          <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-brand bg-brand/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.22em] text-brand">
-            After
-          </div>
-          <div className="space-y-2 text-sm">
-            <ChatBubble side="left" text="hi do u do bathrooms" />
-            <ChatBubble
-              side="right"
-              text="yes, everything's on my page 👇"
-            />
-            <div className="ml-auto w-max rounded-lg border-2 border-ink-900 bg-white px-4 py-3 text-ink-900">
-              <div className="font-mono text-xs text-ink-500">
-                mytradelink.page/t/dave-plumber
-              </div>
-              <div className="mt-1 flex items-center gap-2 text-[11px] font-bold">
-                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-ink-900 bg-brand text-[10px] text-ink-900">
-                  DW
-                </span>
-                Dave Wilson Plumbing · Sydney
-              </div>
+      <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Reveal delay={80}>
+          <div className="h-full rounded-3xl border border-line bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.12)]">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-emergency/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-emergency">
+              Before
             </div>
-            <ChatBubble side="left" text="amazing, when can you come?" />
+            <div className="space-y-2 text-sm">
+              <ChatBubble side="left" text="hi do u do bathrooms" />
+              <ChatBubble side="right" text="yes" />
+              <ChatBubble side="left" text="can u send pics of past work" />
+              <ChatBubble side="right" text="i'll look on my phone tonight" />
+              <ChatBubble side="left" text="you licensed? got insurance?" />
+              <ChatBubble side="right" text="…" muted />
+            </div>
+            <div className="mt-5 text-sm text-ink-500">
+              Three days, no booking. The customer rings someone else.
+            </div>
           </div>
-          <div className="mt-5 text-sm text-brand/90">
-            One link. Job booked the same morning.
+        </Reveal>
+
+        <Reveal delay={180}>
+          <div className="h-full rounded-3xl border border-brand-200 bg-gradient-to-b from-brand-50 to-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_36px_-14px_rgba(249,115,22,0.25)]">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-call/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-call">
+              After
+            </div>
+            <div className="space-y-2 text-sm">
+              <ChatBubble side="left" text="hi do u do bathrooms" />
+              <ChatBubble side="right" text="yes, everything's on my page 👇" />
+              <div className="ml-auto w-max max-w-[85%] rounded-2xl rounded-br-md border border-line bg-white px-4 py-3 shadow-sm">
+                <div className="font-mono text-xs text-ink-500">
+                  mytradelink.page/t/dave-plumber
+                </div>
+                <div className="mt-1.5 flex items-center gap-2 text-xs font-bold text-ink-900">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-[9px] text-white">
+                    DW
+                  </span>
+                  Dave Wilson Plumbing · Sydney
+                </div>
+              </div>
+              <ChatBubble side="left" text="amazing, when can you come?" />
+            </div>
+            <div className="mt-5 text-sm font-semibold text-brand-700">
+              One link. Job booked the same morning.
+            </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
-  );
-}
-
-/* A small "rubber stamp" graphic used on the Before/After cards. */
-function Stamp({
-  label,
-  tone,
-  rotate = 0,
-}: {
-  label: string;
-  tone: "emergency" | "call";
-  rotate?: number;
-}) {
-  const color = tone === "emergency" ? "#DC2626" : "#16A34A";
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute right-4 top-4 select-none rounded-sm border-2 px-2 py-0.5 font-display text-[11px] uppercase tracking-[0.3em] opacity-80"
-      style={{
-        color,
-        borderColor: color,
-        transform: `rotate(${rotate}deg)`,
-        boxShadow: `inset 0 0 0 2px rgba(0,0,0,0)`,
-      }}
-    >
-      {label}
-    </div>
   );
 }
 
@@ -643,7 +440,7 @@ function ChatBubble({
           "max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px]",
           side === "right"
             ? "rounded-br-md bg-brand text-ink-900"
-            : "rounded-bl-md bg-white/10 text-white/85",
+            : "rounded-bl-md bg-muted text-ink-700",
           muted ? "opacity-50" : "",
         ].join(" ")}
       >
@@ -654,278 +451,68 @@ function ChatBubble({
 }
 
 /* ----------------------------------------------------------------------------
- * Section marker — a giant ghosted number + small caption. Replaces the
- * stamped eyebrow chip on most sections so the page doesn't feel like the
- * same row repeated.
- * --------------------------------------------------------------------------*/
-function SectionMarker({ number, tag }: { number: string; tag: string }) {
-  return (
-    <div className="flex items-baseline gap-4">
-      <span className="font-display text-5xl leading-none text-brand/80 md:text-6xl">
-        {number}
-      </span>
-      <span className="border-l-2 border-white/15 pl-4 text-xs font-bold uppercase tracking-[0.28em] text-white/70">
-        {tag}
-      </span>
-    </div>
-  );
-}
-
-/* ----------------------------------------------------------------------------
- * How it works — 3 step rail. Section opener drops the eyebrow chip in favour
- * of a centred section marker for variety.
+ * How it works — three steps joined by a dashed rail.
  * --------------------------------------------------------------------------*/
 function HowItWorks() {
   const steps = [
     {
-      n: "01",
-      icon: <Wrench className="h-6 w-6" />,
+      n: "1",
+      icon: <UserPlus className="h-5 w-5" />,
       title: "Sign up free",
       body: "Drop your name and trade. We make you a page on the spot.",
     },
     {
-      n: "02",
-      icon: <Hammer className="h-6 w-6" />,
+      n: "2",
+      icon: <Pencil className="h-5 w-5" />,
       title: "Fill it in",
       body: "Photos, services, contact details, certs. Toggle what you want, drag the order.",
     },
     {
-      n: "03",
-      icon: <Zap className="h-6 w-6" />,
+      n: "3",
+      icon: <Share2 className="h-5 w-5" />,
       title: "Share the link",
       body: "On your van, your WhatsApp bio, your business cards. One link does everything.",
     },
   ];
   return (
-    <section className="relative z-10 border-t-2 border-white/15 bg-white/[0.02]">
+    <section className="border-t border-line bg-muted/50">
       <div className="mx-auto max-w-6xl px-5 py-24">
-        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <SectionMarker number="02" tag="How it works" />
-          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Live in <span className="text-brand">five minutes.</span>
-          </h2>
-          <p className="mt-4 max-w-lg text-white/60">
-            No designer, no domain, no faff. Sign up, fill in, share.
-          </p>
-        </div>
-
-        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {steps.map((s) => (
-            <div
-              key={s.n}
-              className="group relative overflow-hidden rounded-2xl border-2 border-white/15 bg-ink-900 p-7 transition hover:border-brand"
-            >
-              <div className="absolute -right-6 -top-2 font-display text-[140px] leading-none tracking-tighter text-white/[0.04] transition group-hover:text-brand/15">
-                {s.n}
-              </div>
-              <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-md border-2 border-ink-900 bg-brand text-ink-900 ring-2 ring-white/20">
-                {s.icon}
-              </div>
-              <h3 className="relative mt-5 font-display text-2xl leading-tight tracking-tight">
-                {s.title}
-              </h3>
-              <p className="relative mt-2 text-white/65">{s.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ----------------------------------------------------------------------------
- * Feature grid — what you actually get. Section opener uses a bracketed
- * highlight instead of the orange-word-in-headline trick.
- * --------------------------------------------------------------------------*/
-function FeatureGrid() {
-  const features = [
-    {
-      title: "Call and WhatsApp buttons",
-      body: "Massive, impossible-to-miss. One tap and they're on the phone with you.",
-      tag: "Free",
-    },
-    {
-      title: "Photo gallery",
-      body: "Show off your work. Swipeable on mobile. Looks professional out the box.",
-      tag: "Free",
-    },
-    {
-      title: "Reviews link",
-      body: "Send people to your Google reviews with a single button.",
-      tag: "Free",
-    },
-    {
-      title: "Licences and insurance",
-      body: "Electrical, plumbing, White Card, builder's licence. Display them as proper trust badges.",
-      tag: "Free",
-    },
-    {
-      title: "Quote request form",
-      body: "Customers send name, postcode, photos. You get an email. Win the job.",
-      tag: "Pro",
-    },
-    {
-      title: "Emergency callout",
-      body: "Red 24/7 button for the jobs that pay double. Pro plan only.",
-      tag: "Pro",
-    },
-  ];
-  return (
-    <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
-      <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-        <div>
-          <SectionMarker number="03" tag="What you get" />
-          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Everything a customer
-            <br className="hidden md:block" />{" "}
-            needs to{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10 px-1 text-ink-900">trust you</span>
-              <span
-                aria-hidden
-                className="absolute inset-0 -skew-y-2 bg-brand"
-                style={{ borderRadius: 4 }}
-              />
-            </span>
-            .
-          </h2>
-        </div>
-        <p className="max-w-sm text-white/65">
-          Toggle sections on or off, drag them in the order you want. Changes
-          save the second you make them, no save button anywhere.
-        </p>
-      </div>
-
-      <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border-2 border-white/15 bg-white/15 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map((f) => (
-          <div
-            key={f.title}
-            className="group relative bg-ink-900 p-7 transition hover:bg-white/[0.03]"
-          >
-            <div className="flex items-start justify-between">
-              <h3 className="font-display text-xl leading-tight tracking-tight">
-                {f.title}
-              </h3>
-              <span
-                className={[
-                  "rounded-sm border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em]",
-                  f.tag === "Pro"
-                    ? "border-ink-900 bg-brand text-ink-900"
-                    : "border-white/15 bg-white/[0.04] text-white/70",
-                ].join(" ")}
-              >
-                {f.tag}
+        <Reveal>
+          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+            <Eyebrow label="How it works" />
+            <h2 className="mt-5 font-display-2 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
+              Live in{" "}
+              <span className="bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">
+                five minutes.
               </span>
-            </div>
-            <p className="mt-2 text-sm leading-relaxed text-white/65">
-              {f.body}
+            </h2>
+            <p className="mt-4 max-w-lg text-ink-600">
+              No designer, no domain, no faff. Sign up, fill in, share.
             </p>
           </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+        </Reveal>
 
-/* ----------------------------------------------------------------------------
- * For the jobs — three job-ticket cards showing how Mytradelink wins specific
- * trade scenarios. Honest social-proof substitute — no fake testimonials.
- * --------------------------------------------------------------------------*/
-function ForTheJobs() {
-  const jobs = [
-    {
-      trade: "Plumber",
-      ref: "JOB-0421",
-      icon: <Droplets className="h-5 w-5" />,
-      area: "Sydney · NSW 2150",
-      title: "Hot water emergency",
-      quote:
-        "Customer hits Call. You answer. Quote sent before the kettle's boiled.",
-      colorHex: "#F97316",
-    },
-    {
-      trade: "Sparkie",
-      ref: "JOB-0422",
-      icon: <Plug className="h-5 w-5" />,
-      area: "Melbourne · VIC 3121",
-      title: "Full house rewire",
-      quote:
-        "Customer sees your electrical licence and insurance before they even ring. Trust earned in a tap.",
-      colorHex: "#2563EB",
-    },
-    {
-      trade: "Builder",
-      ref: "JOB-0423",
-      icon: <HardHat className="h-5 w-5" />,
-      area: "Brisbane · QLD 4101",
-      title: "Deck and pergola build",
-      quote:
-        "They scroll the gallery, read the reviews, send a quote request. You haven't lifted a finger.",
-      colorHex: "#EAB308",
-    },
-  ];
-
-  return (
-    <section className="relative z-10 border-t-2 border-white/15 bg-white/[0.02]">
-      <div className="mx-auto max-w-6xl px-5 py-24">
-        <div className="max-w-2xl">
-          <SectionMarker number="04" tag="For the jobs" />
-          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            For the jobs
-            <br />
-            that pay the mortgage.
-          </h2>
-          <p className="mt-5 max-w-lg text-lg text-white/70">
-            Doesn&apos;t matter what you turn up in or what tools you carry. If
-            you do the work, Mytradelink helps you win it.
-          </p>
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {jobs.map((j) => (
-            <article
-              key={j.ref}
-              className="group relative overflow-hidden rounded-2xl border-2 border-white/15 bg-ink-900 p-6 transition hover:border-brand"
-            >
-              {/* job-ticket header strip with reference number */}
-              <div className="-mx-6 -mt-6 mb-5 flex items-center justify-between border-b-2 border-white/15 bg-white/[0.02] px-6 py-3">
-                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-white/70">
-                  <span
-                    className="inline-flex h-5 w-5 items-center justify-center rounded-sm border border-ink-900"
-                    style={{ background: j.colorHex, color: "#0F172A" }}
-                  >
-                    {j.icon}
+        <div className="relative mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
+          {/* dashed connector rail, desktop only */}
+          <div
+            aria-hidden
+            className="absolute left-[16%] right-[16%] top-[44px] hidden border-t-2 border-dashed border-brand-200 md:block"
+          />
+          {steps.map((s, i) => (
+            <Reveal key={s.n} delay={i * 110}>
+              <div className="group relative h-full rounded-3xl border border-line bg-white p-7 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.1)] transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_44px_-16px_rgba(249,115,22,0.28)]">
+                <div className="relative flex h-[60px] w-[60px] items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-[0_10px_24px_-8px_rgba(249,115,22,0.55)]">
+                  {s.icon}
+                  <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-ink-900 text-[11px] font-extrabold text-white">
+                    {s.n}
                   </span>
-                  {j.trade}
                 </div>
-                <span className="font-mono text-[10px] tracking-widest text-white/40">
-                  {j.ref}
-                </span>
+                <h3 className="mt-5 font-display-2 text-2xl font-bold leading-tight tracking-tight">
+                  {s.title}
+                </h3>
+                <p className="mt-2 leading-relaxed text-ink-600">{s.body}</p>
               </div>
-
-              <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-white/55">
-                <MapPin className="h-3 w-3" /> {j.area}
-              </div>
-              <h3 className="mt-2 font-display text-2xl leading-tight tracking-tight">
-                {j.title}
-              </h3>
-              <div className="mt-4 flex items-start gap-2 text-white/75">
-                <Quote className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand" />
-                <p className="text-sm leading-relaxed">{j.quote}</p>
-              </div>
-
-              {/* tear-line at the bottom — gives the card a ticket-stub feel */}
-              <div
-                aria-hidden
-                className="-mx-6 -mb-6 mt-6 h-3"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(circle at 6px 50%, #0F172A 3px, transparent 3.5px)",
-                  backgroundSize: "12px 12px",
-                  backgroundColor: "rgba(255,255,255,0.04)",
-                }}
-              />
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -934,9 +521,229 @@ function ForTheJobs() {
 }
 
 /* ----------------------------------------------------------------------------
- * Free tools — surfaces the top-of-funnel /tools section on the homepage.
- * Only the tools that are actually built get a card here; the rest live behind
- * the "See all free tools" link as they ship.
+ * Bento features — what you actually get, with little working visuals.
+ * --------------------------------------------------------------------------*/
+function BentoFeatures() {
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-24">
+      <Reveal>
+        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <Eyebrow label="What you get" />
+            <h2 className="mt-5 font-display-2 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
+              Everything a customer
+              <br className="hidden md:block" /> needs to{" "}
+              <span className="relative inline-block">
+                <span className="relative z-10 px-1">trust you.</span>
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-1 top-[55%] -skew-y-1 rounded bg-brand/30"
+                />
+              </span>
+            </h2>
+          </div>
+          <p className="max-w-sm text-ink-600">
+            Toggle sections on or off, drag them in the order you want. Changes
+            save the second you make them, no save button anywhere.
+          </p>
+        </div>
+      </Reveal>
+
+      <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-6">
+        {/* Call + WhatsApp, wide card with button mock */}
+        <Reveal className="md:col-span-4" delay={0}>
+          <BentoCard
+            title="Call and WhatsApp buttons"
+            body="Massive, impossible to miss. One tap and they're on the phone with you."
+            tag="Free"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-call py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_-8px_rgba(22,163,74,0.6)]">
+                <Phone className="h-4 w-4" /> Call now
+              </div>
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_-8px_rgba(37,211,102,0.6)]">
+                <MessageCircle className="h-4 w-4" /> WhatsApp
+              </div>
+            </div>
+          </BentoCard>
+        </Reveal>
+
+        {/* Photo gallery */}
+        <Reveal className="md:col-span-2" delay={90}>
+          <BentoCard
+            title="Photo gallery"
+            body="Show off your work. Swipeable on mobile, sharp on desktop."
+            tag="Free"
+          >
+            <div className="grid grid-cols-3 gap-2">
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-gradient-to-br from-sky-200 to-sky-400">
+                <Camera className="absolute bottom-1.5 right-1.5 h-3.5 w-3.5 text-white/90" />
+              </div>
+              <div className="aspect-square rounded-lg bg-gradient-to-br from-brand-200 to-brand-400" />
+              <div className="aspect-square rounded-lg bg-gradient-to-br from-slate-200 to-slate-400" />
+            </div>
+          </BentoCard>
+        </Reveal>
+
+        {/* Reviews */}
+        <Reveal className="md:col-span-2" delay={0}>
+          <BentoCard
+            title="Reviews link"
+            body="Send people straight to your Google reviews with one button."
+            tag="Free"
+          >
+            <div className="flex items-center gap-2 rounded-xl border border-line bg-muted px-3.5 py-3">
+              <div className="flex items-center gap-0.5">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} className="h-3.5 w-3.5 fill-star text-star" />
+                ))}
+              </div>
+              <span className="text-sm font-bold">4.9</span>
+              <span className="text-xs text-ink-500">84 reviews</span>
+            </div>
+          </BentoCard>
+        </Reveal>
+
+        {/* Licences */}
+        <Reveal className="md:col-span-2" delay={90}>
+          <BentoCard
+            title="Licences and insurance"
+            body="Display your tickets as proper trust badges, not a line of text."
+            tag="Free"
+          >
+            <div className="flex items-center gap-2.5 rounded-xl border border-line bg-muted px-3.5 py-3">
+              <ShieldCheck
+                className="h-5 w-5 shrink-0 text-brand-600"
+                strokeWidth={2.5}
+              />
+              <span className="text-sm font-bold">Licensed Plumber</span>
+              <Check className="ml-auto h-4 w-4 text-call" strokeWidth={3} />
+            </div>
+          </BentoCard>
+        </Reveal>
+
+        {/* Emergency callout */}
+        <Reveal className="md:col-span-2" delay={180}>
+          <BentoCard
+            title="Emergency callout"
+            body="A red 24/7 button for the jobs that pay double."
+            tag="Pro"
+          >
+            <div className="flex items-center justify-center gap-2 rounded-xl bg-emergency py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_-8px_rgba(220,38,38,0.6)]">
+              <Siren className="h-4 w-4" /> 24/7 emergency callout
+            </div>
+          </BentoCard>
+        </Reveal>
+
+        {/* Quote requests, the hero card */}
+        <Reveal className="md:col-span-6" delay={0}>
+          <div className="group relative overflow-hidden rounded-3xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-white p-7 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-16px_rgba(249,115,22,0.25)] transition duration-300 hover:-translate-y-1 md:p-9">
+            <div className="grid items-center gap-8 md:grid-cols-2">
+              <div>
+                <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-900">
+                  Pro
+                </span>
+                <h3 className="mt-4 font-display-2 text-3xl font-bold leading-tight tracking-tight">
+                  Quote requests, straight to your inbox.
+                </h3>
+                <p className="mt-3 max-w-md leading-relaxed text-ink-600">
+                  Customers send their name, postcode, job description and
+                  photos. You get an email the second it lands. Reply first,
+                  win the job.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-700">
+                  <Mail className="h-4 w-4" />
+                  Email alerts on every quote
+                </div>
+              </div>
+              <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.15)]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+                    New quote request
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-call">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-call" />
+                    2 min ago
+                  </span>
+                </div>
+                <div className="mt-3 text-base font-bold">
+                  Sarah Davies · Bondi NSW 2026
+                </div>
+                <div className="mt-1 flex items-center gap-1.5 text-sm text-ink-600">
+                  <MapPin className="h-3.5 w-3.5 shrink-0" />
+                  Bathroom refit, 2 weeks, 3 photos attached
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <span className="flex-1 rounded-lg bg-ink-900 py-2.5 text-center text-xs font-bold text-white">
+                    Call Sarah
+                  </span>
+                  <span className="flex-1 rounded-lg border border-line py-2.5 text-center text-xs font-bold text-ink-700">
+                    Mark contacted
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* autosave note card */}
+        <Reveal className="md:col-span-6" delay={80}>
+          <div className="flex flex-col items-start gap-3 rounded-3xl border border-line bg-muted/60 px-7 py-5 sm:flex-row sm:items-center">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm">
+              <ToggleRight className="h-5 w-5 text-brand-600" />
+            </span>
+            <p className="text-sm leading-relaxed text-ink-600">
+              <span className="font-bold text-ink-900">
+                Everything autosaves.
+              </span>{" "}
+              Flip a section on, drag it up the page, change your number. It's
+              live before you've put the phone down.
+            </p>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function BentoCard({
+  title,
+  body,
+  tag,
+  children,
+}: {
+  title: string;
+  body: string;
+  tag: "Free" | "Pro";
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="group flex h-full flex-col rounded-3xl border border-line bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.1)] transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_44px_-16px_rgba(249,115,22,0.25)]">
+      <div className="mb-5">{children}</div>
+      <div className="mt-auto">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="font-display-2 text-xl font-bold leading-tight tracking-tight">
+            {title}
+          </h3>
+          <span
+            className={[
+              "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em]",
+              tag === "Pro"
+                ? "bg-brand text-ink-900"
+                : "bg-muted text-ink-600",
+            ].join(" ")}
+          >
+            {tag}
+          </span>
+        </div>
+        <p className="mt-2 text-sm leading-relaxed text-ink-600">{body}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Free tools — top-of-funnel cards for /tools.
  * --------------------------------------------------------------------------*/
 function FreeTools() {
   const tools = [
@@ -955,55 +762,57 @@ function FreeTools() {
   ];
 
   return (
-    <section className="relative z-10 mx-auto max-w-6xl px-5 py-24">
-      <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-        <div>
-          <SectionMarker number="05" tag="Free tools" />
-          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Free tools for tradies.
-            <br className="hidden md:block" /> No sign-up needed.
-          </h2>
-        </div>
-        <p className="max-w-sm text-white/65">
-          Quotes, tax invoices and more. Use them free, then grab your
-          Mytradelink page when you&apos;re ready.
-        </p>
-      </div>
-
-      <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
-        {tools.map((t) => (
-          <Link
-            key={t.href}
-            href={t.href}
-            className="group relative overflow-hidden rounded-2xl border-2 border-white/15 bg-ink-900 p-6 transition hover:border-brand"
-          >
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-md border-2 border-ink-900 bg-brand text-ink-900 ring-2 ring-white/20">
-                {t.icon}
-              </span>
-              <h3 className="font-display text-2xl leading-tight tracking-tight">
-                {t.name}
-              </h3>
-              <ArrowRight className="ml-auto h-5 w-5 text-white/40 transition-transform duration-200 group-hover:translate-x-1.5 group-hover:text-brand" />
+    <section className="border-t border-line bg-muted/50">
+      <div className="mx-auto max-w-6xl px-5 py-24">
+        <Reveal>
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <Eyebrow label="Free tools" />
+              <h2 className="mt-5 font-display-2 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
+                Free tools for tradies.
+                <br className="hidden md:block" /> No sign-up needed.
+              </h2>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-white/65">
-              {t.body}
+            <p className="max-w-sm text-ink-600">
+              Quotes, tax invoices and more. Use them free, then grab your
+              Mytradelink page when you&apos;re ready.
             </p>
-            <span className="mt-4 inline-flex items-center gap-1.5 rounded-sm border border-white/15 bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
-              Free
-            </span>
-          </Link>
-        ))}
-      </div>
+          </div>
+        </Reveal>
 
-      <div className="mt-8">
-        <Link
-          href="/tools"
-          className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-brand transition hover:text-brand-400"
-        >
-          See all free tools
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {tools.map((t, i) => (
+            <Reveal key={t.href} delay={i * 100}>
+              <Link
+                href={t.href}
+                className="group flex h-full flex-col rounded-3xl border border-line bg-white p-7 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.1)] transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_44px_-16px_rgba(249,115,22,0.25)]"
+              >
+                <div className="flex items-center gap-3.5">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-[0_10px_24px_-8px_rgba(249,115,22,0.55)]">
+                    {t.icon}
+                  </span>
+                  <h3 className="font-display-2 text-2xl font-bold leading-tight tracking-tight">
+                    {t.name}
+                  </h3>
+                  <ArrowRight className="ml-auto h-5 w-5 text-ink-400 transition-transform duration-200 group-hover:translate-x-1.5 group-hover:text-brand-600" />
+                </div>
+                <p className="mt-4 leading-relaxed text-ink-600">{t.body}</p>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal delay={150}>
+          <div className="mt-8">
+            <Link
+              href="/tools"
+              className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.16em] text-brand-700 transition hover:text-brand-600"
+            >
+              See all free tools
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -1014,22 +823,23 @@ function FreeTools() {
  * --------------------------------------------------------------------------*/
 function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
   return (
-    <section
-      id="pricing"
-      className="relative z-10 border-t-2 border-white/15 bg-white/[0.02]"
-    >
-      <div className="mx-auto max-w-6xl px-5 py-24">
+    <section id="pricing" className="mx-auto max-w-6xl px-5 py-24">
+      <Reveal>
         <div className="text-center">
-          <SectionMarker number="06" tag="Pricing" />
-          <h2 className="mt-5 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+          <div className="flex justify-center">
+            <Eyebrow label="Pricing" />
+          </div>
+          <h2 className="mt-5 font-display-2 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
             Simple. Honest. No card to start.
           </h2>
-          <p className="mt-4 text-white/65">
+          <p className="mt-4 text-ink-600">
             Start free. Upgrade when you&apos;ve won the first job.
           </p>
         </div>
+      </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+        <Reveal delay={60}>
           <PriceCard
             tier="Free"
             price="A$0"
@@ -1044,12 +854,14 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
             cta={
               <Link
                 href={isSignedIn ? "/dashboard" : "/sign-up"}
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-white/30 bg-transparent px-6 py-3.5 text-base font-bold transition hover:border-white hover:bg-white/[0.06] active:translate-y-0.5"
+                className="inline-flex w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-line bg-white px-6 py-3.5 text-base font-bold text-ink-900 transition hover:border-ink-900 active:scale-[0.99]"
               >
                 {isSignedIn ? "Go to dashboard" : "Start free"}
               </Link>
             }
           />
+        </Reveal>
+        <Reveal delay={160}>
           <PriceCard
             highlight
             tier="Pro"
@@ -1067,13 +879,15 @@ function PricingBlock({ isSignedIn }: { isSignedIn: boolean }) {
             cta={
               <Link
                 href="/pricing"
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-ink-900 bg-brand px-6 py-3.5 text-base font-bold text-ink-900 transition hover:bg-brand-400 active:translate-y-1"
+                className="group relative inline-flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl bg-brand px-6 py-3.5 text-base font-bold text-ink-900 shadow-[0_12px_28px_-10px_rgba(249,115,22,0.6)] transition hover:bg-brand-400 active:scale-[0.99]"
               >
+                <span aria-hidden className="cta-sheen" />
                 Upgrade to Pro
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
               </Link>
             }
           />
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -1099,44 +913,47 @@ function PriceCard({
   return (
     <div
       className={[
-        "relative overflow-hidden rounded-2xl border-2 p-8",
+        "relative flex h-full flex-col rounded-3xl p-8",
         highlight
-          ? "border-brand bg-gradient-to-b from-brand/10 to-transparent"
-          : "border-white/15 bg-ink-900",
+          ? "border-2 border-brand bg-gradient-to-b from-brand-50 to-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_56px_-20px_rgba(249,115,22,0.35)]"
+          : "border border-line bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.1)]",
       ].join(" ")}
     >
       {highlight && (
-        <div className="absolute right-6 top-6 rounded-sm border-2 border-ink-900 bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-ink-900">
+        <div className="absolute -top-3.5 left-8 inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white shadow-lg">
+          <Zap className="h-3 w-3 text-brand" />
           Most popular
         </div>
       )}
-      <div className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+      <div className="text-xs font-bold uppercase tracking-[0.2em] text-ink-500">
         {tier}
       </div>
       <div className="mt-3 flex items-baseline gap-2">
-        <span className="font-display text-6xl tracking-tight">{price}</span>
-        <span className="text-white/55">{cadence}</span>
+        <span className="font-display-2 text-6xl font-extrabold tracking-tight">
+          {price}
+        </span>
+        <span className="text-ink-500">{cadence}</span>
       </div>
-      {sub && <div className="mt-1 text-sm text-brand">{sub}</div>}
+      {sub && (
+        <div className="mt-1 text-sm font-semibold text-brand-700">{sub}</div>
+      )}
       <ul className="mt-7 space-y-2.5">
         {features.map((f) => (
-          <li
-            key={f}
-            className="flex items-start gap-2.5 text-sm text-white/80"
-          >
-            <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand" />
+          <li key={f} className="flex items-start gap-2.5 text-sm text-ink-700">
+            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-call/15">
+              <Check className="h-3 w-3 text-call" strokeWidth={3} />
+            </span>
             {f}
           </li>
         ))}
       </ul>
-      <div className="mt-8">{cta}</div>
+      <div className="mt-8 pt-2">{cta}</div>
     </div>
   );
 }
 
 /* ----------------------------------------------------------------------------
- * Final CTA — styled like a job-ticket / collection slip. Perforated edge,
- * stamped reference, hatched corner, BigCTA front-and-centre.
+ * Final CTA + footer — one dark closing block with a warm glow.
  * --------------------------------------------------------------------------*/
 function FinalCTA({
   primaryHref,
@@ -1146,83 +963,82 @@ function FinalCTA({
   primaryLabel: string;
 }) {
   return (
-    <section className="relative z-10 mx-auto max-w-6xl px-5 pb-28">
-      <div className="relative overflow-hidden rounded-2xl border-[3px] border-ink-900 bg-brand text-ink-900 shadow-[0_8px_0_0_#0F172A]">
-        {/* perforated top edge — ticket stub */}
-        <div
-          aria-hidden
-          className="absolute -top-2 left-0 right-0 h-4"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 8px 50%, #0F172A 3px, transparent 3.5px)",
-            backgroundSize: "16px 16px",
-          }}
-        />
+    <section className="relative overflow-hidden bg-ink-900 text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-brand/20 blur-[140px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+        }}
+      />
 
-        {/* hatched corner accent */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-12 -top-10 h-64 w-64 rotate-[12deg] rounded-2xl opacity-30"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(45deg, #0F172A 0 6px, transparent 6px 18px)",
-          }}
-        />
-
-        <div className="relative px-8 pt-12 pb-10 md:px-16 md:pt-16 md:pb-14">
-          {/* ticket header — fake reference + stamp */}
-          <div className="mb-8 flex items-center justify-between gap-4 border-b-2 border-ink-900/30 pb-4 text-xs font-bold uppercase tracking-[0.22em]">
-            <div className="flex items-center gap-3">
-              <span className="rounded-sm border-2 border-ink-900 bg-ink-900 px-2 py-0.5 text-brand">
-                Mytradelink
-              </span>
-              <span className="hidden md:inline">Sign-up slip</span>
-            </div>
-            <div className="font-mono text-[10px] tracking-widest text-ink-900/70">
-              REF / 2026-05-{new Date().getDate().toString().padStart(2, "0")}
-            </div>
-          </div>
-
-          <h2 className="max-w-2xl font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Stop losing jobs to the bloke with a website.
+      <div className="relative mx-auto max-w-6xl px-5 pb-12 pt-24 text-center md:pt-28">
+        <Reveal>
+          <h2 className="mx-auto max-w-3xl font-display-2 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
+            Stop losing jobs to the bloke{" "}
+            <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">
+              with a website.
+            </span>
           </h2>
-          <p className="mt-5 max-w-md text-lg text-ink-900/85">
+          <p className="mx-auto mt-5 max-w-md text-lg text-white/70">
             Five minutes to set up. Free forever. Share one link, win more
             work.
           </p>
-
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-start">
-            <BigCTA
-              href={primaryHref}
-              label={primaryLabel}
-              variant="dark"
-              size="xl"
-            />
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <BigCTA href={primaryHref} label={primaryLabel} />
             <Link
               href="/t/demo"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border-[3px] border-ink-900 bg-white/40 px-7 py-4 text-lg font-bold text-ink-900 transition hover:bg-white active:translate-y-1"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-white/25 px-8 py-[14px] text-lg font-bold text-white transition hover:border-white hover:bg-white/10 active:scale-[0.98]"
             >
               See a live page
             </Link>
           </div>
-          <CTACaption light />
-
-          {/* stamped "approved" mark */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute right-8 bottom-8 hidden -rotate-12 select-none rounded-sm border-2 border-ink-900/80 px-3 py-1 font-display text-xs uppercase tracking-[0.3em] text-ink-900/80 md:block"
-          >
-            Approved · Aussie Trades
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-bold uppercase tracking-[0.2em] text-white/50">
+            <span>Free forever</span>
+            <span className="h-1 w-1 rounded-full bg-brand" />
+            <span>5 min setup</span>
+            <span className="h-1 w-1 rounded-full bg-brand" />
+            <span>No card needed</span>
           </div>
-        </div>
+        </Reveal>
+
+        <footer className="mt-20 border-t border-white/10 pb-20 pt-8 md:pb-2">
+          <div className="flex flex-col items-center justify-between gap-4 text-sm text-white/50 md:flex-row">
+            <div className="flex items-center gap-2">
+              <Wordmark className="text-base text-white/80" />
+              <span className="ml-2 text-white/30">
+                © {new Date().getFullYear()}
+              </span>
+            </div>
+            <div className="flex gap-6">
+              <Link href="/tools" className="transition hover:text-white">
+                Free tools
+              </Link>
+              <Link href="/pricing" className="transition hover:text-white">
+                Pricing
+              </Link>
+              <Link href="/sign-in" className="transition hover:text-white">
+                Sign in
+              </Link>
+              <Link href="/sign-up" className="transition hover:text-white">
+                Sign up
+              </Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </section>
   );
 }
 
 /* ----------------------------------------------------------------------------
- * Mobile sticky CTA — orange bar pinned to the bottom on small screens, so
- * the primary action is always one tap away as the user scrolls. Mobile-only.
+ * Mobile sticky CTA — floating pill, always one thumb-tap away.
  * --------------------------------------------------------------------------*/
 function MobileStickyCTA({
   primaryHref,
@@ -1232,46 +1048,15 @@ function MobileStickyCTA({
   primaryLabel: string;
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink-900 bg-brand px-4 py-3 shadow-[0_-4px_0_0_#0F172A] md:hidden">
+    <div className="fixed inset-x-4 bottom-4 z-40 pb-[env(safe-area-inset-bottom)] md:hidden">
       <Link
         href={primaryHref}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink-900 bg-ink-900 px-4 py-3 text-base font-bold text-white active:translate-y-0.5"
+        className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-brand px-5 py-4 text-base font-bold text-ink-900 shadow-[0_16px_40px_-12px_rgba(249,115,22,0.65),0_4px_16px_rgba(15,23,42,0.18)] active:scale-[0.98]"
       >
+        <span aria-hidden className="cta-sheen" />
         {primaryLabel}
         <ArrowRight className="h-5 w-5" />
       </Link>
     </div>
-  );
-}
-
-/* ----------------------------------------------------------------------------
- * Footer
- * --------------------------------------------------------------------------*/
-function Footer() {
-  return (
-    <footer className="relative z-10 border-t-2 border-white/15 pb-24 md:pb-0">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-10 text-sm text-white/50 md:flex-row">
-        <div className="flex items-center gap-2">
-          <Wordmark className="text-base text-white/70" />
-          <span className="ml-2 text-white/30">
-            © {new Date().getFullYear()}
-          </span>
-        </div>
-        <div className="flex gap-5">
-          <Link href="/tools" className="hover:text-white">
-            Free tools
-          </Link>
-          <Link href="/pricing" className="hover:text-white">
-            Pricing
-          </Link>
-          <Link href="/sign-in" className="hover:text-white">
-            Sign in
-          </Link>
-          <Link href="/sign-up" className="hover:text-white">
-            Sign up
-          </Link>
-        </div>
-      </div>
-    </footer>
   );
 }

@@ -41,6 +41,14 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "system-ui", "sans-serif"],
+        // Landing-page headline face — variable set on the landing <main>
+        // only, falls back to the global display font everywhere else.
+        "display-2": [
+          "var(--font-display-landing)",
+          "var(--font-display)",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       boxShadow: {
         // Brand signature — hard 4px ink shadow, no blur. Pairs with translateY-on-press.
