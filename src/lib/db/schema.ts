@@ -71,6 +71,7 @@ export const users = pgTable(
     facebookUrl: text("facebook_url"),
     instagramUrl: text("instagram_url"),
     tiktokUrl: text("tiktok_url"),
+    websiteUrl: text("website_url"),
     whatsappNumber: varchar("whatsapp_number", { length: 40 }),
     introVideoUrl: text("intro_video_url"),
     emergencyNumber: varchar("emergency_number", { length: 40 }),
