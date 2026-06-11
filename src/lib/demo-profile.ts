@@ -29,6 +29,7 @@ export const DEMO_PROFILE: FullProfile = {
     facebookUrl: "https://facebook.com",
     instagramUrl: "https://instagram.com/dave_the_plumber",
     tiktokUrl: "https://tiktok.com/@daveplumber",
+    websiteUrl: "davewilsonplumbing.com.au",
     whatsappNumber: "07700 900123",
     introVideoUrl: null,
     emergencyNumber: "07700 900124",
@@ -235,6 +236,7 @@ export const DEMO_PROFILE: FullProfile = {
     { id: 17, userId: 0, sectionKey: "facebook_link", isEnabled: true, displayOrder: 16 },
     { id: 18, userId: 0, sectionKey: "instagram_link", isEnabled: true, displayOrder: 17 },
     { id: 19, userId: 0, sectionKey: "tiktok_link", isEnabled: true, displayOrder: 18 },
+    { id: 20, userId: 0, sectionKey: "website_link", isEnabled: true, displayOrder: 19 },
   ],
   education: [],
 };

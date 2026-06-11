@@ -1062,6 +1062,16 @@ function SectionDetail({
           placeholder="https://tiktok.com/@..."
         />
       );
+    case "website_link":
+      return (
+        <FieldEditor
+          profile={profile}
+          setProfile={setProfile}
+          field="websiteUrl"
+          label="Your website address"
+          placeholder="yourbusiness.com.au"
+        />
+      );
     case "intro_video":
       return (
         <FieldEditor

@@ -19,6 +19,7 @@ export type SectionKey =
   | "facebook_link"
   | "instagram_link"
   | "tiktok_link"
+  | "website_link"
   | "emergency_callout"
   | "intro_video"
   | "education"
@@ -59,6 +60,7 @@ export const SECTION_DEFS: SectionDef[] = [
   { key: "facebook_link", label: "Facebook", description: "Link to your Facebook business page", goals: ["business"] },
   { key: "instagram_link", label: "Instagram", description: "Link to your Instagram profile", goals: ["business"] },
   { key: "tiktok_link", label: "TikTok", description: "Link to your TikTok profile", goals: ["business"] },
+  { key: "website_link", label: "Website", description: "Link to your own website", goals: ["business", "looking_for_work"] },
   { key: "emergency_callout", label: "Emergency callout button", description: "24/7 emergency line", paidOnly: true, goals: ["business"] },
   { key: "intro_video", label: "Intro video", description: "30-second clip introducing yourself", paidOnly: true, goals: ["business", "looking_for_work"] },
   { key: "education", label: "Training & education", description: "College, course, years", goals: ["looking_for_work"] },
@@ -104,8 +106,8 @@ export const SECTION_GROUPS: SectionGroup[] = [
   {
     id: "social",
     title: "Social & links",
-    blurb: "Socials, areas covered, payment options.",
-    keys: ["facebook_link", "instagram_link", "tiktok_link", "areas_covered", "payment_methods"],
+    blurb: "Socials, your website, areas covered, payment options.",
+    keys: ["facebook_link", "instagram_link", "tiktok_link", "website_link", "areas_covered", "payment_methods"],
   },
 ];
 
@@ -126,8 +128,8 @@ export const LFW_SECTION_GROUPS: SectionGroup[] = [
     keys: ["banner_image", "profile_photo", "availability_status"] },
   { id: "credibility", title: "Proof", blurb: "Quals, training, skills.",
     keys: ["about_me", "certifications", "education", "skills"] },
-  { id: "work", title: "Your work", blurb: "Photos and intro video.",
-    keys: ["photo_gallery", "intro_video"] },
+  { id: "work", title: "Your work", blurb: "Photos, intro video, website.",
+    keys: ["photo_gallery", "intro_video", "website_link"] },
   { id: "contact", title: "Get hired", blurb: "How employers reach you.",
     keys: ["call_button", "whatsapp_button", "email_button"] },
 ];

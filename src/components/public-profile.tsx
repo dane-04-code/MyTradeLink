@@ -18,6 +18,7 @@ import {
   Send,
   Loader2,
   Quote,
+  Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -106,6 +107,8 @@ export function PublicProfile({
             return <InstagramLink key={key} profile={profile} />;
           case "tiktok_link":
             return <TiktokLink key={key} profile={profile} />;
+          case "website_link":
+            return <WebsiteLink key={key} profile={profile} />;
           case "intro_video":
             return user.plan === "paid" ? <IntroVideo key={key} profile={profile} /> : null;
           default:
@@ -729,6 +732,38 @@ function TiktokLink({ profile }: { profile: FullProfile }) {
       icon={
         <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white">
           <Music2 className="h-4 w-4" />
+        </span>
+      }
+    />
+  );
+}
+
+/** Prepend https:// when a tradie types a bare domain like "mysite.com.au". */
+function normalizeUrl(url: string) {
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
+/** Strip protocol and trailing slash so the button reads as a clean domain. */
+function prettyDomain(url: string) {
+  return url
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/+$/, "");
+}
+
+function WebsiteLink({ profile }: { profile: FullProfile }) {
+  if (!profile.user.websiteUrl) return null;
+  return (
+    <SocialLink
+      slug={profile.user.slug}
+      href={normalizeUrl(profile.user.websiteUrl)}
+      label={prettyDomain(profile.user.websiteUrl) || "Visit my website"}
+      icon={
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white">
+          <Globe className="h-4 w-4" />
         </span>
       }
     />

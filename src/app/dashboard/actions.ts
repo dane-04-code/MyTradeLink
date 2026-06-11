@@ -57,6 +57,7 @@ export async function updateProfile(data: Partial<{
   facebookUrl: string;
   instagramUrl: string;
   tiktokUrl: string;
+  websiteUrl: string;
   googleRating: number | null;
   googleReviewCount: number | null;
   introVideoUrl: string;
