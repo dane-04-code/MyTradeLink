@@ -6,9 +6,6 @@ import {
   MessageCircle,
   MapPin,
   Star,
-  Facebook,
-  Instagram,
-  Music2,
   CreditCard,
   ShieldCheck,
   Clock,
@@ -18,8 +15,8 @@ import {
   Send,
   Loader2,
   Quote,
-  Globe,
 } from "lucide-react";
+import { BrandChip, detectBrand } from "@/components/brand-icons";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
@@ -109,6 +106,8 @@ export function PublicProfile({
             return <TiktokLink key={key} profile={profile} />;
           case "website_link":
             return <WebsiteLink key={key} profile={profile} />;
+          case "custom_links":
+            return <CustomLinks key={key} profile={profile} />;
           case "intro_video":
             return user.plan === "paid" ? <IntroVideo key={key} profile={profile} /> : null;
           default:
@@ -701,7 +700,7 @@ function FacebookLink({ profile }: { profile: FullProfile }) {
       slug={profile.user.slug}
       href={profile.user.facebookUrl}
       label="Follow on Facebook"
-      icon={<Facebook className="h-5 w-5 text-[#1877F2]" />}
+      icon={<BrandChip brand="facebook" />}
     />
   );
 }
@@ -713,11 +712,7 @@ function InstagramLink({ profile }: { profile: FullProfile }) {
       slug={profile.user.slug}
       href={profile.user.instagramUrl}
       label="Follow on Instagram"
-      icon={
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white">
-          <Instagram className="h-4 w-4" />
-        </span>
-      }
+      icon={<BrandChip brand="instagram" />}
     />
   );
 }
@@ -729,11 +724,7 @@ function TiktokLink({ profile }: { profile: FullProfile }) {
       slug={profile.user.slug}
       href={profile.user.tiktokUrl}
       label="Follow on TikTok"
-      icon={
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white">
-          <Music2 className="h-4 w-4" />
-        </span>
-      }
+      icon={<BrandChip brand="tiktok" />}
     />
   );
 }
@@ -761,12 +752,32 @@ function WebsiteLink({ profile }: { profile: FullProfile }) {
       slug={profile.user.slug}
       href={normalizeUrl(profile.user.websiteUrl)}
       label={prettyDomain(profile.user.websiteUrl) || "Visit my website"}
-      icon={
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white">
-          <Globe className="h-4 w-4" />
-        </span>
-      }
+      icon={<BrandChip brand="website" />}
     />
+  );
+}
+
+function CustomLinks({ profile }: { profile: FullProfile }) {
+  if (profile.customLinks.length === 0) return null;
+  return (
+    <Section>
+      <div className="space-y-2.5">
+        {profile.customLinks.map((link) => (
+          <a
+            key={link.id}
+            href={normalizeUrl(link.url)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent(profile.user.slug, "social_click")}
+            className="flex w-full items-center gap-3 rounded-xl border-2 border-line bg-white px-4 py-3.5 text-base font-bold text-ink-900 transition active:translate-y-0.5 hover:border-ink-900"
+          >
+            <BrandChip brand={detectBrand(link.url)} />
+            <span className="flex-1 truncate text-left">{link.title}</span>
+            <ChevronRight className="h-4 w-4 flex-shrink-0 text-ink-500" />
+          </a>
+        ))}
+      </div>
+    </Section>
   );
 }
 

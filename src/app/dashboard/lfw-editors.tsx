@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Plus, Trash, GraduationCap, Wrench } from "lucide-react";
+import { Plus, Trash2, GraduationCap, Wrench } from "lucide-react";
 import { toast } from "sonner";
 
 import type { FullProfile } from "@/lib/queries";
@@ -261,7 +261,7 @@ function EducationRow({
           aria-label="Remove"
           className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
         >
-          <Trash className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </button>
       </li>
     );
@@ -384,7 +384,7 @@ function SkillsEditor({
                   aria-label={`Remove ${s.serviceName}`}
                   className="flex h-5 w-5 items-center justify-center rounded-full text-ink-500 hover:bg-muted hover:text-emergency"
                 >
-                  <Trash className="h-3 w-3" />
+                  <Trash2 className="h-3 w-3" />
                 </button>
               </span>
             ))}

@@ -3,17 +3,34 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import {
-  Copy,
+  AlignLeft,
+  CalendarCheck,
+  Camera,
   Check,
-  Lock,
   ChevronDown,
-  Sparkles,
-  GripVertical,
+  CircleUserRound,
+  ClipboardList,
+  Columns2,
+  Copy,
+  CreditCard,
   Eye,
+  GraduationCap,
+  GripVertical,
+  Hammer,
+  Image as ImageIcon,
+  Lock,
+  Mail,
+  MapPin,
+  Phone,
   Plus,
-  Trash,
-  ShieldCheck,
   Quote,
+  ShieldCheck,
+  Siren,
+  Sparkles,
+  Star,
+  Trash2,
+  Video,
+  Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -41,6 +58,7 @@ import {
   sectionGroupsForGoal,
 } from "@/lib/sections";
 import { THEME_PRESETS, isValidHex } from "@/lib/themes";
+import { BrandChip, detectBrand } from "@/components/brand-icons";
 import { PublicProfile } from "@/components/public-profile";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
@@ -158,6 +176,19 @@ const addTestimonial: typeof serverActions.addTestimonial = (...args) =>
     : serverActions.addTestimonial(...args);
 const deleteTestimonial: typeof serverActions.deleteTestimonial = (...args) =>
   isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.deleteTestimonial(...args);
+const addCustomLink: typeof serverActions.addCustomLink = (...args) =>
+  isDemoRoute()
+    ? Promise.resolve({
+        id: Math.floor(Math.random() * 1e6),
+        userId: 0,
+        title: args[0].title,
+        url: args[0].url,
+        displayOrder: 0,
+        createdAt: new Date(),
+      })
+    : serverActions.addCustomLink(...args);
+const deleteCustomLink: typeof serverActions.deleteCustomLink = (...args) =>
+  isDemoRoute() ? Promise.resolve(DEMO_OK) : serverActions.deleteCustomLink(...args);
 
 export function DashboardClient({ initialProfile }: { initialProfile: FullProfile }) {
   const [profile, setProfile] = useState<FullProfile>(initialProfile);
@@ -596,6 +627,7 @@ function SectionGroupCard({
                     <SortableRow
                       key={s.sectionKey}
                       id={s.sectionKey}
+                      icon={sectionIcon(s.sectionKey as SectionKey)}
                       label={def.label}
                       description={def.description}
                       enabled={s.isEnabled}
@@ -743,8 +775,54 @@ function ThemeCard({
   );
 }
 
+/**
+ * Icon shown on each row of the page builder so the list scans visually.
+ * Social rows reuse the real brand logos from the public page; everything
+ * else gets a neutral chip with a matching lucide glyph.
+ */
+function sectionIcon(key: SectionKey): React.ReactNode {
+  const brandKeys: Partial<Record<SectionKey, Parameters<typeof BrandChip>[0]["brand"]>> = {
+    facebook_link: "facebook",
+    instagram_link: "instagram",
+    tiktok_link: "tiktok",
+    website_link: "website",
+    custom_links: "generic",
+    whatsapp_button: "whatsapp",
+  };
+  const brand = brandKeys[key];
+  if (brand) return <BrandChip brand={brand} className="h-8 w-8 rounded-lg" />;
+
+  const glyphs: Partial<Record<SectionKey, React.ReactNode>> = {
+    banner_image: <ImageIcon className="h-4 w-4" />,
+    profile_photo: <CircleUserRound className="h-4 w-4" />,
+    availability_status: <CalendarCheck className="h-4 w-4" />,
+    call_button: <Phone className="h-4 w-4" />,
+    emergency_callout: <Siren className="h-4 w-4" />,
+    about_me: <AlignLeft className="h-4 w-4" />,
+    services_list: <Wrench className="h-4 w-4" />,
+    photo_gallery: <Camera className="h-4 w-4" />,
+    before_after_photos: <Columns2 className="h-4 w-4" />,
+    certifications: <ShieldCheck className="h-4 w-4" />,
+    testimonials: <Quote className="h-4 w-4" />,
+    google_reviews: <Star className="h-4 w-4" />,
+    quote_form: <ClipboardList className="h-4 w-4" />,
+    areas_covered: <MapPin className="h-4 w-4" />,
+    payment_methods: <CreditCard className="h-4 w-4" />,
+    intro_video: <Video className="h-4 w-4" />,
+    education: <GraduationCap className="h-4 w-4" />,
+    skills: <Hammer className="h-4 w-4" />,
+    email_button: <Mail className="h-4 w-4" />,
+  };
+  return (
+    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-muted text-ink-700">
+      {glyphs[key]}
+    </span>
+  );
+}
+
 function SortableRow({
   id,
+  icon,
   label,
   description,
   enabled,
@@ -753,6 +831,7 @@ function SortableRow({
   children,
 }: {
   id: string;
+  icon?: React.ReactNode;
   label: string;
   description: string;
   enabled: boolean;
@@ -788,6 +867,7 @@ function SortableRow({
         >
           <GripVertical className="h-5 w-5" />
         </button>
+        {icon}
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -1072,6 +1152,8 @@ function SectionDetail({
           placeholder="yourbusiness.com.au"
         />
       );
+    case "custom_links":
+      return <CustomLinksEditor profile={profile} setProfile={setProfile} />;
     case "intro_video":
       return (
         <FieldEditor
@@ -1434,7 +1516,7 @@ function BannerEditor({
             onClick={clear}
             className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-lg bg-white/95 px-2 py-1 text-[11px] font-bold text-ink-900 shadow-sm hover:bg-white"
           >
-            <Trash className="h-3 w-3" /> Remove
+            <Trash2 className="h-3 w-3" /> Remove
           </button>
         </div>
       ) : (
@@ -1575,7 +1657,7 @@ function ServicesEditor({
                 aria-label="Remove"
                 className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
               >
-                <Trash className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </li>
           ))}
@@ -1661,7 +1743,7 @@ function PhotosEditor({
                 aria-label="Remove"
                 className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink-900 text-white shadow-sm hover:bg-red-600"
               >
-                <Trash className="h-3 w-3" />
+                <Trash2 className="h-3 w-3" />
               </button>
             </div>
           ))}
@@ -1785,7 +1867,7 @@ function CertificationsEditor({
                 aria-label="Remove"
                 className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
               >
-                <Trash className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </li>
           ))}
@@ -1832,6 +1914,106 @@ function CertificationsEditor({
           <Plus className="h-3.5 w-3.5" /> Add certification
         </button>
       </div>
+    </div>
+  );
+}
+
+const MAX_CUSTOM_LINKS = 10;
+
+function CustomLinksEditor({
+  profile,
+  setProfile,
+}: {
+  profile: FullProfile;
+  setProfile: React.Dispatch<React.SetStateAction<FullProfile>>;
+}) {
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [pending, startTransition] = useTransition();
+  const atCap = profile.customLinks.length >= MAX_CUSTOM_LINKS;
+
+  function add() {
+    if (!title.trim() || !url.trim() || pending) return;
+    startTransition(async () => {
+      try {
+        const row = await addCustomLink({ title: title.trim(), url: url.trim() });
+        setProfile((p) => ({ ...p, customLinks: [...p.customLinks, row] }));
+        setTitle("");
+        setUrl("");
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Couldn't add that link");
+      }
+    });
+  }
+
+  async function remove(id: number) {
+    await deleteCustomLink(id);
+    setProfile((p) => ({
+      ...p,
+      customLinks: p.customLinks.filter((l) => l.id !== id),
+    }));
+  }
+
+  return (
+    <div className="space-y-3">
+      {profile.customLinks.length === 0 ? (
+        <EmptyState
+          title="Add any link you like"
+          body="Your YouTube channel, a booking page, a price list. Give it a title and paste the link. We'll show the right logo automatically."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {profile.customLinks.map((l) => (
+            <li
+              key={l.id}
+              className="flex items-center justify-between gap-3 rounded-xl border border-line bg-white p-3"
+            >
+              <div className="flex min-w-0 items-center gap-2.5">
+                <BrandChip brand={detectBrand(l.url)} className="h-8 w-8 rounded-lg" />
+                <div className="min-w-0">
+                  <div className="truncate font-bold text-ink-900">{l.title}</div>
+                  <div className="truncate text-xs text-ink-500">{l.url}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => remove(l.id)}
+                aria-label="Remove"
+                className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {atCap ? (
+        <p className="text-xs text-ink-500">
+          That&apos;s the maximum of {MAX_CUSTOM_LINKS} links. Remove one to add another.
+        </p>
+      ) : (
+        <div className="rounded-xl border-2 border-dashed border-line bg-white p-3">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value.slice(0, 80))}
+            placeholder="Link title (e.g. Watch my YouTube)"
+            className="w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
+          />
+          <input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Paste the link (e.g. youtube.com/@yourchannel)"
+            inputMode="url"
+            className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-base focus:border-ink-900 focus:outline-none"
+          />
+          <button
+            onClick={add}
+            disabled={!title.trim() || !url.trim() || pending}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-md border-2 border-ink-900 bg-ink-900 px-3 py-2 text-xs font-bold text-white transition active:translate-y-0.5 hover:bg-ink-800 disabled:opacity-40"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add link
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -1901,7 +2083,7 @@ function TestimonialsEditor({
                 aria-label="Remove"
                 className="flex-shrink-0 rounded-lg p-1.5 text-ink-500 hover:bg-muted hover:text-emergency"
               >
-                <Trash className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </li>
           ))}

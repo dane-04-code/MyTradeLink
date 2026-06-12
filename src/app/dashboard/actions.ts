@@ -8,6 +8,7 @@ import {
   photos,
   certifications,
   testimonials,
+  customLinks,
 } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { requireUser } from "@/lib/auth";
@@ -219,6 +220,53 @@ export async function addTestimonial(data: {
     .returning();
   revalidatePath(`/t/${user.slug}`);
   return row;
+}
+
+const MAX_CUSTOM_LINKS = 10;
+
+export async function addCustomLink(data: { title: string; url: string }) {
+  const user = await requireUser();
+  const title = data.title.trim().slice(0, 80);
+  // Accept bare domains ("mysite.com") — the public page prepends https://
+  // when rendering, so we just need something that parses as a URL.
+  const url = data.url.trim().slice(0, 2048);
+  if (!title || !url) {
+    throw new Error("Title and link are required");
+  }
+  const candidate = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  try {
+    const parsed = new URL(candidate);
+    if (!parsed.hostname.includes(".")) throw new Error();
+  } catch {
+    throw new Error("That doesn't look like a web address");
+  }
+  const existing = await db.query.customLinks.findMany({
+    where: eq(customLinks.userId, user.id),
+    columns: { id: true },
+  });
+  if (existing.length >= MAX_CUSTOM_LINKS) {
+    throw new Error(`You can add up to ${MAX_CUSTOM_LINKS} links`);
+  }
+  const [row] = await db
+    .insert(customLinks)
+    .values({
+      userId: user.id,
+      title,
+      url,
+      displayOrder: existing.length,
+    })
+    .returning();
+  revalidatePath(`/t/${user.slug}`);
+  return row;
+}
+
+export async function deleteCustomLink(id: number) {
+  const user = await requireUser();
+  await db
+    .delete(customLinks)
+    .where(and(eq(customLinks.id, id), eq(customLinks.userId, user.id)));
+  revalidatePath(`/t/${user.slug}`);
+  return { ok: true };
 }
 
 export async function deleteTestimonial(id: number) {

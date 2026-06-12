@@ -237,6 +237,25 @@ export const DEMO_PROFILE: FullProfile = {
     { id: 18, userId: 0, sectionKey: "instagram_link", isEnabled: true, displayOrder: 17 },
     { id: 19, userId: 0, sectionKey: "tiktok_link", isEnabled: true, displayOrder: 18 },
     { id: 20, userId: 0, sectionKey: "website_link", isEnabled: true, displayOrder: 19 },
+    { id: 21, userId: 0, sectionKey: "custom_links", isEnabled: true, displayOrder: 20 },
+  ],
+  customLinks: [
+    {
+      id: 1,
+      userId: 0,
+      title: "Watch my boiler tips on YouTube",
+      url: "https://youtube.com/@daveplumber",
+      displayOrder: 0,
+      createdAt: new Date(),
+    },
+    {
+      id: 2,
+      userId: 0,
+      title: "Book a slot online",
+      url: "https://calendly.com/daveplumber",
+      displayOrder: 1,
+      createdAt: new Date(),
+    },
   ],
   education: [],
 };

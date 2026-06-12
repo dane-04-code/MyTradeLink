@@ -197,6 +197,25 @@ export const testimonials = pgTable(
   })
 );
 
+export const customLinks = pgTable(
+  "custom_links",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 80 }).notNull(),
+    url: text("url").notNull(),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    userIdx: index("custom_links_user_idx").on(t.userId),
+  })
+);
+
 export const sections = pgTable(
   "sections",
   {
@@ -263,6 +282,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   certifications: many(certifications),
   education: many(education),
   testimonials: many(testimonials),
+  customLinks: many(customLinks),
   sections: many(sections),
   quoteRequests: many(quoteRequests),
   pageEvents: many(pageEvents),
@@ -283,6 +303,9 @@ export const educationRelations = relations(education, ({ one }) => ({
 export const testimonialsRelations = relations(testimonials, ({ one }) => ({
   user: one(users, { fields: [testimonials.userId], references: [users.id] }),
 }));
+export const customLinksRelations = relations(customLinks, ({ one }) => ({
+  user: one(users, { fields: [customLinks.userId], references: [users.id] }),
+}));
 export const sectionsRelations = relations(sections, ({ one }) => ({
   user: one(users, { fields: [sections.userId], references: [users.id] }),
 }));
@@ -299,6 +322,7 @@ export type Service = typeof services.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Certification = typeof certifications.$inferSelect;
 export type Testimonial = typeof testimonials.$inferSelect;
+export type CustomLink = typeof customLinks.$inferSelect;
 export type Section = typeof sections.$inferSelect;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;
 export type PageEvent = typeof pageEvents.$inferSelect;
