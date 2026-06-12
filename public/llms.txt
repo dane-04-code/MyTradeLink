@@ -1,0 +1,35 @@
+# Mytradelink
+
+> Mytradelink is a dead-simple digital profile page builder for tradespeople (plumbers, electricians, builders, handymen and other trades). It gives a tradie one shareable link that shows their work, trust badges, and big Call and WhatsApp buttons, so customers can hire them in one tap. Think Linktree, built for tradies. Mobile-first, no website needed, set up in minutes.
+
+Mytradelink is built for Australian and UK tradespeople who want to look professional and win more work without building a website. A free plan gives a public profile page; a Pro plan (A$15/month or A$149/year) adds a quote request form, emergency callout button, intro video, and email alerts on every quote.
+
+We also publish free tools and plain-English guides for tradies on pricing, quoting, tax, getting paid, and getting found. These are written to answer the exact questions tradies ask, with real numbers and clear rules.
+
+## Key pages
+- [Home](https://mytradelink.page): What Mytradelink is and how to create a profile.
+- [Pricing](https://mytradelink.page/pricing): Free vs Pro plans, features and cost. Machine-readable version at /pricing.md.
+- [Free tools](https://mytradelink.page/tools): Free calculators and generators for Australian tradies.
+- [Guides](https://mytradelink.page/blog): Plain-English guides on tax, quotes, rates, getting paid and getting found.
+- [Sign up](https://mytradelink.page/sign-up): Create a free profile page.
+
+## Free tools
+- [Tax Invoice Generator](https://mytradelink.page/tools/tax-invoice-generator): Make an ATO-compliant tax invoice in under a minute.
+- [Quote Template](https://mytradelink.page/tools/quote-template): Send professional quotes that win jobs.
+- [Charge-Out Rate Calculator](https://mytradelink.page/tools/charge-out-rate-calculator): Work out what to charge per hour, covering costs, super and profit.
+- [Job Sheet Generator](https://mytradelink.page/tools/job-sheet-generator): Capture site, scope, materials and customer sign-off.
+- [Tradie Tax Calculator](https://mytradelink.page/tools/tradie-tax-calculator): Estimate income tax and GST to set aside as a sole trader.
+
+## Guides
+- [How much should a tradie charge per hour in Australia?](https://mytradelink.page/blog/how-much-should-a-tradie-charge-per-hour-australia)
+- [How much should a plumber charge per hour in Australia?](https://mytradelink.page/blog/how-much-do-plumbers-charge-per-hour-australia)
+- [How do tradies get more work?](https://mytradelink.page/blog/how-tradies-get-more-work)
+- [What tools do plumbers need to run their business?](https://mytradelink.page/blog/tools-for-plumbers-business)
+- [Should tradies charge for quotes?](https://mytradelink.page/blog/should-tradies-charge-for-quotes)
+- [How much should a tradie mark up materials?](https://mytradelink.page/blog/how-much-markup-on-materials-tradie)
+- [What to do when a customer won't pay](https://mytradelink.page/blog/customer-wont-pay-tradie)
+- [Should you take a deposit before starting a job?](https://mytradelink.page/blog/should-you-take-a-deposit-tradie)
+- [Do you need a licence to be a handyman in Australia?](https://mytradelink.page/blog/do-you-need-a-licence-handyman-australia)
+- [How to write a quote that wins the job](https://mytradelink.page/blog/how-to-write-a-quote-that-wins-the-job)
+- [Work out your true day rate](https://mytradelink.page/blog/work-out-your-true-day-rate-tradie)
+- [How much tax does a sole trader tradie pay?](https://mytradelink.page/blog/how-much-tax-does-a-sole-trader-tradie-pay)
