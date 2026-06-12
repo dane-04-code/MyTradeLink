@@ -31,11 +31,14 @@ export type Tool = {
   badge: string;
   /** Who it's for, e.g. "All Tradies" or "Electricians". Shown as a tag. */
   targetTrade: string;
+  /** True once the tool UI is live. Unbuilt tools show as "coming soon" on the hub. */
+  built: boolean;
 };
 
 export const TOOLS: Tool[] = [
   {
     slug: "tax-invoice-generator",
+    built: true,
     name: "Tax Invoice Generator",
     description:
       "Make an ATO-compliant tax invoice in under a minute. Add your ABN, the job and GST, then send it.",
@@ -47,6 +50,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "quote-template",
+    built: true,
     name: "Quote Template",
     description:
       "Send quotes that win jobs. Fill in the work, the price, and look the part every time.",
@@ -58,6 +62,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "charge-out-rate-calculator",
+    built: false,
     name: "Charge-Out Rate Calculator",
     description:
       "Work out what to charge an hour. Cover your costs, super and time off, and still make a profit.",
@@ -69,6 +74,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "job-sheet-generator",
+    built: false,
     name: "Job Sheet Generator",
     description:
       "Print or share a tidy job sheet. Site, scope, materials and sign-off, all in one place.",
@@ -80,6 +86,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "tradie-tax-calculator",
+    built: false,
     name: "Tradie Tax Calculator",
     description:
       "See what to set aside for tax and GST so the ATO bill never catches you out.",
