@@ -62,7 +62,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "charge-out-rate-calculator",
-    built: false,
+    built: true,
     name: "Charge-Out Rate Calculator",
     description:
       "Work out what to charge an hour. Cover your costs, super and time off, and still make a profit.",

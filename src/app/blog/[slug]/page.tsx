@@ -98,8 +98,9 @@ function toolForTag(tag: string): Tool | undefined {
     case "Getting Paid":
       return getToolBySlug("tax-invoice-generator");
     case "Quoting":
-    case "Pricing":
       return getToolBySlug("quote-template");
+    case "Pricing":
+      return getToolBySlug("charge-out-rate-calculator");
     default:
       return undefined;
   }
