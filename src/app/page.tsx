@@ -75,6 +75,12 @@ function Header({ isSignedIn }: { isSignedIn: boolean }) {
             Free tools
           </Link>
           <Link
+            href="/blog"
+            className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-ink-600 transition hover:bg-muted hover:text-ink-900 md:inline-flex"
+          >
+            Blog
+          </Link>
+          <Link
             href="/pricing"
             className="hidden rounded-full px-3.5 py-2 text-sm font-semibold text-ink-600 transition hover:bg-muted hover:text-ink-900 md:inline-flex"
           >
@@ -1019,6 +1025,9 @@ function FinalCTA({
             <div className="flex gap-6">
               <Link href="/tools" className="transition hover:text-white">
                 Free tools
+              </Link>
+              <Link href="/blog" className="transition hover:text-white">
+                Blog
               </Link>
               <Link href="/pricing" className="transition hover:text-white">
                 Pricing
