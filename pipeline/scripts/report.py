@@ -10,8 +10,11 @@ PIPELINE_DIR = Path(__file__).resolve().parents[1]
 
 
 def _counts(conn, column):
+    # Breakdowns count the workable list (ICP 'in') only; excluded leads are
+    # reported in the header totals, not in the per-dimension tables.
     return list(conn.execute(
         f"SELECT {column} AS k, COUNT(*) AS n FROM contacts "
+        f"WHERE icp_status='in' "
         f"GROUP BY {column} ORDER BY n DESC"
     ))
 
@@ -25,6 +28,8 @@ def generate_dashboard(conn):
     lines.append(f"**Total contacts:** {total}  ")
     lines.append(f"**ICP (in):** {in_icp}  ")
     lines.append(f"**Excluded:** {total - in_icp}")
+    lines.append("")
+    lines.append("_Breakdowns below count ICP (in) contacts only._")
     lines.append("")
     for title, col in [("By source", "source"), ("By trade", "trade"),
                        ("By region", "region"), ("By stage", "stage")]:

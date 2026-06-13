@@ -4,30 +4,32 @@
 **ICP (in):** 2676  
 **Excluded:** 27
 
+_Breakdowns below count ICP (in) contacts only._
+
 ## By source
 
 | source | count |
 | --- | --- |
-| niceic | 2604 |
-| gassafe | 99 |
+| niceic | 2580 |
+| gassafe | 96 |
 
 ## By trade
 
 | trade | count |
 | --- | --- |
-| electrical | 2604 |
-| gas | 99 |
+| electrical | 2580 |
+| gas | 96 |
 
 ## By region
 
 | region | count |
 | --- | --- |
-| West Midlands | 1801 |
-| LE | 500 |
-| DE | 402 |
+| West Midlands | 1780 |
+| LE | 497 |
+| DE | 399 |
 
 ## By stage
 
 | stage | count |
 | --- | --- |
-| scraped | 2703 |
+| scraped | 2676 |

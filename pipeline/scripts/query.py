@@ -28,7 +28,7 @@ def build_query(filters, columns=DEFAULT_COLUMNS, limit=None):
     if where:
         sql += " WHERE " + " AND ".join(where)
     sql += " ORDER BY business_name"
-    if limit:
+    if limit is not None:
         sql += f" LIMIT {int(limit)}"
     return sql, params
 
