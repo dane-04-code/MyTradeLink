@@ -42,3 +42,7 @@ next-env.d.ts
 
 # stray devtools console dump accidentally saved to disk
 \[info\] *.txt
+.gstack/
+
+# outreach pipeline local database (binary; CSV/markdown snapshots are committed)
+/pipeline/pipeline.db
