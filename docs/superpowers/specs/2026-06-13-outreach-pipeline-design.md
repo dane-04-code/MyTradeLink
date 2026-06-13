@@ -365,6 +365,12 @@ pipeline/
   either way.
 - Sending volume ramp: governed by Instantly warmup caps; start on the 2 to 3k test
   segment, scale the champion.
+- **Multi-machine access (Hermes on a VPS):** Phase 1 uses a local SQLite file, which
+  only this machine can query live. For the Hermes Telegram agent on a VPS to query the
+  same live data, host the DB. Preferred: Neon Postgres (already in use for the app);
+  alternative: Turso (hosted SQLite, identical engine). All DB access goes through
+  `connect()` in `common.py`, so the swap from local SQLite to a hosted DB is contained.
+  Decide and migrate as the first step of Phase 2, before wiring Hermes.
 - Region derivation from postcode: simple prefix map for v1; refine later.
 - Frozen vs live segment membership: live for v1; add `segment_members` only if needed.
 - `dashboard.html` export: build only if reading markdown becomes limiting.
