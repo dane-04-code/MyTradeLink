@@ -26,6 +26,14 @@ working, and it arrives weeks before a sign-up.
 **Sign-up rate** per variant, shown alongside on the leaderboard as the lagging "money"
 truth-check, so we never crown a method that gets warm replies but no actual sign-ups.
 
+### Also a durable CRM
+Finding the formula is the urgent job, but this is a permanent system. Every contact and
+every interaction stays queryable for the long haul. The operator will routinely ask
+ad-hoc questions ("all electricians in Coventry", "every gas engineer in Manchester we
+have not contacted yet", "who replied positively last month") and get an answer as a
+clean markdown table. SQLite makes this trivial; ad-hoc querying is a first-class
+feature (see `/pipeline-query`), not an afterthought.
+
 ---
 
 ## 2. Non-goals
@@ -249,6 +257,11 @@ agent can call it too).
    "scan for emails I got back and note the wins".
 7. **`/pipeline-report`** — regenerate all dashboards and the leaderboard; state what is
    winning and whether the sample is big enough to believe.
+8. **`/pipeline-query`** — ad-hoc CRM querying. The operator asks in plain English
+   ("all electricians in Coventry not yet contacted"); the skill turns it into SQL over
+   `contacts` + `events`, returns a clean markdown table, and can optionally save the
+   result straight into a new segment. This is what makes it a lasting CRM, not just a
+   campaign tool.
 
 A meta-skill principle the operator asked for: the system should be able to **build the
 scripts and database whenever asked**. `/pipeline-init` plus the schema-as-code make the
@@ -268,16 +281,29 @@ database reproducible from scratch at any time.
 
 ---
 
-## 9. Email generation and Gmail
+## 9. Email sending and reply capture (Instantly)
 
-- **Generation:** evolve `outreach/generate_outreach.py` into the campaign step. It
-  merges a variant's templates with each contact's fields and produces per-contact
-  drafts.
-- **Sending:** drafts are created in Gmail (the operator reviews and sends, or the
-  Telegram agent triggers sends in batches). v1 creates drafts; auto-send is a later
-  toggle so deliverability stays under control while the formula is unproven.
-- **Reply scanning:** the Gmail integration reads the inbox, matches replies to `sends`
-  by thread / sender, Claude classifies sentiment, and `record.py` writes the events.
+The sending channel is **Instantly**, the dedicated cold-email platform. Sending inboxes
+being warmed: `dane@gettradelink.inc` and `sam@gettradelink.inc`. Instantly handles
+warmup, per-inbox daily caps, and inbox rotation, which is what keeps deliverability
+safe at 80k volume. This replaces the earlier Gmail draft-only idea.
+
+- **Generation:** the campaign step (evolving `outreach/generate_outreach.py`) merges a
+  variant's templates with each contact's fields and produces a per-contact send list
+  (CSV or via the Instantly API) tagged with `campaign_id` and `variant_id` so outcomes
+  map back to the right experiment.
+- **Sending:** uploaded into an Instantly campaign. Instantly sends on its warmup-safe
+  schedule. We start with the small test segment (2 to 3k) and scale the champion. The
+  `sends` table logs what went where; deliverability is governed by Instantly's caps,
+  not by a manual draft step.
+- **Reply capture:** replies surface in Instantly's unibox and in the mailbox behind the
+  sending addresses. `/pipeline-scan` pulls them, ideally via the **Instantly API or a
+  reply webhook**; the Gmail integration is the fallback for reading the underlying
+  mailbox directly. Claude classifies sentiment, and `record.py` writes the events.
+- **Phase 2 open item:** confirm Instantly API access / webhook availability on the
+  current plan. If the API is not available, fall back to scanning the mailbox behind
+  `dane@` / `sam@` via the Gmail/IMAP integration. Either path feeds the same `events`
+  table, so the rest of the system is unaffected.
 
 ---
 
@@ -300,6 +326,7 @@ pipeline/
     campaign.py            # generate drafts + log sends
     record.py              # write events (used by pipeline-scan)
     report.py              # regenerate all markdown
+    query.py               # ad-hoc query -> markdown table
     common.py             # db helpers, ICP rules, dedup
   exports/                 # CSV snapshots, committed for git + backup
 .claude/skills/pipeline-*/ # the slash commands
@@ -322,8 +349,8 @@ pipeline/
 ## 12. Build phases
 
 - **Phase 1 (foundation):** `schema.sql`, `/pipeline-init`, `/pipeline-ingest`,
-  `/pipeline-report`, `DASHBOARD.md`. Outcome: all ~2,700 current contacts ingested,
-  deduped, and visible.
+  `/pipeline-report`, `/pipeline-query`, `DASHBOARD.md`. Outcome: all ~2,700 current
+  contacts ingested, deduped, visible, and queryable ("all electricians in Coventry").
 - **Phase 2 (the loop):** `/pipeline-segment`, `/pipeline-variant`,
   `/pipeline-campaign`, `/pipeline-scan`, leaderboard with significance gate. Outcome:
   the full test-measure-learn cycle that finds the winning formula.
@@ -333,7 +360,11 @@ pipeline/
 
 ## 13. Open questions / future
 
-- Auto-send vs draft-only: start draft-only; revisit once a champion exists.
+- Instantly API / reply-webhook availability on the current plan (Phase 2). Fallback:
+  scan the mailbox behind the sending addresses via Gmail/IMAP. Same `events` table
+  either way.
+- Sending volume ramp: governed by Instantly warmup caps; start on the 2 to 3k test
+  segment, scale the champion.
 - Region derivation from postcode: simple prefix map for v1; refine later.
 - Frozen vs live segment membership: live for v1; add `segment_members` only if needed.
 - `dashboard.html` export: build only if reading markdown becomes limiting.
