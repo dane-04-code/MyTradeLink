@@ -111,20 +111,23 @@ export default function ToolsPage() {
           </div>
         </section>
 
-        {/* On the bench — honest about what's coming, no dead-end CTAs */}
-        <section className="mx-auto max-w-6xl px-5 pb-4">
-          <div className="mb-5 flex items-center gap-3">
-            <span className="h-5 w-1.5 rounded-sm bg-white/25" />
-            <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-white/60">
-              On the bench — coming soon
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {coming.map((tool) => (
-              <ComingCard key={tool.slug} tool={tool} />
-            ))}
-          </div>
-        </section>
+        {/* On the bench — honest about what's coming, no dead-end CTAs.
+            Hidden entirely once every planned tool is live. */}
+        {coming.length > 0 && (
+          <section className="mx-auto max-w-6xl px-5 pb-4">
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-5 w-1.5 rounded-sm bg-white/25" />
+              <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-white/60">
+                On the bench — coming soon
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {coming.map((tool) => (
+                <ComingCard key={tool.slug} tool={tool} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Guides cross-link — the other free resource */}
         <section className="mx-auto max-w-6xl px-5 pt-12">

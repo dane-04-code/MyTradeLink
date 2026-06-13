@@ -74,7 +74,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "job-sheet-generator",
-    built: false,
+    built: true,
     name: "Job Sheet Generator",
     description:
       "Print or share a tidy job sheet. Site, scope, materials and sign-off, all in one place.",
@@ -86,7 +86,7 @@ export const TOOLS: Tool[] = [
   },
   {
     slug: "tradie-tax-calculator",
-    built: false,
+    built: true,
     name: "Tradie Tax Calculator",
     description:
       "See what to set aside for tax and GST so the ATO bill never catches you out.",
